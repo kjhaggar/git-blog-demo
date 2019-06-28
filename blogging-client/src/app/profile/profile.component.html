@@ -1,0 +1,50 @@
+
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+        <div class="container">
+          <a class="navbar-brand">Blog - Demo Project</a>
+          <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <label class="nav-link" (click)= "DisplayPost()">Create New Post</label>
+              </li>
+              <li class="nav-item">
+                <label class="nav-link" >Friends</label>
+              </li>
+              <li class="nav-item">
+                <label class="nav-link">Logout</label>
+              </li>
+            </ul>
+          </div>
+          </div>
+        
+      </nav>
+
+<div class= "container" *ngIf = "displayAddPost">
+<div class= "post">
+    <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2"> 
+        <form [formGroup]="postForm">
+            <div class="form-group" >
+                <label for="exampleInputEmail1">Title</label>
+                <input name="title" type="text" formControlName="title" class="form-control" aria-describedby="emailHelp" placeholder="Enter title">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Description</label>
+                <textarea name="description" formControlName="description" class="form-control" placeholder="Your post..!!"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary" (click) = "AddPost()">Add</button>
+        </form>
+    </div>
+</div>
+</div>
+
+<div class = "displayPost" *ngFor = "let post of post_list">
+    <form [formGroup]="updatePost">
+        <h2>{{post.title}}</h2>
+        <textarea class="form-control">{{post.description}}</textarea>  
+    </form>
+</div>
+ 
+ 
+            
+        
+
