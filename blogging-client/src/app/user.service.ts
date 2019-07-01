@@ -5,6 +5,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 export class UserService {
+  
+  currentUserId;
+  currentUserName;
 
   constructor(private http: HttpClient) { }
 
@@ -24,8 +27,17 @@ export class UserService {
     });
   }
 
-  addPost(body:any){
-    return this.http.post('http://127.0.0.1:3000/api/addPost',body,
+  getPostById(id)
+  {debugger
+    return this.http.get('http://127.0.0.1:3000/api/getPostById/'+id,{
+      observe:'body',
+      withCredentials:true,
+      headers:new HttpHeaders().append('Content-Type','application/json')
+    })
+  }
+
+  addPost(body: any){
+    return this.http.post('http://127.0.0.1:3000/api/addPost', body,
     {
       observe: 'body',
       headers: new HttpHeaders().append('Content-Type','application/json')

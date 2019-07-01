@@ -11,7 +11,7 @@ import { UserService } from './../user.service';
 export class LoginComponent implements OnInit {
 
   login_form:FormGroup = new FormGroup({
-    user_name:new FormControl(null,Validators.required),
+    userName:new FormControl(null,Validators.required),
     password:new FormControl(null,Validators.required)
   })
 
@@ -29,9 +29,12 @@ export class LoginComponent implements OnInit {
     .subscribe(
       data=>{
         console.log(data);
+        this.userService.currentUserId = data["userId"];
+        this.userService.currentUserName = data["userName"];
+        this.router.navigate(['/profile']);
+
         localStorage.setItem('currentUser', JSON.stringify(this.login_form.value));
         console.log(localStorage.getItem('currentUser'));
-        this.router.navigate(['/profile']);
       },
       error=>{ alert("Incorrect username/password...!!");
         console.error(error)}
