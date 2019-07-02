@@ -60,21 +60,6 @@ async function addToPostDB(req, res) {
   }
 }
 
-router.post('/addComment',function(req,res,next){
-  addToCommentDB(req, res);
-})
-async function addToCommentDB(req, res) {
-
-  var comment = new Comment(req.body);
-  try {
-    doc = await comment.save();
-    return res.status(201).json(doc);
-  }
-  catch (err) {
-    return res.status(501).json(err);
-  }
-}
-
 router.get('/allPost',function(req,res){
   Post.find({}).exec(function (err, posts) {
     if (err) {
@@ -93,6 +78,33 @@ router.get('/getPostById/:id',function(req,res){
     }
     else {
       res.send(posts);
+    }
+  });
+});
+
+router.post('/addComment',function(req,res,next){
+  addToCommentDB(req, res);
+})
+async function addToCommentDB(req, res) {
+
+  var comment = new Comment(req.body);
+  try {
+    doc = await comment.save();
+    return res.status(201).json(doc);
+  }
+  catch (err) {
+    return res.status(501).json(err);
+  }
+}
+
+router.get('/getCommentsByPostId/:id',function(req,res){
+  console.log(req.params.id)
+  Comment.find({postId: req.params.id}).exec(function (err, comments) {
+    if (err) {
+      console.log("Error:", err);
+    }
+    else {
+      res.send(comments);
     }
   });
 });

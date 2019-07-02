@@ -52,4 +52,21 @@ export class UserService {
     })
   }
 
+  addComment(body: any){debugger
+    return this.http.post('http://127.0.0.1:3000/api/addComment', body,
+    {
+      observe: 'body',
+      headers: new HttpHeaders().append('Content-Type','application/json')
+    });
+  }
+
+  getCommentsByPostId(id)
+  {debugger
+    return this.http.get('http://127.0.0.1:3000/api/getCommentsByPostId/'+id,{
+      observe:'body',
+      withCredentials:true,
+      headers:new HttpHeaders().append('Content-Type','application/json')
+    })
+  }
+
 }

@@ -2,6 +2,8 @@ import { UserService } from './../user.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { VirtualTimeScheduler } from 'rxjs';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-profile',
@@ -12,12 +14,14 @@ export class ProfileComponent implements OnInit {
 
   getCurrentUserId;
   getCurrentUserName;
+  getCurrentPostId;
   displayAddPost: boolean = false;
   showAllPost = true;
   post_list: any;
   displayMyPost : any;
+  commentList: any;
   showMyPost: boolean;
-  displayComment: boolean;
+  displayComment = [];
 
   postForm:FormGroup = new FormGroup({
     title:new FormControl(null,Validators.required),
@@ -26,6 +30,10 @@ export class ProfileComponent implements OnInit {
 
   updatePost:FormGroup = new FormGroup({
     description:new FormControl(null,Validators.required)
+  })
+
+  commentForm:FormGroup = new FormGroup({
+    content:new FormControl(null,Validators.required)
   })
 
   constructor(private userService: UserService, private router: Router) { }
@@ -38,7 +46,7 @@ export class ProfileComponent implements OnInit {
 
   ShowAllPost(){
     this.userService.showPost().subscribe(
-      (data) => (this.post_list = data),
+      (data) => {this.post_list = data},
        error=>console.error(error)
     );
   }
@@ -52,7 +60,7 @@ export class ProfileComponent implements OnInit {
   }
 
   AddPost()
-  { debugger
+  {
     if(!this.postForm.valid){
       console.log('error in submiting');return;
     }
@@ -96,8 +104,45 @@ export class ProfileComponent implements OnInit {
     );
   }
 
-  showCommentBox(){
-    this.displayComment = true;
+  showCommentBox(post,index){debugger
+    this.getCurrentPostId = post._id;
+    this.displayComment[index] = true;
+    this.ShowAllComments(post._id);
+  }
+
+  ShowAllComments(postId){
+    debugger
+    this.userService.getCommentsByPostId(postId).subscribe(
+      (data) => {
+        debugger
+        this.commentList = data
+      },
+       error=>console.error(error)
+    );
+  }
+  sendMessage(){debugger
+
+    if(!this.commentForm.valid){
+      alert( "Invalid Comment");
+      console.log('Invalid Comment');return;
+    }
+    
+    var obj ={
+      postId: this.getCurrentPostId,
+      userId: this.getCurrentUserId,
+      userName: this.getCurrentUserName,
+      content: this.commentForm.value.content
+    };
+
+    this.userService.addComment( JSON.stringify(obj))
+    .subscribe(
+      data=>{
+        console.log(data);
+      },
+      error=>{ alert("Error in posting your blog..!!");
+        console.error(error)}
+    )
+    this.ShowAllComments(this.getCurrentPostId);
   }
   
 }

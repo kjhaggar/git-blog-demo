@@ -2,6 +2,7 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
         <div class="container">
           <a class="navbar-brand">Blog - Demo Project</a>
+          <label>Welcome {{getCurrentUserName}}</label>
           <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
               <li class="nav-item">
@@ -28,11 +29,11 @@
         <form [formGroup]="postForm">
             <div class="form-group" >
                 <label for="exampleInputEmail1">Title</label>
-                <input name="title" type="text" formControlName="title" class="form-control" aria-describedby="emailHelp" placeholder="Enter title">
+                <input name="title" type="text" formControlName="title" class="form-control" placeholder="Enter title">
             </div>
             <div class="form-group">
                 <label for="exampleInputPassword1">Description</label>
-                <textarea name="description" formControlName="description" cols="30" rows="10" class="form-control" placeholder="Your post..!!"></textarea>
+                <textarea name="description" formControlName="description" rows="1" class="form-control" placeholder="Your post..!!"></textarea>
             </div>
             <button type="button" class="btn btn-primary" (click) = "AddPost()">Add</button>
         </form>
@@ -41,30 +42,41 @@
 </div>
 
 <div *ngIf = "showAllPost">
-<div class = "displayPost" *ngFor = "let post of post_list">
+  <div class = "displayPost" *ngFor = "let post of post_list; index as i">
     <form>
       <label>Created by {{ post.userName }} on {{ post.createdAt}} </label>
       <h2>{{post.title}}</h2>
-      <textarea cols="60" rows="3">{{post.description}}</textarea>
+      <label cols="80" rows="3">{{post.description}}</label>
       <div class="comment">
-      <a (click)="showCommentBox()">Show Comment</a>
+        <button type="button" (click)="showCommentBox(post,i)">Show Comments</button>
       </div>
-    </form>
-    <div *ngIf = "displayComment">
-      <div *ngFor = "let comment of commentList">
-          <form>
-            <div>
-              <label>{{comment.userName}}</label>{{comment.content}}
+      <div *ngIf = "displayComment[i]">
+          <div class="row">
+            <div class="well">
+              <div class="panel panel-default" *ngFor="let item of commentList">
+                
+                    <div class="panel-body">
+                        <span><strong>{{item.userName}} : </strong> {{item.content}}</span>
+                      </div>
+                
+                </div>
+              </div>
             </div>
-            <div>
-                <input name="comment" type="text" formControlName="comment" class="form-control" placeholder="Comment Here..!1">
-            </div>
-            <button (click)= "AddComment()">Add Comment</button>
+            
+            <form [formGroup]="commentForm">
+              <div class="row">
+                <div class="col-sm-6">
+                  <input type="text" class="form-control" formControlName="content" placeholder="Start Typing here.." >            
+                </div>
+                <div class="col-sm-offset-2">
+                  <button type="button" class="btn btn-success pull-right" (click)="sendMessage(post._id)">Send</button>
+                </div>
+             </div>
             </form>
-      </div>
-      
-    </div> 
-</div>
+          </div>
+    </form>
+    
+  </div>
 </div>
 
 <div *ngIf = "showMyPost">
@@ -73,7 +85,7 @@
           <label>Created on {{ post.createdAt}} </label>
           <h4>{{post.title}}</h4>
           <div class="form-group">
-          <textarea cols="60" rows="3">{{post.description}}</textarea>
+          <textarea rows="1">{{post.description}}</textarea>
           </div>
         </form>
     </div>
