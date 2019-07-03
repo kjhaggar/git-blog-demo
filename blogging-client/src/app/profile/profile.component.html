@@ -1,0 +1,86 @@
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand">Blog - Demo </a>
+        <label>Welcome {{getCurrentUserName}}</label>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <label class="nav-link" (click)= "DisplayPostBox()">Create New Post</label>
+                </li>
+                <li class="nav-item">
+                    <label class="nav-link" (click)="DisplayMyPost()">My Post</label>
+                </li>
+                <li class="nav-item">
+                    <label class="nav-link" >Friends</label>
+                </li>
+                <li class="nav-item">
+                    <label class="nav-link" (click)="Logout()">Logout</label>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class= "container" *ngIf = "displayAddPost">
+    <div class= "post">
+        <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+            <form [formGroup]="postForm">
+                <div class="form-group" >
+                    <label for="exampleInputEmail1">Title</label>
+                    <input name="title" type="text" formControlName="title" class="form-control" placeholder="Enter title">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Description</label>
+                    <textarea name="description" formControlName="description" rows="1" class="form-control" placeholder="Your post..!!"></textarea>
+                </div>
+                <button type="button" class="btn btn-primary" (click) = "AddPost()">Add</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div *ngIf = "showAllPost">
+    <div class = "displayPost" *ngFor = "let post of postList; index as i">
+        <form>
+            <label>Created by {{ post.userName }} on {{ post.createdAt | date:'MMM dd, yyyy'}} </label>
+            <h2>{{post.title}}</h2>
+            <label cols="80" rows="3">{{post.description}}</label>
+            <div class="comment">
+                <button type="button" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
+            </div>
+            <div *ngIf = "displayComment[i]">
+                <div class="row">
+                    <div class="well" >
+                        <div class="panel panel-default" *ngFor="let item of post.comments">
+                            <div class="panel-body">
+                                <span><strong>{{item.commentatorName}}  :  </strong> {{item.content}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form [formGroup]="commentForm">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" formControlName="content" placeholder="Start Typing here.." >
+                        </div>
+                        <div class="col-sm-offset-2">
+                            <button type="button" class="btn btn-success pull-right" (click)="PostComment(post._id)">Send</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div *ngIf = "showMyPost">
+    <div class = "displayPost" *ngFor = "let post of displayMyPost">
+        <form [formGroup]="updatePost">
+            <label>Created on {{ post.createdAt | date:'MMM dd, yyyy'}} </label>
+            <h4>{{post.title}}</h4>
+            <div class="form-group">
+                <textarea rows="2" cols = "50">{{post.description}}</textarea>
+            </div>
+        </form>
+    </div>
+</div>

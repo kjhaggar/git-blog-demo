@@ -1,0 +1,20 @@
+nav{
+    margin: 10px;
+}
+
+.post{
+    margin-top: 70px;
+}
+
+.displayPost{
+    margin: 100px;
+}
+.comment{
+    padding-top:15px;
+    font-size:85%;
+}
+
+.well{
+    height:100px;
+    padding:15px;
+}
