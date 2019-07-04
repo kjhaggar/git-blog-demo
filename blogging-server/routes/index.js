@@ -28,12 +28,12 @@ async function addToDB(req, res) {
 }
 
 router.post('/login', function(req, res, next) {
-    passport.authenticate('local', function(err, user, info) {
+    passport.authenticate('local', function(err, user) {
         if (err) {
-            return res.status(501).json(err);
+            return res.status(501).json({ err, success: false, message: 'Unable To login.' });
         }
         if (!user) {
-            return res.status(501).json(info);
+            return res.status(501).json({ success: false, message: 'Not the registered user' });
         }
         const token = jwt.sign({ id: user._id }, "qwerty@12345", { expiresIn: 86400 });
         req.logIn(user, function(err) {
@@ -43,8 +43,8 @@ router.post('/login', function(req, res, next) {
             return res.status(200).json({
                 message:'Login Success',
                 token: token,
-                'userId': user._id,
-                'userName': user.userName
+                userId: user._id,
+                userName: user.userName
             });
         });
     })(req, res, next);

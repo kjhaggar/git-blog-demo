@@ -22,6 +22,8 @@ export class ProfileComponent implements OnInit {
     displayComment = [];
     recentComment = [];
     newComment: any;
+    incorrectPost: boolean;
+    incorrectComment: boolean;
 
     postForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
@@ -63,7 +65,7 @@ export class ProfileComponent implements OnInit {
 
     AddPost() {
         if (!this.postForm.valid) {
-            console.log('error in submiting');
+            this.incorrectPost = true;
             return;
         }
         const obj = {
@@ -78,7 +80,7 @@ export class ProfileComponent implements OnInit {
                 this.ShowAllComments();
             },
             error => {
-                alert('Error in posting your blog..!!');
+                this.incorrectPost = true;
                 console.error(error);
             }
         );
@@ -93,7 +95,6 @@ export class ProfileComponent implements OnInit {
         this.userService.getPostById(this.getCurrentUserId).subscribe(
             (data) => {
                 this.displayMyPost = data;
-                console.log(this.displayMyPost);
             }
         );
     }
@@ -113,8 +114,7 @@ export class ProfileComponent implements OnInit {
 
     PostComment(id: string) {
         if (!this.commentForm.valid) {
-            alert( 'Invalid Comment');
-            console.log('Invalid Comment');
+            this.incorrectComment = true;
             return;
         }
 
@@ -128,13 +128,11 @@ export class ProfileComponent implements OnInit {
         this.subscription.add(
             this.userService.addComment(obj).subscribe(
                 data => {
-                    console.log(data);
                     this.commentForm.reset();
                     this.ShowAllPost();
                 },
                 error => {
-                    alert('Error in posting your blog..!!');
-                    console.error(error);
+                    this.incorrectComment = true;
                 }
             )
         );
@@ -142,5 +140,5 @@ export class ProfileComponent implements OnInit {
 
     Logout() {
         this.router.navigate(['/login']);
-}
+    }
 }

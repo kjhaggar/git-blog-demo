@@ -7,14 +7,17 @@ passport.use('local',new LocalStrategy({
     passwordField:'password'
 },
     function (username, password, done) {
-        User.findOne({ userName: username }, function (err, user) {
-            if (err) { return done(err); }
-            if (!user || !user.isValid(password)) {
-                return done(null, false, { message: 'Incorrect username or password..!!' });
-            }
-            
-            return done(null, user);
-        });
+        
+            User.findOne({ userName: username }, function (err, user) {
+                if (err) {
+                    return done(err);
+                }
+                if (!user || !user.isValid(password)) {
+                    return done(null, false);
+                }
+                return done(null, user);
+            });
+          
     }
 ));
 

@@ -3,12 +3,12 @@
         <a class="navbar-brand">Blog - Demo </a>
         <label>Welcome {{getCurrentUserName}}</label>
         <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ml-auto navbar-nav navbar-right ">
                 <li class="nav-item">
-                    <label class="nav-link" (click)= "DisplayPostBox()">Create New Post</label>
+                    <label class="nav-link" (click)= "DisplayPostBox()">New Post</label>
                 </li>
                 <li class="nav-item">
-                    <label class="nav-link" (click)="DisplayMyPost()">My Post</label>
+                    <label class="nav-link" (click)="DisplayMyPost()">My Posts</label>
                 </li>
                 <li class="nav-item">
                     <label class="nav-link" >Friends</label>
@@ -25,6 +25,9 @@
     <div class= "post">
         <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
             <form [formGroup]="postForm">
+                <div>
+					<label *ngIf = "incorrectPost">Enter Valid Details..</label>
+				</div>
                 <div class="form-group" >
                     <label for="exampleInputEmail1">Title</label>
                     <input name="title" type="text" formControlName="title" class="form-control" placeholder="Enter title">
@@ -49,17 +52,20 @@
                 <button type="button" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
             </div>
             <div *ngIf = "displayComment[i]">
-                <div class="row">
+                <div  *ngIf = "post.comments.length >0">
                     <div class="well" >
-                        <div class="panel panel-default" *ngFor="let item of post.comments">
-                            <div class="panel-body">
+                        <div  *ngFor="let item of post.comments">
+                    
                                 <span><strong>{{item.commentatorName}}  :  </strong> {{item.content}}</span>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
                 <form [formGroup]="commentForm">
-                    <div class="row">
+                   
+                            <label *ngIf = "incorrectComment">Add Proper Comment..</label>
+                    
+                    <div class="row" >
                         <div class="col-sm-6">
                             <input type="text" class="form-control" formControlName="content" placeholder="Start Typing here.." >
                         </div>

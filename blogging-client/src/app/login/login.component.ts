@@ -9,37 +9,41 @@ import { UserService } from './../user.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+    submitted: boolean;
+    invalidUser: boolean;
 
-  loginForm: FormGroup = new FormGroup({
-    userName: new FormControl(null, Validators.required),
-    password: new FormControl(null, Validators.required)
-  });
+    loginForm: FormGroup = new FormGroup({
+        userName: new FormControl(null, Validators.required),
+        password: new FormControl(null, Validators.required)
+    });
+    constructor(private userService: UserService, private router: Router, private route: ActivatedRoute) {}
+    ngOnInit() {}
 
-  constructor(private userService: UserService, private router: Router, private route: ActivatedRoute) { }
+    get f() { return this.loginForm.controls; }
 
-  ngOnInit() {
-  }
 
-  Login() {
-    if (!this.loginForm.valid ) {
-      console.log('Invalid UserName/Password');
-      return;
+    Login() {
+        this.submitted = true;
+        if (!this.loginForm.valid ) {
+            return;
+        }
+
+        this.userService.login(JSON.stringify(this.loginForm.value)).subscribe(
+            (data: { userId: string, userName: string, success: boolean, message: string}) => {
+                if (data.success){
+                    alert("not a memmber");
+                    console.log(data.message);
+                }
+                console.log(data)
+                this.router.navigate(['/profile']);
+                this.userService.currentUserId = data.userId;
+                this.userService.currentUserName = data.userName;
+                localStorage.setItem('currentUser', JSON.stringify(this.loginForm.value));
+            },
+            (error) => {
+                this.invalidUser = true;
+                console.log(error.error.message)
+            }
+        );
     }
-
-    this.userService.login(JSON.stringify(this.loginForm.value)).subscribe(
-      (data: { userId: string, userName: string}) => {
-        console.log(data);
-        this.userService.currentUserId = data.userId;
-        this.userService.currentUserName = data.userName;
-        this.router.navigate(['/profile']);
-
-        localStorage.setItem('currentUser', JSON.stringify(this.loginForm.value));
-        console.log(localStorage.getItem('currentUser'));
-      },
-      error => {
-        alert('Incorrect username/password...!!');
-        console.error(error);
-      }
-    );
-  }
 }

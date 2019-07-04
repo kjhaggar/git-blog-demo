@@ -9,30 +9,40 @@ import { Router } from '@angular/router';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  regiForm: FormGroup = new FormGroup({
-    email: new FormControl(null, [Validators.email, Validators.required]),
-    userName: new FormControl(null, Validators.required),
-    firstName: new FormControl(null, Validators.required),
-    lastName: new FormControl(null, Validators.required),
-    password: new FormControl(null, Validators.required),
-    confirmPassword: new FormControl(null, Validators.required)
-  });
+    matchPassword: boolean;
+    submitted: boolean;
 
-  constructor(private userService: UserService, private router: Router) {}
+    regiForm: FormGroup = new FormGroup({
+        email: new FormControl(null, [Validators.required, Validators.email]),
+        userName: new FormControl(null, Validators.required),
+        firstName: new FormControl(null, Validators.required),
+        lastName: new FormControl(null, Validators.required),
+        password: new FormControl(null, [Validators.required, Validators.minLength(6)]),
+        confirmPassword: new FormControl(null, Validators.required)
+    });
 
-  ngOnInit() {
-  }
+    constructor(private userService: UserService, private router: Router) {}
 
-  Register() {
-    if (!this.regiForm.valid ||
-      (this.regiForm.controls.password.value !== this.regiForm.controls.confirmPassword.value)) {
-    console.log('Invalid Form'); return; }
-    this.userService.register(JSON.stringify(this.regiForm.value)).subscribe(
-      data => {
-        console.log(data);
-        this.router.navigate(['/login']);
-        },
-      error => {
+    ngOnInit() {}
+
+    get f() { return this.regiForm.controls; }
+
+    Register() {
+        this.submitted = true;
+
+        if (this.regiForm.controls.password.value !== this.regiForm.controls.confirmPassword.value) {
+            this.matchPassword = true;
+            return;
+        }
+        if (this.regiForm.invalid) {
+            return;
+        }
+
+        this.userService.register(JSON.stringify(this.regiForm.value)).subscribe(
+            data => {
+                this.router.navigate(['/login']);
+            },
+            error => {
         console.error(error);
     });
   }
