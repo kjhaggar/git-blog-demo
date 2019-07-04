@@ -5,25 +5,28 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var passport = require('passport');
 var cors= require('cors');
-var db = require('./config/db')
+db = require('./config/db')
 var indexRouter = require('./routes/index');
 require('./passport-config');
 
 var app = express();
 
+app.use(passport.initialize());
+// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use(passport.initialize());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(cors({
   origin:['http://localhost:4200','http://127.0.0.1:4200'],
   credentials:true
 }));
+
 app.use('/api', indexRouter);
 
 // catch 404 and forward to error handler

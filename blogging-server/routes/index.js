@@ -88,11 +88,13 @@ async function addToPostDB(req, res) {
     }
 }
 
-router.get('/allPost', function(req, res) {
-    Post.find({}).exec(function (err, posts) {
-        if (err) {
-            console.log("Error:", err);
-        } else {
+router.get('/allPost',function(req,res){
+  Post.find({}).exec(function (err, posts) {
+    if (err) {
+      console.log("Error:", err);
+    }
+    else {
+
       res.send(posts);
     }
   });
@@ -148,7 +150,6 @@ router.get('/getCommentsByPostId', function(req, res) {
                 res.json({ success: true, posts: posts });
             }
         }
-    })
+    });
 });
-
 module.exports = router;
