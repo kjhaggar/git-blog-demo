@@ -1,8 +1,10 @@
-import { UserService } from './../user.service';
+import { UserService } from './../services/user.service';
+import { AuthService } from '../services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { OrderPipe } from 'ngx-order-pipe';
 
 @Component({
   selector: 'app-profile',
@@ -14,7 +16,7 @@ export class ProfileComponent implements OnInit {
     getCurrentUserId: string;
     getCurrentUserName: string;
     getCurrentPostId: string;
-    displayAddPost: boolean;
+    displayAddPost = false;
     showAllPost = true;
     postList: any;
     displayMyPost: any;
@@ -23,7 +25,7 @@ export class ProfileComponent implements OnInit {
     recentComment = [];
     newComment: any;
     incorrectPost: boolean;
-    incorrectComment: boolean;
+    order: string;
 
     postForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
@@ -38,29 +40,27 @@ export class ProfileComponent implements OnInit {
         content: new FormControl(null, Validators.required)
     });
 
-    constructor(private userService: UserService, private router: Router) { }
+    constructor(private authService: AuthService,private userService: UserService, private router: Router,private orderPipe: OrderPipe) { }
 
     ngOnInit() {
         this.ShowAllPost();
         this.ShowAllComments();
-        this.getCurrentUserId = this.userService.currentUserId;
-        this.getCurrentUserName = this.userService.currentUserName;
+        this.getCurrentUserId = this.authService.currentUserId;
+        this.getCurrentUserName = this.authService.currentUserName;
     }
 
     ShowAllPost() {
         this.userService.showPost().subscribe(
-            (data) => {
-                this.postList = data;
+            (data) => {debugger
+                this.postList = data.sort((val1, val2)=> {
+                    return new Date(val2.createdAt) - new Date(val1.createdAt)})
+                
             }
         );
     }
 
     DisplayPostBox() {
-        if (this.displayAddPost === false) {
-            this.displayAddPost = true;
-        } else {
-            this.displayAddPost = false;
-        }
+        this.displayAddPost = !this.displayAddPost;
     }
 
     AddPost() {
@@ -114,7 +114,6 @@ export class ProfileComponent implements OnInit {
 
     PostComment(id: string) {
         if (!this.commentForm.valid) {
-            this.incorrectComment = true;
             return;
         }
 
@@ -132,7 +131,6 @@ export class ProfileComponent implements OnInit {
                     this.ShowAllPost();
                 },
                 error => {
-                    this.incorrectComment = true;
                 }
             )
         );

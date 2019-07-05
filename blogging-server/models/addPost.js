@@ -9,8 +9,8 @@ var postSchema = new Schema({
     createdAt: {type: Date, default: Date.now},
     comments: [{
         content: { type: String},
-        commentatorId: { type: String },
-        commentatorName: { type: String },
+        commenterId: { type: String },
+        commenterName: { type: String },
         commentedAt: {type: Date, default: Date.now},
       }],
 });

@@ -1,4 +1,4 @@
-import { UserService } from './../user.service';
+import { AuthService } from '../services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,13 +19,15 @@ export class RegisterComponent implements OnInit {
         lastName: new FormControl(null, Validators.required),
         password: new FormControl(null, [Validators.required, Validators.minLength(6)]),
         confirmPassword: new FormControl(null, Validators.required)
-    });
+    }
+    );
 
-    constructor(private userService: UserService, private router: Router) {}
+
+    constructor(private authService: AuthService, private router: Router) {}
 
     ngOnInit() {}
 
-    get f() { return this.regiForm.controls; }
+    get f() { return this.regiForm.controls; } 
 
     Register() {
         this.submitted = true;
@@ -38,7 +40,7 @@ export class RegisterComponent implements OnInit {
             return;
         }
 
-        this.userService.register(JSON.stringify(this.regiForm.value)).subscribe(
+        this.authService.register(JSON.stringify(this.regiForm.value)).subscribe(
             data => {
                 this.router.navigate(['/login']);
             },

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { UserService } from './../user.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,13 +11,17 @@ import { UserService } from './../user.service';
 export class LoginComponent implements OnInit {
     submitted: boolean;
     invalidUser: boolean;
+    unauthMessage: string;
 
     loginForm: FormGroup = new FormGroup({
         userName: new FormControl(null, Validators.required),
         password: new FormControl(null, Validators.required)
     });
-    constructor(private userService: UserService, private router: Router, private route: ActivatedRoute) {}
-    ngOnInit() {}
+
+    constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) {}
+    
+    ngOnInit() {
+    }
 
     get f() { return this.loginForm.controls; }
 
@@ -27,22 +31,20 @@ export class LoginComponent implements OnInit {
         if (!this.loginForm.valid ) {
             return;
         }
-
-        this.userService.login(JSON.stringify(this.loginForm.value)).subscribe(
-            (data: { userId: string, userName: string, success: boolean, message: string}) => {
+        this.authService.login(JSON.stringify(this.loginForm.value)).subscribe(
+            (data: { userId: string, userName: string, success: boolean, message: string,token: string}) => {
                 if (data.success){
                     alert("not a memmber");
                     console.log(data.message);
                 }
-                console.log(data)
                 this.router.navigate(['/profile']);
-                this.userService.currentUserId = data.userId;
-                this.userService.currentUserName = data.userName;
-                localStorage.setItem('currentUser', JSON.stringify(this.loginForm.value));
+                this.authService.currentUserId = data.userId;
+                this.authService.currentUserName = data.userName;
+                this.authService.storeUserData(data.token, data.userName);
             },
-            (error) => {
+            error => {debugger
                 this.invalidUser = true;
-                console.log(error.error.message)
+                this.unauthMessage = error.error.message;
             }
         );
     }

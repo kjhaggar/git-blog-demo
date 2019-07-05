@@ -50,23 +50,6 @@ router.post('/login', function(req, res, next) {
     })(req, res, next);
 });
 
-// router.use((req, res, next) => {
-//   const token = req.headers['authorization'];
-//   if (!token) {
-//     res.json({ success: false, message: 'No token provided' }); 
-//   }
-//   else {
-//     jwt.verify(token, "qwerty@12345", (err, decoded) => {
-//       if (err) {
-//         res.json({ success: false, message: 'Token invalid: ' + err });
-//       }
-//       else {
-//         req.decoded = decoded;
-//         next(); 
-//       }
-//     });
-//   }
-// });
 
 router.post('/addPost', function(req, res, next) {
     addToPostDB(req, res);
@@ -124,8 +107,8 @@ async function addToCommentDB(req, res) {
             } else {
                 post.comments.push({
                     content: req.body.comment,
-                    commentatorId: req.body.userId,
-                    commentatorName: req.body.userName
+                    commenterId: req.body.userId,
+                    commenterName: req.body.userName
                 });
                 post.save((err) => {
                     if (err) {
@@ -152,4 +135,73 @@ router.get('/getCommentsByPostId', function(req, res) {
         }
     });
 });
+
+
+// router.use((req, res, next) => {
+//   const token = req.headers['authorization'];
+//   if (!token) {
+//     res.json({ success: false, message: 'No token provided' }); 
+//   }
+//   else {
+//     jwt.verify(token, "qwerty@12345", (err, decoded) => {
+//       if (err) {
+//         res.json({ success: false, message: 'Token invalid: ' + err });
+//       }
+//       else {
+//         req.decoded = decoded;
+//         next(); 
+//       }
+//     });
+//   }
+// });
+
+router.get('/profile', (req, res) => {
+    User.findOne({ _id: req.decoded.userId }).select('userName email').exec((err, user) => {
+      if (err) {
+        res.json({ success: false, message: err });
+      } else {
+        if (!user) {
+          res.json({ success: false, message: 'User not found' });
+        } else {
+          res.json({ success: true, user: user });
+        }
+      }
+    });
+  });
+
 module.exports = router;
+
+// async function addToCommentDB(req, res) {
+//     Post.findOne({ _id: req.body.postId }, (err, post) => {
+//         if (err) {
+//             res.json({ success: false, message: 'Invalid post id' });
+//         } else {
+//             if (!post) {
+//                 res.json({ success: false, message: 'post not found.' });
+//             } else {
+//                 User.findOne({ _id: req.decoded.userId }, (err, user) => {
+//                     if (err) {
+//                         res.json({ success: false, message: 'Something went wrong' });
+//                       } else {
+//                         if (!user) {
+//                           res.json({ success: false, message: 'User not found.' });
+//                         } else {
+//                             post.comments.push({
+//                                 content: req.body.comment,
+//                                 commenterId: req.body.userId,
+//                                 commenterName: req.body.userName
+//                             });
+//                             post.save((err) => {
+//                                 if (err) {
+//                                     res.json({ success: false, message: 'Something went wrong.' });
+//                                 } else {
+//                                     res.json({ success: true, message: 'Comment saved' });
+//                                 }
+//                             });
+//                         }
+//                     }
+//                 });
+//             }
+//         }
+//     });
+// }
