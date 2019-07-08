@@ -1,7 +1,7 @@
+import { Router } from '@angular/router';
 import { Headers, RequestOptions } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
-import { tokenNotExpired } from 'angular2-jwt';
 
 @Injectable({
   providedIn: 'root'
@@ -14,20 +14,7 @@ export class AuthService {
   user;
   options;
 
-  constructor(private http: HttpClient) { }
-
-  createAuthenticationHeaders() {
-    this.loadToken();
-    this.options = new RequestOptions({
-      headers: new Headers({
-        'Content-Type': 'application/json',
-        'authorization': this.authToken
-      })
-    });
-  }
-  loadToken() {
-    this.authToken = localStorage.getItem('token');
-  }
+  constructor(private http: HttpClient, private router : Router) { }
  
   register(body: any) {
     return this.http.post('http://127.0.0.1:3000/api/register', body,
@@ -49,18 +36,24 @@ export class AuthService {
   logout() {
     this.authToken = null;
     this.user = null;
-    localStorage.clear(); 
+    localStorage.clear();
+    this.router.navigate(['/login']);
   }
 
-  storeUserData(token, user) {
+  storeUserData(token, user, userId) {
     localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('user', user);
+    localStorage.setItem('userId', userId);
     this.authToken = token; 
     this.user = user;
   }
 
   loggedIn() {
-    return tokenNotExpired();
+    return !!localStorage.getItem('token');
+  }
+
+  getToken(){
+    return localStorage.getItem('token');
   }
 
 }

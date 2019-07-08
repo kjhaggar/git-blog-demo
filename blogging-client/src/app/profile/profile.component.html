@@ -2,21 +2,21 @@
     <div class="container">
         <div class="navbar-header">
             <h2> Blog - Demo </h2>
-            <a class="navbar-brand">Welcome {{getCurrentUserName}}</a>
+            <a class="navbar-brand">Welcome {{getCurrentUserName | titlecase}}</a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ml-auto navbar-nav navbar-right ">
                 <li class="nav-item">
-                    <label class="nav-link" (click)= "DisplayPostBox()">New Post</label>
+                    <a class="nav-link" (click)= "DisplayPostBox()">New Blog</a>
                 </li>
                 <li class="nav-item">
-                    <label class="nav-link" (click)="DisplayMyPost()">My Posts</label>
+                    <a class="nav-link" (click)="DisplayMyPost()">My Blogs</a>
                 </li>
                 <li class="nav-item">
-                    <label class="nav-link">Friends</label>
+                    <a class="nav-link">Friends</a>
                 </li>
                 <li class="nav-item">
-                    <label class="nav-link" (click)="Logout()">Logout</label>
+                    <a class="nav-link" (click)="Logout()">Logout</a>
                 </li>
             </ul>
         </div>
@@ -38,63 +38,84 @@
                     <label for="exampleInputPassword1">Description</label>
                     <textarea name="description" formControlName="description" rows="1" class="form-control" placeholder="Your post..!!"></textarea>
                 </div>
-                <button type="button" class="btn btn-primary" (click) = "AddPost()">Add</button>
+                <button type="button" class="btn btn-primary" (click) = "AddPost()">Post</button>
             </form>
         </div>
     </div>
 </div>
 
 <div *ngIf = "showAllPost">
-    <div class = "displayPost panel panel-primary" *ngFor = "let post of postList; index as i">
-        <form>
+    <h2>All Blogs</h2>
+    <mat-accordion>
+        <div class = "displayPost panel panel-primary" *ngFor = "let post of postList; index as i">
+            <form>
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <div class="panel-heading">
+                            <div class = "row">
+                                <div class="col-sm-4">
+                                    <label class="panel-title">{{post.title | titlecase}}</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label>Posted by {{post.userName | titlecase}} on {{ post.createdAt | date:'MMM dd, yyyy'}} </label>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-expansion-panel-header>
+                    <p cols="80" rows="4">{{post.description}}</p>
+                    <div class="comment panel-footer">
+                        <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
+                    </div>
+                
+                <div *ngIf = "displayComment[i]">
+                    <div  *ngIf = "post.comments.length >0; else elseBlock">
+                        <div class="well" >
+                            <div  *ngFor="let item of post.comments">
+                                <span><strong>{{item.commenterName | titlecase}}  :  </strong> {{item.content}}</span>   
+                            </div>
+                        </div>
+                    </div>
+                    <ng-template #elseBlock>No comments. Be the first one to comment.</ng-template>
+                    <form [formGroup]="commentForm">
+                        <div class="row" >
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" formControlName="content" placeholder="Start Typing here.." >
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-success pull-right" (click)="PostComment(post._id)" [disabled]="!commentForm.valid">Send</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </mat-expansion-panel>
+            </form>
+        </div>
+    </mat-accordion>
+</div>
+
+<div *ngIf = "showMyPost">
+    <h2>My Blogs</h2>
+    <mat-accordion>
+    <div class = "displayPost panel panel-primary" *ngFor = "let post of displayMyPost; index as i">
+        <form [formGroup]="updatePost">
+                <mat-expansion-panel>
+                        <mat-expansion-panel-header>
             <div class="panel-heading">
                 <div class = "row">
                     <div class="col-sm-4">
                         <label class="panel-title">{{post.title | titlecase}}</label>
                     </div>
                     <div class="col-sm-6">
-                            <label>Posted by {{post.userName | titlecase}} on {{ post.createdAt | date:'MMM dd, yyyy'}} </label>
+                        <label>Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </label>
                     </div>
                 </div>
             </div>
-            <label class="panel-body" cols="80" rows="3">{{post.description}}</label>
+        </mat-expansion-panel-header>
+        <textarea cols="80" rows="4" class="form-control" [(ngModel)]= "post.description" formControlName= "description">{{post.description}}</textarea>
             <div class="comment panel-footer">
                 <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
-            </div>
-            <div *ngIf = "displayComment[i]">
-                <div  *ngIf = "post.comments.length >0; else elseBlock">
-                    <div class="well" >
-                        <div  *ngFor="let item of post.comments">
-                            <span><strong>{{item.commenterName | titlecase}}  :  </strong> {{item.content}}</span>   
-                        </div>
-                    </div>
-                </div>
-                <ng-template #elseBlock>No comments. Be the first one to comment.</ng-template>
-                <form [formGroup]="commentForm">
-                    <div class="row" >
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" formControlName="content" placeholder="Start Typing here.." >
-                        </div>
-                        <div class="col-sm-2">
-                            <button type="button" class="btn btn-success pull-right" (click)="PostComment(post._id)" [disabled]="!commentForm.valid">Send</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div *ngIf = "showMyPost">
-    <div class = "displayPost" *ngFor = "let post of displayMyPost; index as i">
-        <form [formGroup]="updatePost">
-            <label>Created on {{ post.createdAt | date:'MMM dd, yyyy'}} </label>
-            <h4>{{post.title | titlecase}}</h4>
-            <div class="form-group">
-                <textarea rows="2" cols = "50">{{post.description}}</textarea>
-            </div>
-            <div class="comment">
-                <button type="button" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
+                <button type="button" class="btn btn-sm btn-primary" (click)="DeletePost(post._id)">Delete</button>
+                <button type="button" class="btn btn-sm btn-primary" (click)="UpdatePost(post._id)">Edit</button>
             </div>
             <div *ngIf = "displayComment[i]">
                 <div  *ngIf = "post.comments.length >0">
@@ -112,12 +133,11 @@
                         <div class="col-sm-2">
                             <button type="button" class="btn btn-success pull-right" (click)="PostComment(post._id)">Send</button>
                         </div>
-                        <div class="col-sm-2">
-                            <label>Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </label>
-                        </div>
                     </div>
                 </form>
             </div>
+        </mat-expansion-panel>
         </form>
     </div>
+</mat-accordion>
 </div>

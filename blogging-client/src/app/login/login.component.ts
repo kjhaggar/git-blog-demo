@@ -12,6 +12,7 @@ export class LoginComponent implements OnInit {
     submitted: boolean;
     invalidUser: boolean;
     unauthMessage: string;
+    message: string;
 
     loginForm: FormGroup = new FormGroup({
         userName: new FormControl(null, Validators.required),
@@ -21,6 +22,9 @@ export class LoginComponent implements OnInit {
     constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) {}
     
     ngOnInit() {
+        if(localStorage.getItem('token')){
+            this.router.navigate(['/profile']);
+        }
     }
 
     get f() { return this.loginForm.controls; }
@@ -38,13 +42,11 @@ export class LoginComponent implements OnInit {
                     console.log(data.message);
                 }
                 this.router.navigate(['/profile']);
-                this.authService.currentUserId = data.userId;
-                this.authService.currentUserName = data.userName;
-                this.authService.storeUserData(data.token, data.userName);
+                this.authService.storeUserData(data.token, data.userName, data.userId);
             },
-            error => {debugger
+            error => {
                 this.invalidUser = true;
-                this.unauthMessage = error.error.message;
+                console.log(error.error.message);
             }
         );
     }

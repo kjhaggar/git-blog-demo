@@ -1,4 +1,4 @@
-.row,nav{
+.row,nav,button{
     margin: 10px;
 }
 
@@ -19,5 +19,14 @@
     padding:15px;
 }
 .panel{
-    width: 700px;
+    width: 600px;
+    margin: 50px auto;
+}
+
+a:active {
+    color: green;
+    text-decoration: underline;
+}
+h2{
+    text-align: center;
 }

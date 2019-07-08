@@ -27,6 +27,22 @@ async function addToDB(req, res) {
     }
 }
 
+function verifyToken(req, res, next){
+    if (!req.headers.authorization){
+        return res.status(401).send('Unauthorised request');
+    }
+    let token = req.headers.authorization.split(' ')[1];
+    if(token == 'null'){
+        return res.status(401).send('Unauthorised request');
+    }
+    let payload = jwt.verify(token, 'qwerty@12345');
+    if(!payload){
+        return res.status(401).send('Unauthorised request');
+    }
+    req.userId = payload.subject;
+    next();
+}
+
 router.post('/login', function(req, res, next) {
     passport.authenticate('local', function(err, user) {
         if (err) {
@@ -50,7 +66,20 @@ router.post('/login', function(req, res, next) {
     })(req, res, next);
 });
 
-
+router.get('/profile', verifyToken, (req, res) => {
+    User.findOne({ _id: req.decoded.userId }).select('userName email').exec((err, user) => {
+      if (err) {
+        res.json({ success: false, message: err });
+      } else {
+        if (!user) {
+          res.json({ success: false, message: 'User not found' });
+        } else {
+          res.json({ success: true, user: user });
+        }
+      }
+    });
+  });
+  
 router.post('/addPost', function(req, res, next) {
     addToPostDB(req, res);
 });
@@ -136,38 +165,20 @@ router.get('/getCommentsByPostId', function(req, res) {
     });
 });
 
-
-// router.use((req, res, next) => {
-//   const token = req.headers['authorization'];
-//   if (!token) {
-//     res.json({ success: false, message: 'No token provided' }); 
-//   }
-//   else {
-//     jwt.verify(token, "qwerty@12345", (err, decoded) => {
-//       if (err) {
-//         res.json({ success: false, message: 'Token invalid: ' + err });
-//       }
-//       else {
-//         req.decoded = decoded;
-//         next(); 
-//       }
-//     });
-//   }
-// });
-
-router.get('/profile', (req, res) => {
-    User.findOne({ _id: req.decoded.userId }).select('userName email').exec((err, user) => {
-      if (err) {
-        res.json({ success: false, message: err });
-      } else {
-        if (!user) {
-          res.json({ success: false, message: 'User not found' });
-        } else {
-          res.json({ success: true, user: user });
-        }
-      }
-    });
+router.put('/updatePost/:id', function(req, res, next) {
+    Post.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
+    if (err) return next(err);
+    res.json(post);
   });
+  });
+
+router.delete('/deletePost/:id', function(req, res, next) {
+    Post.findByIdAndRemove(req.params.id, req.body, function (err, post) {
+    if (err) return next(err);
+    res.json(post);
+  });
+  });
+
 
 module.exports = router;
 

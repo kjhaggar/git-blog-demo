@@ -4,6 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { OrderModule } from 'ngx-order-pipe';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -14,9 +16,12 @@ import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
 
 import { AuthGuard } from './guards/auth.guard';
-import { NotAuthGuard } from './guards/notAuth.guard';
 
 import { AuthInterceptor } from './interceptor/auth-interceptor';
+
+export const authInterceptorProviders = [
+  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+];
 
 @NgModule({
   declarations: [
@@ -31,11 +36,13 @@ import { AuthInterceptor } from './interceptor/auth-interceptor';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    OrderModule
+    OrderModule,
+    BrowserAnimationsModule,
+    MatExpansionModule
   ],
   providers: [
-    // { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    AuthInterceptor, UserService, AuthService, AuthGuard, NotAuthGuard],
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    AuthInterceptor, UserService, AuthService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

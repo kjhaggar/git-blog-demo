@@ -50,4 +50,20 @@ export class UserService {
       headers: new HttpHeaders().append('Content-Type', 'application/json')
     });
   }
+
+  updatePost(postId: any, body: any){
+    return this.http.put('http://127.0.0.1:3000/api/updatePost/' + postId, body, {
+      observe:'body',
+      withCredentials:true,
+      headers:new HttpHeaders().append('Content-Type','application/json')
+    })
+  }
+
+  deletePost(postId){
+    return this.http.delete('http://127.0.0.1:3000/api/deletePost/' + postId,{
+      observe:'body',
+      withCredentials:true,
+      headers:new HttpHeaders().append('Content-Type','application/json')
+    })
+  }
 }

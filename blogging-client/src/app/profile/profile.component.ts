@@ -1,10 +1,12 @@
 import { UserService } from './../services/user.service';
 import { AuthService } from '../services/auth.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { OrderPipe } from 'ngx-order-pipe';
+import { HttpErrorResponse } from '@angular/common/http';
+import { debug } from 'util';
 
 @Component({
   selector: 'app-profile',
@@ -20,7 +22,7 @@ export class ProfileComponent implements OnInit {
     showAllPost = true;
     postList: any;
     displayMyPost: any;
-    showMyPost: boolean;
+    showMyPost= false;
     displayComment = [];
     recentComment = [];
     newComment: any;
@@ -45,23 +47,32 @@ export class ProfileComponent implements OnInit {
     ngOnInit() {
         this.ShowAllPost();
         this.ShowAllComments();
-        this.getCurrentUserId = this.authService.currentUserId;
-        this.getCurrentUserName = this.authService.currentUserName;
+        this.getCurrentUserId = localStorage.getItem('userId');
+        this.getCurrentUserName = localStorage.getItem('user');
     }
 
     ShowAllPost() {
         this.userService.showPost().subscribe(
-            (data) => {debugger
-                this.postList = data.sort((val1, val2)=> {
-                    return new Date(val2.createdAt) - new Date(val1.createdAt)})
+            (data) => {
+                this.postList = Object.values(data).sort((val1, val2)=> {
+                    const start = +new Date(val1.createdAt);
+                    const end = +new Date(val2.createdAt)
+                    return end - start;
+                })
                 
+            },
+            error => {
+                if(error instanceof HttpErrorResponse){
+                    if(error.status == 401){
+                        this.router.navigate(['/login']);
+                    }
+                }
             }
         );
     }
 
-    DisplayPostBox() {
-        this.displayAddPost = !this.displayAddPost;
-    }
+    DisplayPostBox=() => this.displayAddPost = !this.displayAddPost;
+
 
     AddPost() {
         if (!this.postForm.valid) {
@@ -78,6 +89,7 @@ export class ProfileComponent implements OnInit {
         this.userService.addPost( JSON.stringify(obj)).subscribe(
             data => {
                 this.ShowAllComments();
+                this.DisplayMyPost();
             },
             error => {
                 this.incorrectPost = true;
@@ -94,7 +106,11 @@ export class ProfileComponent implements OnInit {
         this.showMyPost = !this.showMyPost;
         this.userService.getPostById(this.getCurrentUserId).subscribe(
             (data) => {
-                this.displayMyPost = data;
+                this.displayMyPost = Object.values(data).sort((val1, val2)=> {
+                    const start = +new Date(val1.createdAt);
+                    const end = +new Date(val2.createdAt)
+                    return end - start;
+        })
             }
         );
     }
@@ -136,7 +152,26 @@ export class ProfileComponent implements OnInit {
         );
     }
 
-    Logout() {
-        this.router.navigate(['/login']);
-    }
+    UpdatePost(postId: string){debugger
+        this.userService.updatePost(postId, JSON.stringify(this.updatePost.value)).subscribe(
+          data=> {
+              this.DisplayMyPost();
+              this.ShowAllPost();
+            },
+            error=>console.error(error)
+        )
+      }
+
+    DeletePost(postId){
+        this.userService.deletePost(postId).subscribe(
+          data=> {
+              this.DisplayMyPost();
+              this.ShowAllPost();
+            },
+            error=>console.error(error)
+        )
+        }
+
+    Logout=() => this.authService.logout();
+    
 }
