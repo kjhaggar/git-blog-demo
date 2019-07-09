@@ -8,6 +8,7 @@ var cors= require('cors');
 db = require('./config/db')
 var indexRouter = require('./routes/index');
 require('./passport-config');
+var multer = require('multer');
 
 var app = express();
 

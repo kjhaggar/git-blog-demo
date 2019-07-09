@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+<nav class="navbar is-info navbar-expand-lg navbar-light fixed-top">
     <div class="container">
         <div class="navbar-header">
             <h2> Blog - Demo </h2>
@@ -13,7 +13,7 @@
                     <a class="nav-link" (click)="DisplayMyPost()">My Blogs</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link">Friends</a>
+                    <a class="nav-link" routerLink="/editProfile">Edit Profile</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" (click)="Logout()">Logout</a>
@@ -52,8 +52,10 @@
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
                         <div class="panel-heading">
+                            
                             <div class = "row">
                                 <div class="col-sm-4">
+                                    <img class = "logo" src = "assets/image/download.png">
                                     <label class="panel-title">{{post.title | titlecase}}</label>
                                 </div>
                                 <div class="col-sm-8">
@@ -141,3 +143,5 @@
     </div>
 </mat-accordion>
 </div>
+
+<div>{{currentProfile}}</div>

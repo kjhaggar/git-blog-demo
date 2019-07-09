@@ -1,0 +1,81 @@
+<div class="container">
+    <div class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+        <div class="panel panel-info" >
+            <div class="panel-heading"> 
+                    <div class="panel-title">Update your profile</div> 
+            </div>
+            <div class="panel-body panel-pad">
+                <form [formGroup]="updateForm">
+                    <div class="form-group">
+                        <label for="image" class="col-md-6 control-label">Upload Profile Picture</label>
+                        <div class="col-md-9">
+                            <input formControlName="image" id="image" name="image" type="file" 
+                            (change)="fileChangeEvent($event)" placeholder="Upload a file..."/>
+                            <button class="btn btn-info mr-1" (click)="Update()"> Update</button> 
+                        </div>
+                        </div>
+                    <!-- <div class="form-group">
+                            <label for="userName" class="col-md-4 control-label">User Name</label>
+                            <div class="col-md-9">
+                            <input type="text" formControlName="userName" class="form-control" placeholder="Username"
+                            [ngClass]="{ 'is-invalid': submitted && f.userName.errors }">
+                            <div *ngIf="submitted && f.userName.errors" class="invalid-feedback">
+                                <div *ngIf="f.userName.errors.required">Username is required</div>
+                            </div>
+                            </div>
+                    </div>
+                        
+                        <div class="form-group">
+                                <label for="firstname" class="col-md-4 control-label">First Name</label>
+                                <div class="col-md-9">
+                                     <input type="text" formControlName="firstName" class="form-control" name="firstname" placeholder="First Name"
+                                     [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }">
+                                     <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
+                                        <div *ngIf="f.firstName.errors.required">Firstname required</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-md-4 control-label">Last Name</label>
+                                <div class="col-md-9">
+                                    <input type="text" formControlName="lastName" class="form-control" name="lastname" placeholder="Last Name"
+                                    [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }">
+                                    <div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">
+                                        <div *ngIf="f.lastName.errors.required">Last Name is required</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                    <label for="password" class="col-md-4 control-label">Password</label>
+                                    <div class="col-md-9">
+                                       <input type="password" formControlName="password" class="form-control" name="passwd" placeholder="Password"
+                                       [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+                                       <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                                           <div *ngIf="f.password.errors.required">Password is required</div>
+                                           <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
+                                       </div>
+                                   </div>
+                               </div>
+                               <div class="form-group">
+                                   <label for="confirmPassword" class="col-md-4 control-label">Confirm Password</label>
+                                    <div class="col-md-9">
+                                       <input type="password" formControlName="confirmPassword" class="form-control" placeholder="********"
+                                        [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }">
+                                       <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                                           <div *ngIf="f.confirmPassword.errors.required">Confirm Password is required</div>
+                                       </div>
+                                       <div *ngIf="matchPassword" >Password do not match.</div>
+                                   </div>
+                               </div>
+                        <div class="form-group action"> 
+                                <div class="col-sm-12 controls"> 
+                                        <button type="submit" class="btn btn-info mr-1" (click)="Update()"> Update</button>
+				
+                                </div> 
+                            </div> -->
+                </form>
+            </div>
+        </div>
+        <a class="btn btn-block btn-success" routerLink="/profile">Back to Dashboard</a>
+    </div>
+</div>						

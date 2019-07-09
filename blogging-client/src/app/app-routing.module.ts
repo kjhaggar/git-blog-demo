@@ -5,11 +5,13 @@ import { ProfileComponent } from './profile/profile.component';
 import { RegisterComponent } from './register/register.component';
 
 import { AuthGuard } from './guards/auth.guard';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent},
   { path: 'register', component: RegisterComponent},
-  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]}
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
+  { path: 'editProfile', component: EditProfileComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

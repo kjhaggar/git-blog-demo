@@ -4,6 +4,7 @@ var passport = require('passport');
 var User = require('../models/user');
 var Post = require('../models/addPost');
 var jwt = require('jsonwebtoken');
+var multer = require('multer');
 
 router.post('/register', function (req, res, next) {
     addToDB(req, res);
@@ -100,6 +101,51 @@ async function addToPostDB(req, res) {
     }
 }
 
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, '../client/src/assets/images')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now());
+    }
+  });
+
+  var upload = multer({ storage: storage });
+
+  router.put('/uploadData/:id', upload.single('image'), function(req, res, next) {
+    User.findOne({ _id: req.params.id }, function (err, user) {
+        if (err) {
+            res.json({ success: false, message: 'Something went wrong' });
+        }
+        else {
+            if (!user) { res.json({ success: false, message: 'User not found.' });}
+            else {console.log(req.file)
+                var imgUrl = req.file;
+                user.image = imgUrl;
+
+                user.save((err) => {
+                    if (err) {
+                        res.json({ success: false, message: 'Something went wrong.' });
+                    } else {
+                        res.json({ success: true, message: 'Image saved' });
+                    }
+                });
+            }
+        }
+        });
+    });
+
+router.get('/displayProfile/:id', function(req, res) {
+        User.find({_id: req.params.id}).exec(function (err, user) {
+            if (err) {
+            console.log("Error:", err);
+            } else {console.log(user)
+                const x = [{'image': user.image}];
+                console.log(user[0].image)
+                res.json({success: true, data: {image: user[0].image}});
+            }
+        });
+    }); 
 router.get('/allPost',function(req,res){
   Post.find({}).exec(function (err, posts) {
     if (err) {
@@ -181,38 +227,3 @@ router.delete('/deletePost/:id', function(req, res, next) {
 
 
 module.exports = router;
-
-// async function addToCommentDB(req, res) {
-//     Post.findOne({ _id: req.body.postId }, (err, post) => {
-//         if (err) {
-//             res.json({ success: false, message: 'Invalid post id' });
-//         } else {
-//             if (!post) {
-//                 res.json({ success: false, message: 'post not found.' });
-//             } else {
-//                 User.findOne({ _id: req.decoded.userId }, (err, user) => {
-//                     if (err) {
-//                         res.json({ success: false, message: 'Something went wrong' });
-//                       } else {
-//                         if (!user) {
-//                           res.json({ success: false, message: 'User not found.' });
-//                         } else {
-//                             post.comments.push({
-//                                 content: req.body.comment,
-//                                 commenterId: req.body.userId,
-//                                 commenterName: req.body.userName
-//                             });
-//                             post.save((err) => {
-//                                 if (err) {
-//                                     res.json({ success: false, message: 'Something went wrong.' });
-//                                 } else {
-//                                     res.json({ success: true, message: 'Comment saved' });
-//                                 }
-//                             });
-//                         }
-//                     }
-//                 });
-//             }
-//         }
-//     });
-// }

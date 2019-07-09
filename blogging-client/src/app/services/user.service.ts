@@ -9,8 +9,7 @@ export class UserService {
   constructor( private http: HttpClient ) {}
 
   getPostById(id: string) {
-    return this.http.get('http://127.0.0.1:3000/api/getPostById/' + id,
-    {
+    return this.http.get('http://127.0.0.1:3000/api/getPostById/' + id, {
       observe: 'body',
       withCredentials: true,
       headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -18,16 +17,14 @@ export class UserService {
   }
 
   addPost(body: any) {
-    return this.http.post('http://127.0.0.1:3000/api/addPost', body,
-    {
+    return this.http.post('http://127.0.0.1:3000/api/addPost', body, {
       observe: 'body',
       headers: new HttpHeaders().append('Content-Type', 'application/json')
     });
   }
 
   showPost() {
-    return this.http.get('http://127.0.0.1:3000/api/allPost',
-    {
+    return this.http.get('http://127.0.0.1:3000/api/allPost', {
       observe: 'body',
       withCredentials: true,
       headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -35,16 +32,14 @@ export class UserService {
   }
 
   addComment(body: any) {
-    return this.http.post('http://127.0.0.1:3000/api/addComment', body,
-    {
+    return this.http.post('http://127.0.0.1:3000/api/addComment', body, {
       observe: 'body',
       headers: new HttpHeaders().append('Content-Type', 'application/json')
     });
   }
 
   getCommentsByPostId() {
-    return this.http.get('http://127.0.0.1:3000/api/getCommentsByPostId',
-    {
+    return this.http.get('http://127.0.0.1:3000/api/getCommentsByPostId', {
       observe: 'body',
       withCredentials: true,
       headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -59,11 +54,20 @@ export class UserService {
     })
   }
 
-  deletePost(postId){
+  deletePost(postId: string){
     return this.http.delete('http://127.0.0.1:3000/api/deletePost/' + postId,{
       observe:'body',
       withCredentials:true,
       headers:new HttpHeaders().append('Content-Type','application/json')
     })
+  }
+
+  displayProfile(userId: string)
+  {debugger
+    return this.http.get('http://127.0.0.1:3000/api/displayProfile/' + userId, {
+      observe: 'body',
+      withCredentials: true,
+      headers: new HttpHeaders().append('Content-Type', 'application/json')
+    });
   }
 }

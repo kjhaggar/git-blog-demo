@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { OrderPipe } from 'ngx-order-pipe';
 import { HttpErrorResponse } from '@angular/common/http';
 import { debug } from 'util';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-profile',
@@ -28,6 +29,7 @@ export class ProfileComponent implements OnInit {
     newComment: any;
     incorrectPost: boolean;
     order: string;
+    currentProfile: any;
 
     postForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
@@ -42,15 +44,16 @@ export class ProfileComponent implements OnInit {
         content: new FormControl(null, Validators.required)
     });
 
-    constructor(private authService: AuthService,private userService: UserService, private router: Router,private orderPipe: OrderPipe) { }
+    constructor(private authService: AuthService,private userService: UserService, private router: Router,private orderPipe: OrderPipe) {}
 
     ngOnInit() {
-        this.ShowAllPost();
-        this.ShowAllComments();
         this.getCurrentUserId = localStorage.getItem('userId');
         this.getCurrentUserName = localStorage.getItem('user');
+        this.ShowAllPost();
+        this.ShowAllComments();
+        this.DisplayProfile();
     }
-
+    
     ShowAllPost() {
         this.userService.showPost().subscribe(
             (data) => {
@@ -173,5 +176,15 @@ export class ProfileComponent implements OnInit {
         }
 
     Logout=() => this.authService.logout();
+
+    DisplayProfile(){debugger
+        console.log(this.getCurrentUserId)
+        this.userService.displayProfile(this.getCurrentUserId).subscribe(
+            (data)=> {debugger 
+                this.currentProfile = data.data.image},
+            err => {debugger
+                console.log(err)}
+        )
+    }
     
 }

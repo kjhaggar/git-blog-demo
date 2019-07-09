@@ -29,8 +29,9 @@ export class RegisterComponent implements OnInit {
 
     get f() { return this.regiForm.controls; } 
 
-    Register() {
+    Register() {debugger
         this.submitted = true;
+        console.log(this.regiForm.value);
 
         if (this.regiForm.controls.password.value !== this.regiForm.controls.confirmPassword.value) {
             this.matchPassword = true;
@@ -48,4 +49,5 @@ export class RegisterComponent implements OnInit {
         console.error(error);
     });
   }
+
 }
