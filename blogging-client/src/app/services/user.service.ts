@@ -62,9 +62,9 @@ export class UserService {
     })
   }
 
-  displayProfile(userId: string)
+  displayProfile()
   {debugger
-    return this.http.get('http://127.0.0.1:3000/api/displayProfile/' + userId, {
+    return this.http.get('http://127.0.0.1:3000/api/displayProfile/', {
       observe: 'body',
       withCredentials: true,
       headers: new HttpHeaders().append('Content-Type', 'application/json')

@@ -6,8 +6,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { OrderPipe } from 'ngx-order-pipe';
 import { HttpErrorResponse } from '@angular/common/http';
-import { debug } from 'util';
-import { ThrowStmt } from '@angular/compiler';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile',
@@ -29,7 +28,7 @@ export class ProfileComponent implements OnInit {
     newComment: any;
     incorrectPost: boolean;
     order: string;
-    currentProfile: any;
+    usersProfile: any;
 
     postForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
@@ -44,7 +43,10 @@ export class ProfileComponent implements OnInit {
         content: new FormControl(null, Validators.required)
     });
 
-    constructor(private authService: AuthService,private userService: UserService, private router: Router,private orderPipe: OrderPipe) {}
+    constructor(private authService: AuthService,
+        private userService: UserService,
+        private router: Router,
+        private sanitized: DomSanitizer) {}
 
     ngOnInit() {
         this.getCurrentUserId = localStorage.getItem('userId');
@@ -54,6 +56,16 @@ export class ProfileComponent implements OnInit {
         this.DisplayProfile();
     }
     
+    DisplayProfile(){debugger
+        this.userService.displayProfile().subscribe(
+            (data)=> {debugger
+                this.usersProfile = data.user;
+                console.log(this.usersProfile)
+                },
+            err => {debugger
+                console.log(err)}
+        )
+    }
     ShowAllPost() {
         this.userService.showPost().subscribe(
             (data) => {
@@ -75,6 +87,11 @@ export class ProfileComponent implements OnInit {
     }
 
     DisplayPostBox=() => this.displayAddPost = !this.displayAddPost;
+
+    GetImageUrl(filename){debugger
+        const url = 'http://localhost:3000/images/' + filename;
+        return this.sanitized.bypassSecurityTrustUrl(url);
+    }
 
 
     AddPost() {
@@ -176,15 +193,4 @@ export class ProfileComponent implements OnInit {
         }
 
     Logout=() => this.authService.logout();
-
-    DisplayProfile(){debugger
-        console.log(this.getCurrentUserId)
-        this.userService.displayProfile(this.getCurrentUserId).subscribe(
-            (data)=> {debugger 
-                this.currentProfile = data.data.image},
-            err => {debugger
-                console.log(err)}
-        )
-    }
-    
 }

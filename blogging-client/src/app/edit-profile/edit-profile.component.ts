@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 export class EditProfileComponent implements OnInit {
   selectedFile: File;
   getCurrentUserId: string;
+  url: any;
 
   constructor(private http: HttpClient, private router :Router) { }
 
@@ -28,15 +29,17 @@ export class EditProfileComponent implements OnInit {
     this.getCurrentUserId = localStorage.getItem('userId');
   }
 
-  fileChangeEvent(event: any) {
+  fileChangeEvent(event: any) {debugger
     this.selectedFile = event.target.files[0];
-
+    var reader = new FileReader();
+    reader.readAsDataURL(event.target.files[0]);
+      this.url = reader.result; 
   }
 
   Update = () => {debugger
-      const uploadData = new FormData();
-      uploadData.append('image', this.selectedFile, this.selectedFile.name);
-      this.http.put('http://127.0.0.1:3000/api/uploadData/' + this.getCurrentUserId , uploadData, {
+      const formData = new FormData();
+      formData.append('image', this.selectedFile, this.selectedFile.name);
+      this.http.put('http://127.0.0.1:3000/api/uploadData/' + this.getCurrentUserId , formData, {
         reportProgress: true,
         observe: 'events'
       })

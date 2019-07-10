@@ -55,8 +55,10 @@
                             
                             <div class = "row">
                                 <div class="col-sm-4">
-                                    <img class = "logo" src = "assets/image/download.png">
-                                    <label class="panel-title">{{post.title | titlecase}}</label>
+                                    <div *ngFor = " let user of usersProfile; index as j">
+                                    <img class = "logo" *ngIf = "i==j" [src] = GetImageUrl(user.image)/>
+                                    </div>
+                                    <label class="panel-title">{{post.image | titlecase}}</label>
                                 </div>
                                 <div class="col-sm-8">
                                     <label>Posted by {{post.userName | titlecase}} on {{ post.createdAt | date:'MMM dd, yyyy'}} </label>
@@ -143,5 +145,7 @@
     </div>
 </mat-accordion>
 </div>
-
-<div>{{currentProfile}}</div>
+<!-- 
+<div>
+     <img class= "picture" src ={{currentProfile}}>
+</div> -->

@@ -12,6 +12,9 @@ var multer = require('multer');
 
 var app = express();
 
+var imgDir = require('path').join(__dirname,'/static');
+app.use(express.static(imgDir));
+
 app.use(passport.initialize());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

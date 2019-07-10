@@ -5,6 +5,7 @@ var User = require('../models/user');
 var Post = require('../models/addPost');
 var jwt = require('jsonwebtoken');
 var multer = require('multer');
+var fs = require('fs');
 
 router.post('/register', function (req, res, next) {
     addToDB(req, res);
@@ -103,7 +104,7 @@ async function addToPostDB(req, res) {
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, '../client/src/assets/images')
+      cb(null, '../blogging-server/static/images')
     },
     filename: function (req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now());
@@ -120,7 +121,7 @@ var storage = multer.diskStorage({
         else {
             if (!user) { res.json({ success: false, message: 'User not found.' });}
             else {console.log(req.file)
-                var imgUrl = req.file;
+                var imgUrl = req.file.filename;
                 user.image = imgUrl;
 
                 user.save((err) => {
@@ -135,17 +136,17 @@ var storage = multer.diskStorage({
         });
     });
 
-router.get('/displayProfile/:id', function(req, res) {
-        User.find({_id: req.params.id}).exec(function (err, user) {
-            if (err) {
-            console.log("Error:", err);
-            } else {console.log(user)
-                const x = [{'image': user.image}];
-                console.log(user[0].image)
-                res.json({success: true, data: {image: user[0].image}});
-            }
-        });
-    }); 
+router.get('/displayProfile', function(req, res) {
+    User.find({}).select('image -_id').exec(function (err, user) {
+        console.log(user)
+        if (err) {
+        console.log("Error:", err);
+        } else {
+            res.json({success: true, user });
+        }
+    });
+}); 
+
 router.get('/allPost',function(req,res){
   Post.find({}).exec(function (err, posts) {
     if (err) {

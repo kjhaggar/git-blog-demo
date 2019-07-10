@@ -33,5 +33,11 @@ h2{
 img {
     float: left;
     width: 33.33%;
-    /* padding: 5px; */
+}
+.picture{
+    width: 10%;
+    height: 10%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
