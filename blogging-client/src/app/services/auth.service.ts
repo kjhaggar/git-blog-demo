@@ -1,5 +1,4 @@
 import { Router } from '@angular/router';
-import { Headers, RequestOptions } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 
@@ -7,12 +6,8 @@ import { HttpClient, HttpHeaders} from '@angular/common/http';
   providedIn: 'root'
 })
 export class AuthService {
-  currentUserId: string;
-  currentUserName: string;
-  domain = "http://localhost:3000/";
-  authToken;
-  user;
-  options;
+  authToken: any;
+  user: string;
 
   constructor(private http: HttpClient, private router : Router) { }
  
@@ -37,6 +32,8 @@ export class AuthService {
     this.authToken = null;
     this.user = null;
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
     this.router.navigate(['/login']);
   }
 

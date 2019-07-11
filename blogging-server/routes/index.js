@@ -67,20 +67,6 @@ router.post('/login', function(req, res, next) {
         });
     })(req, res, next);
 });
-
-router.get('/profile', verifyToken, (req, res) => {
-    User.findOne({ _id: req.decoded.userId }).select('userName email').exec((err, user) => {
-      if (err) {
-        res.json({ success: false, message: err });
-      } else {
-        if (!user) {
-          res.json({ success: false, message: 'User not found' });
-        } else {
-          res.json({ success: true, user: user });
-        }
-      }
-    });
-  });
   
 router.post('/addPost', function(req, res, next) {
     addToPostDB(req, res);
@@ -120,7 +106,7 @@ var storage = multer.diskStorage({
         }
         else {
             if (!user) { res.json({ success: false, message: 'User not found.' });}
-            else {console.log(req.file)
+            else {
                 var imgUrl = req.file.filename;
                 user.image = imgUrl;
 
@@ -136,11 +122,10 @@ var storage = multer.diskStorage({
         });
     });
 
-router.get('/displayProfile', function(req, res) {
-    User.find({}).select('image -_id').exec(function (err, user) {
-        console.log(user)
+router.get('/displayProfilePicture', function(req, res) {
+    User.find({}).select('image').exec(function (err, user) {
         if (err) {
-        console.log("Error:", err);
+        // console.log("Error:", err);
         } else {
             res.json({success: true, user });
         }
@@ -150,7 +135,7 @@ router.get('/displayProfile', function(req, res) {
 router.get('/allPost',function(req,res){
   Post.find({}).exec(function (err, posts) {
     if (err) {
-      console.log("Error:", err);
+    //   console.log("Error:", err);
     }
     else {
 
@@ -162,7 +147,7 @@ router.get('/allPost',function(req,res){
 router.get('/getPostById/:id', function(req, res) {
     Post.find({userId: req.params.id}).exec(function (err, posts) {
         if (err) {
-        console.log("Error:", err);
+        // console.log("Error:", err);
         } else {
             res.send(posts);
         }
@@ -198,20 +183,6 @@ async function addToCommentDB(req, res) {
     });
 }
 
-router.get('/getCommentsByPostId', function(req, res) {
-    Post.find({}, (err, posts) => {
-        if (err) {
-            res.json({ success: false, message: err });
-        } else {
-            if (!posts) {
-                res.json({ success: false, message: 'No post found.' });
-            } else {
-                res.json({ success: true, posts: posts });
-            }
-        }
-    });
-});
-
 router.put('/updatePost/:id', function(req, res, next) {
     Post.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
     if (err) return next(err);
@@ -226,5 +197,33 @@ router.delete('/deletePost/:id', function(req, res, next) {
   });
   });
 
+  router.get('/getProfileData/:id', verifyToken, (req, res) => {
+    User.findOne({ _id: req.params.id }).exec((err, user) => {
+      if (err) {
+        res.json({ success: false, message: err });
+      } else {
+        if (!user) {
+          res.json({ success: false, message: 'User not found' });
+        } else {
+          res.json({ success: true, user });
+        }
+      }
+    });
+  });
+
+// router.get('/profile', verifyToken, (req, res) => {
+//     User.findOne({ _id: req.decoded.userId }).select('userName').exec((err, user) => {
+//         console.log(user)
+//       if (err) {
+//         res.json({ success: false, message: err });
+//       } else {
+//         if (!user) {
+//           res.json({ success: false, message: 'User not found' });
+//         } else {
+//           res.json({ success: true, user: user });
+//         }
+//       }
+//     });
+//   });
 
 module.exports = router;

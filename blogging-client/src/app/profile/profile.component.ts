@@ -4,7 +4,6 @@ import { Component, OnInit} from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { OrderPipe } from 'ngx-order-pipe';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -17,18 +16,20 @@ export class ProfileComponent implements OnInit {
     private subscription: Subscription = new Subscription();
     getCurrentUserId: string;
     getCurrentUserName: string;
-    getCurrentPostId: string;
     displayAddPost = false;
     showAllPost = true;
     postList: any;
     displayMyPost: any;
     showMyPost= false;
     displayComment = [];
-    recentComment = [];
     newComment: any;
     incorrectPost: boolean;
     order: string;
     usersProfile: any;
+    url: any;
+    labelName : string = 'My Blogs';
+    panelOpenState = [];
+    buttonName= 'Show Comments';
 
     postForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
@@ -52,17 +53,15 @@ export class ProfileComponent implements OnInit {
         this.getCurrentUserId = localStorage.getItem('userId');
         this.getCurrentUserName = localStorage.getItem('user');
         this.ShowAllPost();
-        this.ShowAllComments();
         this.DisplayProfile();
     }
     
-    DisplayProfile(){debugger
+    DisplayProfile(){
         this.userService.displayProfile().subscribe(
-            (data)=> {debugger
+            (data)=> {
                 this.usersProfile = data.user;
-                console.log(this.usersProfile)
                 },
-            err => {debugger
+            err => {
                 console.log(err)}
         )
     }
@@ -88,9 +87,13 @@ export class ProfileComponent implements OnInit {
 
     DisplayPostBox=() => this.displayAddPost = !this.displayAddPost;
 
-    GetImageUrl(filename){debugger
-        const url = 'http://localhost:3000/images/' + filename;
-        return this.sanitized.bypassSecurityTrustUrl(url);
+    GetImageUrl(filename){
+        if(filename == undefined){
+            this.url = 'http://localhost:3000/images/download.jpeg';
+        } else {
+            this.url = 'http://localhost:3000/images/' + filename;
+        }
+        return this.sanitized.bypassSecurityTrustUrl(this.url);
     }
 
 
@@ -108,8 +111,7 @@ export class ProfileComponent implements OnInit {
 
         this.userService.addPost( JSON.stringify(obj)).subscribe(
             data => {
-                this.ShowAllComments();
-                this.DisplayMyPost();
+                this.DisplayProfile();
             },
             error => {
                 this.incorrectPost = true;
@@ -117,11 +119,18 @@ export class ProfileComponent implements OnInit {
             }
         );
 
-        this.displayAddPost = false;
+        this.postForm.reset();
+        this.displayAddPost = !this.displayAddPost;
         this.ShowAllPost();
     }
 
     DisplayMyPost() {
+        if(this.showMyPost == true) {
+            this.labelName = "My Blogs";
+        } else {
+            this.labelName = "Dashboard";
+        }
+        this.displayAddPost = false;
         this.showAllPost = !this.showAllPost;
         this.showMyPost = !this.showMyPost;
         this.userService.getPostById(this.getCurrentUserId).subscribe(
@@ -136,25 +145,20 @@ export class ProfileComponent implements OnInit {
     }
 
     ShowCommentBox(id: string, index: number) {
-        this.getCurrentPostId = id;
         this.displayComment[index] = !this.displayComment[index];
     }
 
-    ShowAllComments() {
-        this.userService.getCommentsByPostId().subscribe(
-            (data: { comments: any}) => {
-                this.newComment = data.comments;
-            }
-        );
-    }
-
-    PostComment(id: string) {
+    PostComment(postId: string, index: number) {debugger
+        if(this.panelOpenState[index] == false) { 
+            this.panelOpenState[index] =  !this.panelOpenState[index];
+        } 
+            this.panelOpenState[index] = true;
         if (!this.commentForm.valid) {
             return;
         }
 
         const obj = {
-            postId: id,
+            postId: postId,
             comment: this.commentForm.value.content,
             userId: this.getCurrentUserId,
             userName: this.getCurrentUserName
@@ -172,7 +176,7 @@ export class ProfileComponent implements OnInit {
         );
     }
 
-    UpdatePost(postId: string){debugger
+    UpdatePost(postId: string){
         this.userService.updatePost(postId, JSON.stringify(this.updatePost.value)).subscribe(
           data=> {
               this.DisplayMyPost();
