@@ -30,6 +30,8 @@ export class ProfileComponent implements OnInit {
     labelName : string = 'My Blogs';
     panelOpenState = [];
     buttonName= 'Show Comments';
+    displayOriginalBlog = [];
+    displayUpdatedBlog = [];
 
     postForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
@@ -56,6 +58,10 @@ export class ProfileComponent implements OnInit {
         this.DisplayProfile();
     }
     
+    getUpdatedBlog(text: string) {
+        console.log(text);
+    }
+
     DisplayProfile(){
         this.userService.displayProfile().subscribe(
             (data)=> {
@@ -148,7 +154,7 @@ export class ProfileComponent implements OnInit {
         this.displayComment[index] = !this.displayComment[index];
     }
 
-    PostComment(postId: string, index: number) {debugger
+    PostComment(postId: string, index: number) {
         if(this.panelOpenState[index] == false) { 
             this.panelOpenState[index] =  !this.panelOpenState[index];
         } 
@@ -169,6 +175,9 @@ export class ProfileComponent implements OnInit {
                 data => {
                     this.commentForm.reset();
                     this.ShowAllPost();
+                    if(this.showMyPost) {
+                        this.DisplayMyPost();
+                    }
                 },
                 error => {
                 }
@@ -176,10 +185,12 @@ export class ProfileComponent implements OnInit {
         );
     }
 
-    UpdatePost(postId: string){
+    UpdatePost(postId: string,index: number){
+
+        this.displayOriginalBlog[index] = !this.displayOriginalBlog[index] ;
+        this.displayUpdatedBlog[index]= !this.displayUpdatedBlog[index];
         this.userService.updatePost(postId, JSON.stringify(this.updatePost.value)).subscribe(
           data=> {
-              this.DisplayMyPost();
               this.ShowAllPost();
             },
             error=>console.error(error)

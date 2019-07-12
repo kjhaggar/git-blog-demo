@@ -107,14 +107,21 @@ var storage = multer.diskStorage({
         else {
             if (!user) { res.json({ success: false, message: 'User not found.' });}
             else {
-                var imgUrl = req.file.filename;
-                user.image = imgUrl;
+                console.log(req.body)
+                var updatedDetails = JSON.parse(req.body.forminput);
+                if(req.file) {
+                    var imgUrl = req.file.filename;
+                    user.image = imgUrl;
+                }
+                user.userName =updatedDetails.userName;
+                user.firstName = updatedDetails.firstName;
+                user.lastName = updatedDetails.lastName;
 
                 user.save((err) => {
                     if (err) {
                         res.json({ success: false, message: 'Something went wrong.' });
                     } else {
-                        res.json({ success: true, message: 'Image saved' });
+                        res.json({ success: true, message: 'Profile updated..!!' });
                     }
                 });
             }
@@ -184,7 +191,7 @@ async function addToCommentDB(req, res) {
 }
 
 router.put('/updatePost/:id', function(req, res, next) {
-    Post.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
+    Post.findByIdAndUpdate(req.params.id, req.body , function (err, post) {
     if (err) return next(err);
     res.json(post);
   });

@@ -49,7 +49,7 @@
     <mat-accordion>
         <div class = "displayPost panel panel-primary" *ngFor = "let post of postList; index as i">
             <form>
-                <mat-expansion-panel [expanded]="panelOpenState[i]" (closed)="panelOpenState[i] = false; displayComment[i] = false " (open)="panelOpenState[i] = true" >
+                <mat-expansion-panel [expanded]="panelOpenState[i]" (closed)="panelOpenState[i] = false; displayComment[i] = false" (open)="panelOpenState[i] = true" >
                     <mat-expansion-panel-header>
                         <div class="panel-heading">
                             <div class = "row">
@@ -64,30 +64,29 @@
                             </div>
                         </div>
                     </mat-expansion-panel-header>
-                    <p cols="80" rows="4">{{post.description}}</p>
+                    <p class = "description" cols="80" rows="4">{{post.description}}</p>
                     <div class="comment panel-footer">
                         <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
                     </div>
-                
-                <div *ngIf = "displayComment[i]">
-                    <div  *ngIf = "post.comments.length > 0; else noComments">
+                    <div *ngIf = "displayComment[i]">
+                        <div  *ngIf = "post.comments.length > 0; else noComments">
                             <div *ngFor="let item of post.comments">
-                                <span><strong>{{item.commenterName | titlecase}}  :  </strong> {{item.content}}</span>   
-                            </div>
-                    </div>
-                    <ng-template #noComments>No comments. Be the first one to comment.</ng-template>
-                    <form [formGroup]="commentForm">
-                        <div class="row" >
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" formControlName="content" placeholder="Start Typing here.." >
-                            </div>
-                            <div class="col-sm-2">
-                                <button mat-raised-button type="button" class="btn btn-success pull-right" (click)="PostComment(post._id,i)" (click)="$event.stopPropagation();" [disabled]="!commentForm.valid">Send</button>
+                                <span><strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}</span>   
                             </div>
                         </div>
-                    </form>
-                </div>
-            </mat-expansion-panel>
+                        <ng-template #noComments>No comments. Be the first one to comment.</ng-template>
+                        <form [formGroup]="commentForm">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" formControlName="content" placeholder="Start Typing here.." >
+                                </div>
+                                <div class="col-sm-2">
+                                    <button mat-raised-button type="button" class="btn btn-success pull-right" (click)="PostComment(post._id,i)" (click)="$event.stopPropagation();" [disabled]="!commentForm.valid">Send</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </mat-expansion-panel>
             </form>
         </div>
     </mat-accordion>
@@ -98,48 +97,48 @@
     <mat-accordion>
     <div class = "displayPost panel panel-primary" *ngFor = "let post of displayMyPost; index as i">
         <form [formGroup]="updatePost">
-                <mat-expansion-panel>
-                        <mat-expansion-panel-header>
-            <div class="panel-heading">
-                <div class = "row">
-                    <div *ngFor = "let user of usersProfile; index as j">
-                        <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/> 
-                    </div>
-                    <div>
-                        <label><strong>{{ post.title | titlecase}}</strong></label>
-                        <br>
-                        <label>Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </label>
-                    </div>
-                </div>
-            </div>
-        </mat-expansion-panel-header>
-        <textarea cols="80" rows="4" class="form-control" disabled >{{post.description}}</textarea>
-            <div class="comment panel-footer">
-                <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
-                <button type="button" class="btn btn-sm btn-primary" (click)="DeletePost(post._id)">Delete</button>
-                <button type="button" class="btn btn-sm btn-primary" (click)="UpdatePost(post._id)">Edit</button>
-            </div>
-            <div *ngIf = "displayComment[i]">
-                <div  *ngIf = "post.comments.length >0">
-                    <div class="well" >
-                        <div  *ngFor="let item of post.comments">
-                            <span><strong>{{item.commenterName | titlecase}}  :  </strong> {{item.content}}</span>   
+                <mat-expansion-panel [expanded]="panelOpenState[i]" (closed)="panelOpenState[i] = false; displayUpdatedBlog[i] = false; displayComment[i] = false; displayOriginalBlog[i] = false" (open)="panelOpenState[i] = true" >
+                    <mat-expansion-panel-header>
+                        <div class="panel-heading">
+                            <div class = "row">
+                                <div *ngFor = "let user of usersProfile; index as j">
+                                    <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
+                                </div>
+                                <div class="content">
+                                    <label><strong>{{ post.title | titlecase}}</strong></label>
+                                    <br>
+                                    <label>Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </label>
+                                </div>
+                            </div>
                         </div>
+                    </mat-expansion-panel-header>
+                    <p *ngIf = "!displayOriginalBlog[i]" class = "description">{{post.description}}</p>
+                    <textarea *ngIf = "displayUpdatedBlog[i]" class = "description form-control" formControlName = "description" [(ngModel)] = "post.description" rows="10" >{{post.description}}</textarea>
+                    <div class="comment panel-footer">
+                        <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
+                        <button type="button" class="btn btn-sm btn-primary" (click)="DeletePost(post._id)">Delete</button>
+                        <button type="button" class="btn btn-sm btn-primary" (click)="UpdatePost(post._id,i)">Edit</button>
                     </div>
-                </div>
-                <form [formGroup]="commentForm">
-                    <div class="row" >
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" formControlName="content" placeholder="Start Typing here.." >
+                    <div *ngIf = "displayComment[i]">
+                        <div  *ngIf = "post.comments.length >0; else noComments">
+                            <div  *ngFor="let item of post.comments">
+                                <span><strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}</span>   
+                            </div>
                         </div>
-                        <div class="col-sm-2">
-                            <button type="button" class="btn btn-success pull-right" (click)="PostComment(post._id)">Send</button>
-                        </div>
+                        <ng-template #noComments>No comments. Be the first one to comment.</ng-template>
+                        <form [formGroup]="commentForm">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" formControlName="content" placeholder="Start Typing here.." >
+                                </div>
+                                <div class="col-sm-2">
+                                    <button mat-raised-button type="button" class="btn btn-success pull-right" (click)="PostComment(post._id,i)" (click)="$event.stopPropagation();" [disabled]="!commentForm.valid">Send</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                </form>
-            </div>
-        </mat-expansion-panel>
-        </form>
-    </div>
-</mat-accordion>
+                </mat-expansion-panel>
+            </form>
+        </div>
+    </mat-accordion>
 </div>

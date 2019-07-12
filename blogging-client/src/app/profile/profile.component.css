@@ -34,3 +34,9 @@ h2{
     margin: 20px;
     margin-left: 90px;
 }
+.description{
+    text-align: justify;
+}
+textarea{
+    margin-right: 20px;
+}

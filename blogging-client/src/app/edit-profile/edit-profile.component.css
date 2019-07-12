@@ -1,3 +1,6 @@
 button, label, input{
     margin: 5px;
 }
+.alert{
+    align-content: center
+}
