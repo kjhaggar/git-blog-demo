@@ -4,3 +4,6 @@ button, label, input{
 .alert{
     align-content: center
 }
+.container{
+    padding-top: 50px;
+}

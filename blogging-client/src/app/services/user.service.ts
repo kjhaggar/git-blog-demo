@@ -69,4 +69,12 @@ export class UserService {
       headers: new HttpHeaders().append('Content-Type', 'application/json')
     });
   }
+
+  deleteProfilePicture(userId: string){
+    return this.http.delete('http://127.0.0.1:3000/api/deleteProfilePicture/' + userId,{
+      observe:'body',
+      withCredentials:true,
+      headers:new HttpHeaders().append('Content-Type','application/json')
+    })
+  }
 }

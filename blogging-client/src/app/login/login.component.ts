@@ -36,17 +36,16 @@ export class LoginComponent implements OnInit {
             return;
         }
         this.authService.login(JSON.stringify(this.loginForm.value)).subscribe(
-            (data: { userId: string, userName: string, success: boolean, message: string,token: string}) => {
+            (data: { userId: string, userName: string, success: boolean, message: string, token: string}) => {
                 if (data.success){
                     alert("not a memmber");
-                    console.log(data.message);
                 }
                 this.router.navigate(['/profile']);
                 this.authService.storeUserData(data.token, data.userName, data.userId);
             },
             error => {
                 this.invalidUser = true;
-                console.log(error.error.message);
+                this.unauthMessage = error.error.message;
             }
         );
     }

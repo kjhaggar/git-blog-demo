@@ -1,11 +1,6 @@
-.row,nav,button{
-    margin: 10px;
-}
-
 .post{
     margin-top: 70px;
 }
-
 .displayPost{
     margin: 100px;
 }
@@ -14,7 +9,7 @@
     font-size:85%;
 }
 .panel{
-    width: 600px;
+    width: 650px;
     margin: 50px auto;
 }
 
@@ -25,18 +20,37 @@ a:active {
 h2{
     text-align: center;
 }
-.logo {
+.logo{
     height: 50px;
     width: 50px;
     margin: 20px;
-}
-.content{
-    margin: 20px;
-    margin-left: 90px;
 }
 .description{
     text-align: justify;
 }
 textarea{
     margin-right: 20px;
+}
+button{
+    margin: 10px;
+    float: right;
+}
+
+.info {
+    display : block;
+    margin-top: 20px;
+    margin-left : 120px;
+}
+.title {
+    margin-top: 30px;
+    margin-right: 30px;
+    padding-left: 70px;
+}
+.updatedInfo{
+    display : block;
+    margin-top: 20px;
+    margin-left : 170px;
+}
+.container{
+    padding-top: 150px;
 }

@@ -13,6 +13,8 @@
                             (change)="fileChangeEvent($event)" placeholder="Upload a file..."/>
                         </div>
                     </div>
+                    <img *ngIf = "url" [src] = "url" height="100" width="100" alt="preview"> <br/>
+                    <button (click) = "deleteProfilePicture()" [disabled]="disableBtn">{{validPicture}}</button>
                     <div class="form-group">
                         <label for="userName" class="col-md-4 control-label">User Name</label>
                         <div class="col-md-9">
@@ -44,31 +46,27 @@
                         </div>
                     </div>
                     <div class="col">
-                        <button class="col-md-4" (click) = "EnablePasswordChange()">Change Password</button>
+                        <button class="col-md-4 btn-outline-success" (click) = "EnablePasswordChange()">Change Password</button>
                     </div>
                     <div *ngIf = "changePassword">
-                        <div class="form-group">
-                            <label for="password" class="col-md-12 control-label">Password</label>
-                            <div class="col-md-9">
-                                <input type="password" formControlName="password" class="form-control" name="passwd" placeholder="*****"
-                                [ngClass]="{ 'is-invalid': submitted && f.password.errors }" (click)="enableSubmitButton()">
-                                <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-                                    <div *ngIf="f.password.errors.required">Password is required</div>
-                                    <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
+                            <div class="form-group">
+                                <label for="password" class="col-md-12 control-label">Password</label>
+                                <div class="col-md-9">
+                                    <input type="password" formControlName="password" class="form-control" placeholder="*****"
+                                    [ngClass]="{ 'is-invalid':pwdsubmitted && f.password.errors}">
+                                    <div *ngIf="pwdsubmitted && f.password.errors" class="invalid-feedback">
+                                        <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword" class="col-md-4 control-label">Confirm Password</label>
-                            <div class="col-md-9">
-                                <input type="password" formControlName="confirmPassword" class="form-control" placeholder=""
-                                [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }">
-                                <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
-                                    <div *ngIf="f.confirmPassword.errors.required">Confirm Password is required</div>
+                            <div class="form-group">
+                                <label for="confirmPassword" class="col-md-4 control-label">Confirm Password</label>
+                                <div class="col-md-9">
+                                    <input type="password" formControlName="confirmPassword" class="form-control" placeholder=""
+                                    [ngClass]="{ 'is-invalid':pwdsubmitted && f.confirmPassword.errors}">
+                                    <div *ngIf="matchPassword"  class="invalid-feedback">Password do not match.</div>
                                 </div>
-                                <div *ngIf="matchPassword" >Password do not match.</div>
                             </div>
-                        </div>
                     </div>
                     <div class="form-group action"> 
                         <div class="col-sm-12 controls"> 

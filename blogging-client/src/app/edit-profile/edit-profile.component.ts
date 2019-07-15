@@ -1,3 +1,4 @@
+import { DomSanitizer } from '@angular/platform-browser';
 import { UserService } from './../services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
@@ -12,15 +13,23 @@ import { Router } from '@angular/router';
 export class EditProfileComponent implements OnInit {
   selectedFile: File;
   getCurrentUserId: string;
+  getCurrentProfilePicture: any;
   url: any;
   submitted: boolean;
   hideSuccessMessage = false;
   hideNoUpdateMessage = false;
   changePassword = false;
-  disableBtn = false;
+  disableBtn: boolean;
   originalData: any;
+  pwdsubmitted = true;
+  matchPassword: boolean;
+  validPicture = "Delete current picutre";
 
-  constructor(private http: HttpClient, private router :Router, private userService: UserService) {}
+  constructor(
+      private http: HttpClient,
+      private router :Router,
+      private userService: UserService,
+      private sanitized: DomSanitizer) {}
 
   updateForm: FormGroup = new FormGroup({
       userName: new FormControl(null, [Validators.required, Validators.minLength(3)]),
@@ -33,43 +42,67 @@ export class EditProfileComponent implements OnInit {
 
   ngOnInit() {
       this.getCurrentUserId = localStorage.getItem('userId');
-      this.userService.getProfileData(this.getCurrentUserId).subscribe(
-          data => {
-              this.originalData = data.user;
-              this.updateForm.get('userName').setValue(data.user.userName);
-              this.updateForm.get('firstName').setValue(data.user.firstName);
-              this.updateForm.get('lastName').setValue(data.user.lastName);
-            },
-            error => {console.log(error)}
-        )
-    }
+      this.getProfileData();
+}
+
+getProfileData() {
+    this.userService.getProfileData(this.getCurrentUserId).subscribe(
+        data => {
+            this.originalData = data.user;
+            this.updateForm.get('userName').setValue(data.user.userName);
+            this.updateForm.get('firstName').setValue(data.user.firstName);
+            this.updateForm.get('lastName').setValue(data.user.lastName);
+            this.getCurrentProfilePicture = data.user.image;
+            if(this.getCurrentProfilePicture == null) {
+                this.disableBtn = true;
+                this.validPicture = "No image uploaded";
+                this.url = 'http://localhost:3000/images/download.jpeg';
+            } else {
+              this.disableBtn = false;
+              this.validPicture = "Delete current picutre";
+              this.url = 'http://localhost:3000/images/' + this.getCurrentProfilePicture;
+            }
+      },
+      error => {
+            console.log(error.message)
+      }
+  );
+}
 
   get f() { return this.updateForm.controls; }
-
-  enableSubmitButton(){
-      this.disableBtn =true;
-  }
 
   fileChangeEvent(event: any) {
       this.selectedFile = event.target.files[0];
       var reader = new FileReader();
       reader.readAsDataURL(event.target.files[0]);
-      this.url = reader.result;
+      reader.onload = (event) => {
+        this.url = reader.result;
+      }
     }
 
     EnablePasswordChange(){
         this.changePassword = !this.changePassword;
+        this.submitted = false;
+        this.pwdsubmitted = false;
     }
 
   Update = () => {debugger
       this.submitted = true;
-      if(!this.updateForm.valid){
+      if(this.updateForm.touched) {
+      this.pwdsubmitted = true;
+      }
+      if(!this.updateForm.invalid){
           return;
       }
 
       if(this.originalData == this.updateForm.value) {
           this.hideNoUpdateMessage = true;
       }
+
+      if (this.updateForm.controls.password.value !== this.updateForm.controls.confirmPassword.value) {
+        this.matchPassword = true;
+        return;
+    }
       const formData = new FormData();
       if(this.selectedFile) {
           formData.append("image", this.selectedFile, this.selectedFile.name);
@@ -80,6 +113,7 @@ export class EditProfileComponent implements OnInit {
       .subscribe(
           data => {
             this.hideSuccessMessage = true;
+            this.getProfileData();
           },
           error => {
               console.log(error);
@@ -92,6 +126,15 @@ export class EditProfileComponent implements OnInit {
             this.hideSuccessMessage = false;
             this.hideNoUpdateMessage = false;
         }, 4000);
+    }
+
+    deleteProfilePicture() {
+        this.userService.deleteProfilePicture(this.getCurrentUserId).subscribe(
+            data=> {
+                this.getProfileData();
+              },
+              error=>console.error(error)
+          )
     }
 
 }

@@ -30,6 +30,7 @@ export class ProfileComponent implements OnInit {
     labelName : string = 'My Blogs';
     panelOpenState = [];
     buttonName= 'Show Comments';
+    newBlogLink = 'New BLog';
     displayOriginalBlog = [];
     displayUpdatedBlog = [];
 
@@ -91,7 +92,10 @@ export class ProfileComponent implements OnInit {
         );
     }
 
-    DisplayPostBox=() => this.displayAddPost = !this.displayAddPost;
+    DisplayPostBox=() => {
+        this.displayAddPost = !this.displayAddPost;
+        this.newBlogLink = "";
+    }
 
     GetImageUrl(filename){
         if(filename == undefined){
@@ -128,6 +132,7 @@ export class ProfileComponent implements OnInit {
         this.postForm.reset();
         this.displayAddPost = !this.displayAddPost;
         this.ShowAllPost();
+        this.newBlogLink = 'New Blog';
     }
 
     DisplayMyPost() {
@@ -205,7 +210,7 @@ export class ProfileComponent implements OnInit {
             },
             error=>console.error(error)
         )
-        }
+    }
 
     Logout=() => this.authService.logout();
 }

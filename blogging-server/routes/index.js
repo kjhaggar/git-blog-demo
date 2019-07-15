@@ -117,6 +117,10 @@ var storage = multer.diskStorage({
                 user.firstName = updatedDetails.firstName;
                 user.lastName = updatedDetails.lastName;
 
+                if(updatedDetails.password != null) {
+                user.password = User.hashPassword(updatedDetails.password);
+                }
+
                 user.save((err) => {
                     if (err) {
                         res.json({ success: false, message: 'Something went wrong.' });
@@ -218,19 +222,10 @@ router.delete('/deletePost/:id', function(req, res, next) {
     });
   });
 
-// router.get('/profile', verifyToken, (req, res) => {
-//     User.findOne({ _id: req.decoded.userId }).select('userName').exec((err, user) => {
-//         console.log(user)
-//       if (err) {
-//         res.json({ success: false, message: err });
-//       } else {
-//         if (!user) {
-//           res.json({ success: false, message: 'User not found' });
-//         } else {
-//           res.json({ success: true, user: user });
-//         }
-//       }
-//     });
-//   });
-
+  router.delete('/deleteProfilePicture/:id', function(req, res, next) {
+    User.update({ _id: req.params.id },{$unset: { image: 1}}, function (err, post) {
+    if (err) return next(err);
+    res.json(post);
+  });
+  });
 module.exports = router;

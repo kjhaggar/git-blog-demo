@@ -43,6 +43,8 @@
 				</form>
 			</div>
 		</div> 
-		<div *ngIf = "invalidUser">{{unauthMessage}}</div>
+		<div *ngIf = "invalidUser">
+			<p class="text-danger" style="text-align: center">{{unauthMessage}} or Invalid Username/Password</p>
+		</div>
 	</div>
 </div>
