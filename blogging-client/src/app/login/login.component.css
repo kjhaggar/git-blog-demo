@@ -1,8 +1,7 @@
-.loginbox{
-	margin-top:50px;
-}
+
 .panel-pad{
 	padding-top:30px;
+	background-color: rgba(255, 255, 255, 0.8);
 }
 .action{
 	margin-top:10px;
@@ -14,6 +13,9 @@ input{
     margin-bottom: 15px;
 }
 .container{
-    padding-top: 50px;
+	padding-top: 50px;
 }
 
+.panel-transparent {
+	background: none;
+}

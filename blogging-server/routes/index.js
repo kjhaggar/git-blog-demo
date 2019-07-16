@@ -194,6 +194,35 @@ async function addToCommentDB(req, res) {
     });
 }
 
+router.post('/addReply', function(req, res, next){
+    addToReplyDB(req, res);
+})
+
+async function addToReplyDB(req, res) {
+    Post.findOne({ _id: req.body.postId }, (err, post) => {
+        if (err) {
+            res.json({ success: false, message: 'Invalid post id' });
+        } else {
+            if (!post) {
+                res.json({ success: false, message: 'post not found.' });
+            } else {
+                post.comments.id({_id: req.body.commentId}).replies.push({
+                    content: req.body.content,
+                    commenterId: req.body.userId,
+                    commenterName: req.body.userName
+                });
+                post.save((err) => {
+                    if (err) {
+                        res.json({ success: false, message: 'Something went wrong.' });
+                    } else {
+                        res.json({ success: true, message: 'Comment saved' });
+                    }
+                });
+            }
+        }
+    });
+}
+
 router.put('/updatePost/:id', function(req, res, next) {
     Post.findByIdAndUpdate(req.params.id, req.body , function (err, post) {
     if (err) return next(err);

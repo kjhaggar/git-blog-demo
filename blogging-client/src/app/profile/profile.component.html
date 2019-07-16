@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-primary navbar-fixed-top" >
+<nav class="navbar navbar-expand-md navbar-light fixed-top" >
     <div class="navbar-header navbar-text">
         <h2> Blog - Demo </h2>
         <a class="navbar-brand">Welcome {{getCurrentUserName | titlecase}}</a>
@@ -50,7 +50,7 @@
     <mat-accordion>
         <div class = "displayPost panel panel-primary" *ngFor = "let post of postList; index as i">
             <form>
-                <mat-expansion-panel [expanded]="panelOpenState[i]" (closed)="panelOpenState[i] = false; displayComment[i] = false" (open)="panelOpenState[i] = true" >
+                <mat-expansion-panel [expanded]="panelOpenState[i]" (closed)="panelOpenState[i] = false; displayComment[i] = false; dispalyReplyBox[j] = false" (open)="panelOpenState[i] = true" >
                     <mat-expansion-panel-header>
                         <div class="panel-heading row clearfix">
                                 <div *ngFor = "let user of usersProfile; index as j" class="panel-title pull-left">
@@ -65,20 +65,45 @@
                     <div class="comment panel-footer">
                         <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
                     </div>
-                    <div *ngIf = "displayComment[i]">
-                        <div  *ngIf = "post.comments.length > 0; else noComments">
-                            <div *ngFor="let item of post.comments">
-                                <span><strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}</span>   
+                    <div *ngIf = "displayComment[i]" class="showCommentBox">
+                        <div  *ngIf = "post.comments.length > 0; else noComments" >
+                            <div *ngFor="let item of post.comments; index as j" class="row">
+                                <div class="col-lg-9">
+                                    <span ><strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}</span>
+                                </div>
+                                <a (click)="openReplyText(j)">Show Replies</a>
+
+                                <div *ngIf="dispalyReplyBox[j]" class="showReplyBox">
+
+                                        <div  *ngIf = "post.comments[j].replies.length > 0; else noComments" >
+                                                <div *ngFor="let reply of post.comments[j].replies; index as k" class="row">
+                                                    <div class="col-sm-12">
+                                                        <span ><strong>{{reply.commenterName | titlecase}} : </strong> {{reply.content}}</span>
+                                                    </div>
+                                                    <!-- <a (click)="openReplyText(item,j)">Show Replies</a> -->
+                                                </div>
+
+                                        </div>
+                                        <ng-template #noComments>No replies.</ng-template>
+                                    <form [formGroup] = "replyForm">
+                                        <input type="text" class="form-control" formControlName="content"/>
+                                        
+                                        <button mat-raised-button (click)="addReply(post._id, item._id, j, i)" (click)="$event.stopPropagation();">Send</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                         <ng-template #noComments>No comments. Be the first one to comment.</ng-template>
                         <form [formGroup]="commentForm">
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" formControlName="content" placeholder="Start Typing here.." >
+                                    <input type="text" class="form-control" formControlName="content"
+                                    placeholder="Start Typing here.." >
                                 </div>
                                 <div class="col-sm-2">
-                                    <button mat-raised-button type="button" class="btn btn-sm btn-success pull-right" (click)="PostComment(post._id,i)" (click)="$event.stopPropagation();" [disabled]="!commentForm.valid">Send</button>
+                                    <button mat-raised-button type="button" class="btn btn-sm btn-success pull-right"
+                                    (click)="PostComment(post._id,i)" (click)="$event.stopPropagation();"
+                                    [disabled]="!commentForm.valid">Send</button>
                                 </div>
                             </div>
                         </form>

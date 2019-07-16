@@ -1,2 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~bootstrap/dist/css/bootstrap.min.css';
+body{
+    background: transparent;
+    margin: 0;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+}
+
+html, app-root {
+    margin: 0;
+    }

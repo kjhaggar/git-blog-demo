@@ -8,7 +8,7 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit{
     submitted: boolean;
     invalidUser: boolean;
     unauthMessage: string;
@@ -19,12 +19,16 @@ export class LoginComponent implements OnInit {
         password: new FormControl(null, Validators.required)
     });
 
+    bodyTag: HTMLBodyElement = document.getElementsByTagName('body')[0];
+    htmlTag: HTMLElement = document.getElementsByTagName('html')[0];
+
     constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) {}
     
     ngOnInit() {
         if(localStorage.getItem('token')){
             this.router.navigate(['/profile']);
         }
+   
     }
 
     get f() { return this.loginForm.controls; }
@@ -49,4 +53,5 @@ export class LoginComponent implements OnInit {
             }
         );
     }
+
 }

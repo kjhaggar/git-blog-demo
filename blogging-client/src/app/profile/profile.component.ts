@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
+import { debug } from 'util';
 
 @Component({
   selector: 'app-profile',
@@ -33,7 +34,8 @@ export class ProfileComponent implements OnInit {
     newBlogLink = 'New BLog';
     displayOriginalBlog = [];
     displayUpdatedBlog = [];
-
+    dispalyReplyBox = [];
+    
     postForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
         description: new FormControl(null, Validators.required)
@@ -44,6 +46,10 @@ export class ProfileComponent implements OnInit {
     });
 
     commentForm: FormGroup = new FormGroup({
+        content: new FormControl(null, Validators.required)
+    });
+
+    replyForm: FormGroup = new FormGroup({
         content: new FormControl(null, Validators.required)
     });
 
@@ -58,9 +64,39 @@ export class ProfileComponent implements OnInit {
         this.ShowAllPost();
         this.DisplayProfile();
     }
-    
-    getUpdatedBlog(text: string) {
-        console.log(text);
+
+    openReplyText(index: number){
+        this.dispalyReplyBox[index] = !this.dispalyReplyBox[index];
+    }
+
+    addReply(postId: string, commentId: string, index: number,blogIndex: number) {
+        this.dispalyReplyBox[index] = true;
+        this.panelOpenState[blogIndex] = true;
+        if (!this.replyForm.valid) {
+            return;
+        }
+
+        const obj = {
+            postId: postId,
+            commentId: commentId,
+            content: this.replyForm.value.content,
+            userId: this.getCurrentUserId,
+            userName: this.getCurrentUserName
+        };
+
+        this.subscription.add(
+            this.userService.addReply(obj).subscribe(
+                data => {
+                    this.replyForm.reset();
+                    this.ShowAllPost();
+                    if(this.showMyPost) {
+                        this.DisplayMyPost();
+                    }
+                },
+                error => {
+                }
+            )
+        );
     }
 
     DisplayProfile(){
@@ -77,7 +113,7 @@ export class ProfileComponent implements OnInit {
             (data) => {
                 this.postList = Object.values(data).sort((val1, val2)=> {
                     const start = +new Date(val1.createdAt);
-                    const end = +new Date(val2.createdAt)
+                    const end = +new Date(val2.createdAt);
                     return end - start;
                 })
                 

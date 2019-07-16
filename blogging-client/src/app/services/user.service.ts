@@ -46,6 +46,12 @@ export class UserService {
     });
   }
 
+  addReply(body: any) {
+    return this.http.post('http://127.0.0.1:3000/api/addReply', body, {
+      observe: 'body',
+      headers: new HttpHeaders().append('Content-Type', 'application/json')
+    });
+  }
   updatePost(postId: any, body: any){
     return this.http.put('http://127.0.0.1:3000/api/updatePost/' + postId, body, {
       observe:'body',

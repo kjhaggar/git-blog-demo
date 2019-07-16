@@ -51,6 +51,12 @@ button{
     margin-top: 20px;
     margin-left : 170px;
 }
-.container{
-    padding-top: 150px;
+input{
+    margin: 10px;
+}
+.showCommentBox .showReplyBox{
+    margin: 40px;
+}
+a{
+    color: lightskyblue;
 }
