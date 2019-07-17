@@ -6,14 +6,16 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
-import { debug } from 'util';
 
+import * as io from 'socket.io-client';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
+
+    private socket = io('http://127.0.0.1:3000');
     private subscription: Subscription = new Subscription();
     getCurrentUserId: string;
     getCurrentUserName: string;
@@ -23,7 +25,6 @@ export class ProfileComponent implements OnInit {
     displayMyPost: any;
     showMyPost= false;
     displayComment = [];
-    newComment: any;
     incorrectPost: boolean;
     order: string;
     usersProfile: any;
@@ -35,6 +36,8 @@ export class ProfileComponent implements OnInit {
     displayOriginalBlog = [];
     displayUpdatedBlog = [];
     dispalyReplyBox = [];
+    commentClicked: boolean;
+    replyClicked= [];
     
     postForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
@@ -56,7 +59,34 @@ export class ProfileComponent implements OnInit {
     constructor(private authService: AuthService,
         private userService: UserService,
         private router: Router,
-        private sanitized: DomSanitizer) {}
+        private sanitized: DomSanitizer) {
+            this.userService.newCommentReceived().subscribe(
+                data => { debugger
+                    console.log(data)
+                    this.ShowAllPost();
+                }
+            )
+
+            this.userService.newReplyReceived().subscribe(
+                data => { debugger
+                    console.log(data)
+                    this.ShowAllPost();
+                    if(this.showMyPost) {
+                        this.DisplayMyPost();
+                    }
+                }
+            )
+
+            this.userService.newPostReceived().subscribe(
+                data => { debugger
+                    console.log(data)
+                    this.ShowAllPost();
+                    if(this.showMyPost) {
+                        this.DisplayMyPost();
+                    }
+                }
+            )
+        }
 
     ngOnInit() {
         this.getCurrentUserId = localStorage.getItem('userId');
@@ -65,12 +95,76 @@ export class ProfileComponent implements OnInit {
         this.DisplayProfile();
     }
 
+    clickedMyPost() {
+        if(this.showMyPost == true) {
+            this.labelName = "My Blogs";
+        } else {
+            this.labelName = "Dashboard";
+        }
+        this.displayAddPost = false;
+        this.showAllPost = !this.showAllPost;
+        this.showMyPost = !this.showMyPost;
+        this.DisplayMyPost();
+    }
+
+    DisplayMyPost() {
+        this.userService.getPostById(this.getCurrentUserId).subscribe(
+            (data) => {
+                this.displayMyPost = Object.values(data).sort((val1, val2)=> {
+                    const start = +new Date(val1.createdAt);
+                    const end = +new Date(val2.createdAt)
+                    return end - start;
+        })
+            }
+        );
+    }
+
+    openCommentForm() {
+        this.commentClicked = !this.commentClicked;
+    }
+
+    openReplyForm(index) {
+        this.replyClicked[index] = !this.replyClicked[index];
+    }
+
+    PostComment(postId: string, index: number) {
+        if(this.panelOpenState[index] == false) { 
+            this.panelOpenState[index] =  !this.panelOpenState[index];
+        } 
+            this.panelOpenState[index] = true;
+        if (!this.commentForm.valid) {
+            return;
+        }
+
+        const obj = {
+            postId: postId,
+            comment: this.commentForm.value.content,
+            userId: this.getCurrentUserId,
+            userName: this.getCurrentUserName
+        };
+
+        this.subscription.add(
+            this.userService.addComment(obj).subscribe(
+                data => {debugger
+                    this.commentClicked = false;
+                    this.socket.emit('comment',obj); 
+                    this.commentForm.reset();
+                    if(this.showMyPost == true) {
+                        this.DisplayMyPost();
+                    } else {
+                    this.ShowAllPost();
+                    }
+                },
+                error => {
+                }
+            )
+        );
+    }
     openReplyText(index: number){
         this.dispalyReplyBox[index] = !this.dispalyReplyBox[index];
     }
 
     addReply(postId: string, commentId: string, index: number,blogIndex: number) {
-        this.dispalyReplyBox[index] = true;
         this.panelOpenState[blogIndex] = true;
         if (!this.replyForm.valid) {
             return;
@@ -87,8 +181,11 @@ export class ProfileComponent implements OnInit {
         this.subscription.add(
             this.userService.addReply(obj).subscribe(
                 data => {
+                    this.replyClicked[index] = !this.replyClicked[index];
+                    this.socket.emit('reply',obj);
                     this.replyForm.reset();
                     this.ShowAllPost();
+
                     if(this.showMyPost) {
                         this.DisplayMyPost();
                     }
@@ -157,6 +254,7 @@ export class ProfileComponent implements OnInit {
 
         this.userService.addPost( JSON.stringify(obj)).subscribe(
             data => {
+                this.socket.emit('post',obj);
                 this.DisplayProfile();
             },
             error => {
@@ -171,59 +269,8 @@ export class ProfileComponent implements OnInit {
         this.newBlogLink = 'New Blog';
     }
 
-    DisplayMyPost() {
-        if(this.showMyPost == true) {
-            this.labelName = "My Blogs";
-        } else {
-            this.labelName = "Dashboard";
-        }
-        this.displayAddPost = false;
-        this.showAllPost = !this.showAllPost;
-        this.showMyPost = !this.showMyPost;
-        this.userService.getPostById(this.getCurrentUserId).subscribe(
-            (data) => {
-                this.displayMyPost = Object.values(data).sort((val1, val2)=> {
-                    const start = +new Date(val1.createdAt);
-                    const end = +new Date(val2.createdAt)
-                    return end - start;
-        })
-            }
-        );
-    }
-
     ShowCommentBox(id: string, index: number) {
         this.displayComment[index] = !this.displayComment[index];
-    }
-
-    PostComment(postId: string, index: number) {
-        if(this.panelOpenState[index] == false) { 
-            this.panelOpenState[index] =  !this.panelOpenState[index];
-        } 
-            this.panelOpenState[index] = true;
-        if (!this.commentForm.valid) {
-            return;
-        }
-
-        const obj = {
-            postId: postId,
-            comment: this.commentForm.value.content,
-            userId: this.getCurrentUserId,
-            userName: this.getCurrentUserName
-        };
-
-        this.subscription.add(
-            this.userService.addComment(obj).subscribe(
-                data => {
-                    this.commentForm.reset();
-                    this.ShowAllPost();
-                    if(this.showMyPost) {
-                        this.DisplayMyPost();
-                    }
-                },
-                error => {
-                }
-            )
-        );
     }
 
     UpdatePost(postId: string,index: number){

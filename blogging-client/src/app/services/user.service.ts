@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import * as io from 'socket.io-client';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+    private socket = io('http://127.0.0.1:3000');
 
   constructor( private http: HttpClient ) {}
 
@@ -40,6 +43,7 @@ export class UserService {
   }
 
   addComment(body: any) {
+    
     return this.http.post('http://127.0.0.1:3000/api/addComment', body, {
       observe: 'body',
       headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -83,4 +87,38 @@ export class UserService {
       headers:new HttpHeaders().append('Content-Type','application/json')
     })
   }
+
+    newCommentReceived(){
+    let observable = new Observable<any>(observer=>{
+        this.socket.on('new comment', (data)=>{
+            observer.next(data);
+        });
+        return () => {this.socket.disconnect();}
+    });
+
+    return observable;
+    }
+
+    newReplyReceived(){
+        let observable = new Observable<any>(observer=>{
+            this.socket.on('new reply', (data)=>{
+                observer.next(data);
+            });
+            return () => {this.socket.disconnect();}
+        });
+    
+        return observable;
+    }
+
+    newPostReceived(){
+            let observable = new Observable<any>(observer=>{
+                this.socket.on('new post', (data)=>{
+                    observer.next(data);
+                });
+                return () => {this.socket.disconnect();}
+            });
+        
+            return observable;
+    }
+   
 }
