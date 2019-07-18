@@ -89,7 +89,7 @@
                                     <form [formGroup] = "replyForm" *ngIf = "replyClicked[j]">
                                         <input type="text" class="form-control" formControlName="content"/>
                                         
-                                        <button mat-raised-button (click)="addReply(post._id, item._id, j, i)" (click)="$event.stopPropagation();">Send</button>
+                                        <button mat-raised-button type="submit" (click)="addReply(post._id, item._id, j, i)" (click)="$event.stopPropagation();">Send</button>
                                     </form>
                                 </div>
                             </div>
@@ -104,7 +104,7 @@
                                     placeholder="Start Typing here.." >
                                 </div>
                                 <div class="col-sm-2">
-                                    <button mat-raised-button type="button" class="btn btn-sm btn-success pull-right"
+                                    <button mat-raised-button type="submit" class="btn btn-sm btn-success pull-right"
                                     (click)="PostComment(post._id,i)" (click)="$event.stopPropagation();"
                                     [disabled]="!commentForm.valid">Send</button>
                                 </div>
@@ -164,7 +164,7 @@
                                     <form [formGroup] = "replyForm" *ngIf = "replyClicked[j]">
                                         <input type="text" class="form-control" formControlName="content"/>
                                         
-                                        <button mat-raised-button (click)="addReply(post._id, item._id, j, i)" (click)="$event.stopPropagation();">Send</button>
+                                        <button mat-raised-button type="submit" (click)="addReply(post._id, item._id, j, i)" (click)="$event.stopPropagation();">Send</button>
                                     </form>
                                 </div>  
                             </div>
@@ -179,7 +179,7 @@
                                     placeholder="Start Typing here.." >
                                 </div>
                                 <div class="col-sm-2">
-                                    <button mat-raised-button type="button" class="btn btn-success pull-right"
+                                    <button mat-raised-button type="submit" class="btn btn-success pull-right"
                                     (click)="PostComment(post._id,i)" (click)="$event.stopPropagation();"
                                     [disabled]="!commentForm.valid">Send</button>
                                 </div>

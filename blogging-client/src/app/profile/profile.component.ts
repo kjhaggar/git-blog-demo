@@ -104,6 +104,10 @@ export class ProfileComponent implements OnInit {
         this.displayAddPost = false;
         this.showAllPost = !this.showAllPost;
         this.showMyPost = !this.showMyPost;
+        this.displayComment = [];
+        this.dispalyReplyBox = [];
+        this.replyClicked = [];
+        this.commentClicked = false;
         this.DisplayMyPost();
     }
 
