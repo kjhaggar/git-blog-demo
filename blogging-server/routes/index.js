@@ -136,7 +136,7 @@ var storage = multer.diskStorage({
 router.get('/displayProfilePicture', function(req, res) {
     User.find({}).select('image').exec(function (err, user) {
         if (err) {
-        // console.log("Error:", err);
+        console.log("Error:", err);
         } else {
             res.json({success: true, user });
         }
@@ -146,7 +146,7 @@ router.get('/displayProfilePicture', function(req, res) {
 router.get('/allPost',function(req,res){
   Post.find({}).exec(function (err, posts) {
     if (err) {
-    //   console.log("Error:", err);
+      console.log("Error:", err);
     }
     else {
 

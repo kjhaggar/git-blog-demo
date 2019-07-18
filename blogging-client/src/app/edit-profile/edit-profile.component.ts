@@ -47,7 +47,7 @@ export class EditProfileComponent implements OnInit {
 
 getProfileData() {
     this.userService.getProfileData(this.getCurrentUserId).subscribe(
-        data => {
+        (data: {user: any}) => {
             this.originalData = data.user;
             this.updateForm.get('userName').setValue(data.user.userName);
             this.updateForm.get('firstName').setValue(data.user.firstName);

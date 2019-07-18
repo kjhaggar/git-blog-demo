@@ -198,7 +198,7 @@ export class ProfileComponent implements OnInit {
 
     DisplayProfile(){
         this.userService.displayProfile().subscribe(
-            (data)=> {
+            (data:{user: Object})=> {
                 this.usersProfile = data.user;
                 },
             err => {
