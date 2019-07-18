@@ -271,6 +271,8 @@ export class ProfileComponent implements OnInit {
 
     ShowCommentBox(id: string, index: number) {
         this.displayComment[index] = !this.displayComment[index];
+        this.dispalyReplyBox = [];
+        this.replyClicked = [];
     }
 
     UpdatePost(postId: string,index: number){
