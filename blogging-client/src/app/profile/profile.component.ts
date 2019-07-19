@@ -26,18 +26,23 @@ export class ProfileComponent implements OnInit {
     showMyPost= false;
     displayComment = [];
     incorrectPost: boolean;
-    order: string;
     usersProfile: any;
     url: any;
     labelName : string = 'My Blogs';
     panelOpenState = [];
-    buttonName= 'Show Comments';
     newBlogLink = 'New BLog';
     displayOriginalBlog = [];
     displayUpdatedBlog = [];
     dispalyReplyBox = [];
     commentClicked: boolean;
     replyClicked= [];
+    usersInfo: any;
+    showMyFriends = false;
+    newFriendRequest: boolean;
+    newFriend: any;
+    acceptRequest = [];
+    friendRequestSent = [];
+    temp =[];
     
     postForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
@@ -56,43 +61,104 @@ export class ProfileComponent implements OnInit {
         content: new FormControl(null, Validators.required)
     });
 
-    constructor(private authService: AuthService,
-        private userService: UserService,
-        private router: Router,
-        private sanitized: DomSanitizer) {
-            this.userService.newCommentReceived().subscribe(
-                data => { debugger
-                    console.log(data)
-                    this.ShowAllPost();
+    constructor(private authService: AuthService, private userService: UserService,
+        private router: Router, private sanitized: DomSanitizer) {
+        this.userService.newCommentReceived().subscribe(
+            data => { 
+                this.ShowAllPost();
+                if(this.showMyPost) {
+                    this.DisplayMyPost();
                 }
-            )
+            }
+        )
 
-            this.userService.newReplyReceived().subscribe(
-                data => { debugger
-                    console.log(data)
-                    this.ShowAllPost();
-                    if(this.showMyPost) {
-                        this.DisplayMyPost();
-                    }
+        this.userService.newReplyReceived().subscribe(
+            data => { 
+                this.ShowAllPost();
+                if(this.showMyPost) {
+                    this.DisplayMyPost();
                 }
-            )
+            }
+        )
 
-            this.userService.newPostReceived().subscribe(
-                data => { debugger
-                    console.log(data)
-                    this.ShowAllPost();
-                    if(this.showMyPost) {
-                        this.DisplayMyPost();
-                    }
+        this.userService.newPostReceived().subscribe(
+            data => { 
+                this.ShowAllPost();
+                if(this.showMyPost) {
+                    this.DisplayMyPost();
                 }
-            )
-        }
+            }
+        )
+
+        this.userService.newRequestReceived().subscribe(
+            data => {
+                if(this.getCurrentUserId == data.receiverId) {
+                    this.newRequest();
+                }
+            },
+            error => console.log(error)
+        )
+
+    }
 
     ngOnInit() {
         this.getCurrentUserId = localStorage.getItem('userId');
         this.getCurrentUserName = localStorage.getItem('user');
         this.ShowAllPost();
         this.DisplayProfile();
+        this.newRequest();
+        this.sentRequest();
+    }
+
+    newRequest() {
+        this.userService.RequestList(this.getCurrentUserId).subscribe(
+            (data: {pendingUserProfile: any, pendingRequestId: any}) => { debugger
+                this.newFriendRequest = true;
+                this.newFriend = data.pendingUserProfile;
+                for(var i =0; i< data.pendingRequestId.length; i++) {
+                    this.acceptRequest[data.pendingRequestId[i]] = true;
+                }
+            },
+            error => console.log(error)
+        )
+    }
+
+    sentRequest() {
+        this.userService.SentRequestList(this.getCurrentUserId).subscribe(
+            (data: {pendingRequestId : any}) => {
+                for( var i=0; i< data.pendingRequestId.length;i++) {
+                    this.friendRequestSent[data.pendingRequestId[i]] = true;
+                }
+            },
+            error => console.log(error)
+        )
+    }
+
+    sendRequest(receiverId: string) {
+        var request = {
+            receiverId: receiverId,            // receiver of friend request
+            senderId: this.getCurrentUserId    // sender of friend request
+        }
+        this.userService.sendRequest(request).subscribe(
+            data => {
+                this.socket.emit('friendRequest',request);
+                this.friendRequestSent[request.receiverId] = true;
+            },
+            error => console.log(error)
+        )
+    }
+
+    UsersList() {
+        this.displayAddPost = false;
+        this.showAllPost = false;
+        this.showMyPost = false;
+        this.showMyFriends = true;
+        this.userService.getUsersList().subscribe(
+            data => {
+                this.usersInfo = data;
+            },
+            error => console.log(error)
+        )
     }
 
     clickedMyPost() {
@@ -149,7 +215,7 @@ export class ProfileComponent implements OnInit {
 
         this.subscription.add(
             this.userService.addComment(obj).subscribe(
-                data => {debugger
+                data => {
                     this.commentClicked = false;
                     this.socket.emit('comment',obj); 
                     this.commentForm.reset();

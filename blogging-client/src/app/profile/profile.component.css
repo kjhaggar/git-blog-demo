@@ -13,10 +13,6 @@
     margin: 50px auto;
 }
 
-a:active {
-    color: green;
-    text-decoration: underline;
-}
 h2{
     text-align: center;
 }
@@ -45,6 +41,7 @@ button{
     margin-top: 30px;
     margin-right: 30px;
     padding-left: 70px;
+    font-size: 16px;
 }
 .updatedInfo{
     display : block;
@@ -59,4 +56,29 @@ input{
 }
 a{
     color: lightskyblue;
+}
+
+.list {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 200px;
+    margin: 10px auto;
+    text-align: center;
+    font-family: arial;
+}
+  
+.sendRequest{
+    border: none;
+    outline: 0;
+    display: inline-block;
+    padding: 8px;
+    color: white;
+    background-color: #000;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    font-size: 13px;
+}
+  
+button:hover, a:hover {
+    opacity: 0.7;
 }

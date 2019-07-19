@@ -6,8 +6,7 @@ replySchema.add({
 	commenterId: { type: String },
 	commenterName: { type: String },
 	content: { type: String},
-	commentedAt: {type: Date, default: Date.now},
-	replies: [replySchema] 
+	commentedAt: {type: Date, default: Date.now}
 });
 
 var postSchema = new Schema({

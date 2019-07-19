@@ -12,6 +12,9 @@
                 <a class="nav-link" (click)="clickedMyPost()">{{labelName}}</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" (click)="UsersList()">Friends</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" routerLink="/editProfile">Edit Profile</a>
             </li>
             <li class="nav-item">
@@ -72,7 +75,7 @@
                                 <div class="col-lg-9">
                                     <span><strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}</span>
                                 </div>
-                                <a (click)="openReplyText(j)">Show Replies</a>
+                                <a (click)="openReplyText(j)" style="cursor: pointer;">Show Replies</a>
 
                                 <div *ngIf="dispalyReplyBox[j]" class="showReplyBox">
 
@@ -85,7 +88,7 @@
                                         </div>
                                         <ng-template #noComments>No replies.</ng-template>
                                         <br>
-                                        <i class="material-icons" (click) = "openReplyForm(j)">reply</i>
+                                        <i class="material-icons" style="cursor: pointer;" (click) = "openReplyForm(j)">reply</i>
                                     <form [formGroup] = "replyForm" *ngIf = "replyClicked[j]">
                                         <input type="text" class="form-control" formControlName="content"/>
                                         
@@ -96,7 +99,7 @@
                         </div>
                         <ng-template #noComments>No comments. Be the first one to comment.</ng-template>
                         <br>
-                        <i class="material-icons" (click) = "openCommentForm()">sms</i>
+                        <i class="material-icons" style="cursor: pointer;" (click) = "openCommentForm()">sms</i>
                         <form [formGroup]="commentForm" *ngIf = "commentClicked">
                             <div class="row">
                                 <div class="col-sm-6">
@@ -147,7 +150,7 @@
                                 <div class="col-lg-9">
                                     <span><strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}</span>
                                 </div>
-                                <a (click)="openReplyText(j)">Show Replies</a>
+                                <a (click)="openReplyText(j)" style="cursor: pointer;">Show Replies</a>
                                 
                                 <div *ngIf="dispalyReplyBox[j]" class="showReplyBox">
                                     <div  *ngIf = "post.comments[j].replies.length > 0; else noReply" >
@@ -160,7 +163,7 @@
                                     </div>
                                     <ng-template #noReply>No replies.</ng-template>
                                     <br>
-                                    <i class="material-icons" (click) = "openReplyForm(j)">reply</i>
+                                    <i class="material-icons" style="cursor: pointer;" (click) = "openReplyForm(j)">reply</i>
                                     <form [formGroup] = "replyForm" *ngIf = "replyClicked[j]">
                                         <input type="text" class="form-control" formControlName="content"/>
                                         
@@ -171,7 +174,7 @@
                         </div>
                         <ng-template #noComments>No comments. Be the first one to comment.</ng-template>
                         <br>
-                        <i class="material-icons" (click) = "openCommentForm()">sms</i>
+                        <i class="material-icons" style="cursor: pointer;" (click) = "openCommentForm()">sms</i>
                         <form [formGroup]="commentForm"  *ngIf = "commentClicked">
                             <div class="row">
                                 <div class="col-sm-6">
@@ -190,4 +193,33 @@
             </form>
         </div>
     </mat-accordion>
+</div>
+
+<div class= "container" *ngIf = "showMyFriends">
+    <h2>Search Friends</h2>
+    <form>
+        <input type="text" name="searchfriend" placeholder="username">
+        <input type="submit" value="search"><br>
+        <div *ngIf = "newFriendRequest">
+            <li *ngFor ="let new of newFriend">{{new.firstName}} {{new.lastName}} sent you friend request</li>
+        </div>
+    </form>
+    <div *ngFor = "let profile of usersInfo; index as i">
+            <div class="list" *ngIf= "getCurrentUserId != profile._id">
+                <div class="row">
+                    <img class="logo column" [src] = GetImageUrl(profile.image) alt="Your Profile Picture" >
+                    <h5 class="column" style="margin-top: 35px ">{{profile.firstName | titlecase}} {{profile.lastName | titlecase}}</h5>
+                </div>
+                <p *ngIf = "!acceptRequest[profile._id] && !friendRequestSent[profile._id]">
+                    <button class="sendRequest" (click)="sendRequest(profile._id)">Send Request</button>
+                </p>
+                <p *ngIf = "friendRequestSent[profile._id]">
+                    <button type="button" class="sendRequest">Friend Request Sent <br> Cancel??</button>
+                    </p>
+                <p *ngIf = "acceptRequest[profile._id]">
+                    <button class="sendRequest" >Accept Request</button>
+                </p>
+            </div>
+        <br>
+    </div>
 </div>

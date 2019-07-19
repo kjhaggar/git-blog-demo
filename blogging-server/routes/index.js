@@ -3,9 +3,9 @@ var router = express.Router();
 var passport = require('passport'); 
 var User = require('../models/user');
 var Post = require('../models/addPost');
+var Request = require('../models/FriendRequest');
 var jwt = require('jsonwebtoken');
 var multer = require('multer');
-var fs = require('fs');
 
 router.post('/register', function (req, res, next) {
     addToDB(req, res);
@@ -67,7 +67,21 @@ router.post('/login', function(req, res, next) {
         });
     })(req, res, next);
 });
-  
+
+router.post('/sendRequest', function(req, res, next) {
+    var newRequest = new Request({
+        user: req.body.senderId,
+        requestTo: req.body.receiverId
+    });
+    newRequest.save((err) => {
+        if (err) {
+            res.json({ success: false, message: 'Something went wrong.' });
+        } else {
+            res.json({ success: true, message: 'Saved' });
+        }
+    });
+});
+
 router.post('/addPost', function(req, res, next) {
     addToPostDB(req, res);
 });
@@ -141,7 +155,7 @@ router.get('/displayProfilePicture', function(req, res) {
             res.json({success: true, user });
         }
     });
-}); 
+});
 
 router.get('/allPost',function(req,res){
   Post.find({}).exec(function (err, posts) {
@@ -257,4 +271,53 @@ router.delete('/deletePost/:id', function(req, res, next) {
     res.json(post);
   });
   });
+
+  router.get('/getUsersList', function(req, res) {
+    User.find({}).exec(function (err, user) {
+        if (err) {
+        console.log("Error:", err);
+        } else { 
+            res.json(user);
+        }
+    });
+});
+
+router.get('/requestList/:id', function(req, res) {
+    Request.find({ requestTo: req.params.id}).exec(function (err, request) {
+        if (err) {
+        console.log("Error:", err);
+        } else {
+            console.log(request);
+            var pendingRequestId = request.map(({user}) => user);
+            User.find({_id: { $in: pendingRequestId }}).exec(function (err, pendingUserProfile) {
+                if(err) {
+                    console.log("Error:", err);
+                } else {
+                    console.log(pendingUserProfile)
+                    res.send({ pendingUserProfile, pendingRequestId });
+                }
+            } )
+        }
+    });
+});
+
+router.get('/sentRequestList/:id', function(req, res) {
+    Request.find({ user: req.params.id}).exec(function (err, request) {
+        if (err) {
+        console.log("Error:", err);
+        } else {
+            console.log(request);
+            var pendingRequestId = request.map(({requestTo}) => requestTo);
+            res.send({pendingRequestId});
+            // User.find({_id: { $in: pendingRequestId }}).exec(function (err, pendingUserProfile) {
+            //     if(err) {
+            //         console.log("Error:", err);
+            //     } else {
+            //         console.log(pendingUserProfile)
+            //         res.send({ pendingUserProfile, pendingRequestId });
+            //     }
+            // } )
+        }
+    });
+});
 module.exports = router;

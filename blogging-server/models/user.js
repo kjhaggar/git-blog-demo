@@ -8,7 +8,14 @@ var userSchema = new Schema({
     lastName: { type: String, require: true },
     email : { type: String, require: true, lowercase: true},
     password: { type: String, require: true},
-    image: { type: String }
+    image: { type: String },
+    friends: [{
+        friendName: {
+            type: Schema.ObjectId,
+            required: true,
+            ref: 'User'
+        }
+    }]
 });
 
 userSchema.statics.hashPassword = function hashPassword(password){
