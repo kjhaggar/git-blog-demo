@@ -119,6 +119,14 @@ export class UserService {
         })
     }
 
+    deleteFriendRequest(userId: string, requestToId: string){debugger
+        return this.http.delete('http://127.0.0.1:3000/api/deleteFriendRequest/' + userId+ "/"+ requestToId,{
+            observe:'body',
+            withCredentials:true,
+            headers:new HttpHeaders().append('Content-Type','application/json')
+        })
+    }
+
     newCommentReceived() {
         let observable = new Observable<any>(observer => {
             this.socket.on('new comment', (data) => {

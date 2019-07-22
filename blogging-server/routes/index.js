@@ -287,13 +287,13 @@ router.get('/requestList/:id', function(req, res) {
         if (err) {
         console.log("Error:", err);
         } else {
-            console.log(request);
+
             var pendingRequestId = request.map(({user}) => user);
             User.find({_id: { $in: pendingRequestId }}).exec(function (err, pendingUserProfile) {
                 if(err) {
                     console.log("Error:", err);
                 } else {
-                    console.log(pendingUserProfile)
+
                     res.send({ pendingUserProfile, pendingRequestId });
                 }
             } )
@@ -306,18 +306,19 @@ router.get('/sentRequestList/:id', function(req, res) {
         if (err) {
         console.log("Error:", err);
         } else {
-            console.log(request);
             var pendingRequestId = request.map(({requestTo}) => requestTo);
             res.send({pendingRequestId});
-            // User.find({_id: { $in: pendingRequestId }}).exec(function (err, pendingUserProfile) {
-            //     if(err) {
-            //         console.log("Error:", err);
-            //     } else {
-            //         console.log(pendingUserProfile)
-            //         res.send({ pendingUserProfile, pendingRequestId });
-            //     }
-            // } )
+
         }
     });
 });
+
+router.delete('/deleteFriendRequest/:userId/:requestToId', function(req, res, next) {
+    console.log("user: " + req.param.userId)
+    console.log("requestTo: " + req.params.requestToId)
+    Request.findOneAndDelete({user: req.param.userId, requestTo: req.params.requestToId}).exec(function(err, user) {
+        if (err) return next(err);
+        res.json(user);
+  });
+  });
 module.exports = router;

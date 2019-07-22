@@ -110,9 +110,19 @@ export class ProfileComponent implements OnInit {
         this.sentRequest();
     }
 
+    DeleteFriendRequest(userId: string) {debugger
+        this.userService.deleteFriendRequest(userId, this.getCurrentUserId).subscribe(
+            data=> {
+                this.newRequest();
+                this.sentRequest();
+              },
+              error=>console.error(error)
+          )
+    }
+
     newRequest() {
         this.userService.RequestList(this.getCurrentUserId).subscribe(
-            (data: {pendingUserProfile: any, pendingRequestId: any}) => { debugger
+            (data: {pendingUserProfile: any, pendingRequestId: any}) => {
                 this.newFriendRequest = true;
                 this.newFriend = data.pendingUserProfile;
                 for(var i =0; i< data.pendingRequestId.length; i++) {
@@ -125,7 +135,7 @@ export class ProfileComponent implements OnInit {
 
     sentRequest() {
         this.userService.SentRequestList(this.getCurrentUserId).subscribe(
-            (data: {pendingRequestId : any}) => {
+            (data: {pendingRequestId : string}) => {
                 for( var i=0; i< data.pendingRequestId.length;i++) {
                     this.friendRequestSent[data.pendingRequestId[i]] = true;
                 }
@@ -162,6 +172,9 @@ export class ProfileComponent implements OnInit {
     }
 
     clickedMyPost() {
+        this.showMyFriends = false;
+        this.displayAddPost = !this.displayAddPost;
+        this.newBlogLink = "New Blog";
         if(this.showMyPost == true) {
             this.labelName = "My Blogs";
         } else {

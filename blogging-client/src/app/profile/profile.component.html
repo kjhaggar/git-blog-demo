@@ -196,28 +196,33 @@
 </div>
 
 <div class= "container" *ngIf = "showMyFriends">
-    <h2>Search Friends</h2>
-    <form>
-        <input type="text" name="searchfriend" placeholder="username">
-        <input type="submit" value="search"><br>
-        <div *ngIf = "newFriendRequest">
-            <li *ngFor ="let new of newFriend">{{new.firstName}} {{new.lastName}} sent you friend request</li>
+    <h3>Search Friends</h3>
+    <!-- <input type="text" name="searchfriend" placeholder="username">
+    <input type="submit" value="search"><br> -->
+    <div *ngIf = "newFriendRequest">
+        <h3>Friend Requests</h3>
+        <div class="col-md-8 reqColumn" *ngFor ="let new of newFriend">
+            <div class="row">
+                <img class="logo column" [src] = GetImageUrl(new.image) alt="Your Profile Picture" >
+                <h5 class="column" style="margin-top: 35px ">{{new.firstName | titlecase}} {{new.lastName | titlecase}}</h5>
+            </div>
+            <div class="row" *ngIf = "acceptRequest[new._id]">
+                <button class="column acceptRequest" >Accept</button>
+                <button class="column acceptRequest" (click)="DeleteFriendRequest(new._id)">Delete</button>
+            </div>
         </div>
-    </form>
-    <div *ngFor = "let profile of usersInfo; index as i">
-            <div class="list" *ngIf= "getCurrentUserId != profile._id">
-                <div class="row">
-                    <img class="logo column" [src] = GetImageUrl(profile.image) alt="Your Profile Picture" >
-                    <h5 class="column" style="margin-top: 35px ">{{profile.firstName | titlecase}} {{profile.lastName | titlecase}}</h5>
-                </div>
-                <p *ngIf = "!acceptRequest[profile._id] && !friendRequestSent[profile._id]">
-                    <button class="sendRequest" (click)="sendRequest(profile._id)">Send Request</button>
-                </p>
-                <p *ngIf = "friendRequestSent[profile._id]">
-                    <button type="button" class="sendRequest">Friend Request Sent <br> Cancel??</button>
-                    </p>
-                <p *ngIf = "acceptRequest[profile._id]">
-                    <button class="sendRequest" >Accept Request</button>
+    </div>
+    <div class = "col-md-8 reqColumn" *ngFor = "let profile of usersInfo; index as i">
+        <div class="list" *ngIf= "getCurrentUserId != profile._id">
+            <div class="row">
+                <img class="logo column" [src] = GetImageUrl(profile.image) alt="Your Profile Picture" >
+                <h5 class="column" style="margin-top: 35px ">{{profile.firstName | titlecase}} {{profile.lastName | titlecase}}</h5>
+            </div>
+            <p *ngIf = "!acceptRequest[profile._id] && !friendRequestSent[profile._id]">
+                <button class="sendRequest" (click)="sendRequest(profile._id)">Send Request</button>
+            </p>
+            <p *ngIf = "friendRequestSent[profile._id]">
+                <button type="button" class="sendRequest">Friend Request Sent <br> Cancel??</button>
                 </p>
             </div>
         <br>
