@@ -15,6 +15,9 @@ var postSchema = new Schema({
     title: { type: String, require: true},
     description: {type: String, require: true},
     createdAt: {type: Date, default: Date.now},
+    imageUrl:[{
+        filename: { type: String, required: true }
+    }],
 
     comments: [{
         content: { type: String},

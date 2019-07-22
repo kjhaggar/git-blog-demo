@@ -1,3 +1,6 @@
+import { Provider } from '@angular/core';
+import { BrowserXhr } from '@angular/http';
+import { CustExtBrowserXhr } from './cust-ext-browser-xhr';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -7,6 +10,7 @@ import { OrderModule } from 'ngx-order-pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
+import { AgmCoreModule } from '@agm/core';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -42,9 +46,14 @@ export const authInterceptorProviders = [
     OrderModule,
     BrowserAnimationsModule,
     MatExpansionModule,
-    MatIconModule
+    MatIconModule,
+    AgmCoreModule.forRoot({
+      apiKey: '',
+      libraries: ['places']
+    })
   ],
   providers: [
+    { provide: BrowserXhr, useClass:CustExtBrowserXhr},
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     AuthInterceptor, UserService, AuthService, AuthGuard],
   bootstrap: [AppComponent]

@@ -4,7 +4,7 @@ import { Component, OnInit} from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import * as io from 'socket.io-client';
@@ -42,11 +42,17 @@ export class ProfileComponent implements OnInit {
     newFriend: any;
     acceptRequest = [];
     friendRequestSent = [];
-    temp =[];
-    
+    latitude: number;
+    longitude: number;
+    zoom:number;
+    address: string;
+    uploadBlogImages: boolean;
+    filesToUpload: Array<File> = [];
+  
     postForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
-        description: new FormControl(null, Validators.required)
+        description: new FormControl(null, Validators.required),
+        image: new FormControl(null, Validators.required)
     });
 
     updatePost: FormGroup = new FormGroup({
@@ -62,7 +68,7 @@ export class ProfileComponent implements OnInit {
     });
 
     constructor(private authService: AuthService, private userService: UserService,
-        private router: Router, private sanitized: DomSanitizer) {
+        private router: Router, private sanitized: DomSanitizer,private http: HttpClient) {
         this.userService.newCommentReceived().subscribe(
             data => { 
                 this.ShowAllPost();
@@ -104,12 +110,30 @@ export class ProfileComponent implements OnInit {
     ngOnInit() {
         this.getCurrentUserId = localStorage.getItem('userId');
         this.getCurrentUserName = localStorage.getItem('user');
+        this.setCurrentLocation();
         this.ShowAllPost();
         this.DisplayProfile();
         this.newRequest();
         this.sentRequest();
     }
+    private setCurrentLocation() {
+        if ('geolocation' in navigator) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            this.latitude = position.coords.latitude;
+            this.longitude = position.coords.longitude;
+            this.zoom = 15;
+          });
+        }
+      }
 
+    UploadBlogImages(){
+        this.uploadBlogImages = !this.uploadBlogImages;
+    }
+
+    fileChangeEvent(fileInput: any) {debugger
+    this.filesToUpload = <Array<File>>fileInput.target.files;
+    }
+    
     DeleteFriendRequest(userId: string) {debugger
         this.userService.deleteFriendRequest(userId, this.getCurrentUserId).subscribe(
             data=> {
@@ -322,8 +346,25 @@ export class ProfileComponent implements OnInit {
         return this.sanitized.bypassSecurityTrustUrl(this.url);
     }
 
+    GetBlogImageUrl(filename){debugger
+        if(filename == undefined){
+            // this.url = 'http://localhost:3000/images/download.jpeg';
+        } else {
+            this.url = 'http://localhost:3000/blogImages/' + filename;
+        }
+        return this.sanitized.bypassSecurityTrustUrl(this.url);
+    }
 
-    AddPost() {
+
+    AddPost() {debugger
+        console.log(this.filesToUpload)
+        const formData: any = new FormData();
+        const files: Array<File> = this.filesToUpload;
+        console.log(files);
+
+        for(let i =0; i < files.length; i++){
+            formData.append("uploads[]", files[i], files[i]['name']);
+        }
         if (!this.postForm.valid) {
             this.incorrectPost = true;
             return;
@@ -335,9 +376,12 @@ export class ProfileComponent implements OnInit {
             userName: this.getCurrentUserName
         };
 
-        this.userService.addPost( JSON.stringify(obj)).subscribe(
-            data => {
+        formData.append("forminput", JSON.stringify(obj));
+        this.userService.addPost( formData ).subscribe(
+            data => {debugger
                 this.socket.emit('post',obj);
+                this.displayAddPost = !this.displayAddPost;
+                this.ShowAllPost();
                 this.DisplayProfile();
             },
             error => {
@@ -347,8 +391,6 @@ export class ProfileComponent implements OnInit {
         );
 
         this.postForm.reset();
-        this.displayAddPost = !this.displayAddPost;
-        this.ShowAllPost();
         this.newBlogLink = 'New Blog';
     }
 

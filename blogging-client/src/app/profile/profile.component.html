@@ -30,7 +30,7 @@
             <button type="button" class="close" (click)="displayAddPost = false; newBlogLink = 'New Blog'">
                 <span aria-hidden="true">&times;</span>
             </button>
-            <form [formGroup]="postForm">
+            <form [formGroup]="postForm" enctype="multipart/form-data">
                 <div>
 					<label *ngIf = "incorrectPost">Enter Valid Details..</label>
 				</div>
@@ -42,7 +42,25 @@
                     <label for="exampleInputPassword1">Description</label>
                     <textarea name="description" formControlName="description" rows="4" class="form-control" placeholder="Your post..!!"></textarea>
                 </div>
-                <button type="button" class="btn btn-primary" (click) = "AddPost()">Post</button>
+                <button type="button" class="btn btn-sm btn-primary" (click) = "showGoogleMap = true">Add Location</button>
+                <!-- <div *ngIf = "showGoogleMap">
+                    <agm-map [latitude]="latitude" [longitude]="longitude" [zoom]="zoom">
+                            <agm-marker [latitude]="latitude" [longitude]="longitude" [markerDraggable]="true"></agm-marker>
+                    </agm-map>
+                    <label>Enter address</label>
+                    <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()"
+                    placeholder="Search Location" autocorrect="off" autocapitalize="off" spellcheck="off"
+                    #search>
+                </div> -->
+                <button type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages()">Upload Photo(s)</button>
+                <div class="form-group" *ngIf= "uploadBlogImages">
+                    <div class="col-md-9">
+                        <input formControlName="image" id="image" name="image" type="file" 
+                        (change)="fileChangeEvent($event)" placeholder="Upload a file..." multiple/>
+                    </div>
+                    <!-- <img [src]="url" height="100" alt="preview"> <br/> -->
+                </div>
+                <button type="button" class="btn btn-sm btn-primary" (click) = "AddPost()">Post</button>
             </form>
         </div>
     </div>
@@ -61,11 +79,13 @@
                             <div *ngFor = "let user of usersProfile; index as j" class="panel-title pull-left">
                                 <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
                             </div>
-                            <label class="panel-title title col-lg-2" ><em>{{ post.title | titlecase}}</em></label>
+                            <label class="panel-title title col-md-2" ><em>{{ post.title | titlecase}}</em></label>
                             <small class="info col-lg-5" >Posted by {{post.userName | titlecase}} on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>
                         </div>
                     </mat-expansion-panel-header>
                     <p class = "description" cols="80" rows="4">{{post.description}}</p>
+                    <img *ngFor="let count of post.imageUrl" class = "logo" [src] = GetBlogImageUrl(count.filename)/>
+                    
                     <div class="comment panel-footer">
                         <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
                     </div>
@@ -138,6 +158,7 @@
                         </div>
                     </mat-expansion-panel-header>
                     <p *ngIf = "!displayOriginalBlog[i]" class = "description">{{post.description}}</p>
+                    <img *ngFor="let count of post.imageUrl" class = "logo" [src] = GetBlogImageUrl(count.filename)/>
                     <textarea *ngIf = "displayUpdatedBlog[i]" class = "description form-control" formControlName = "description" [(ngModel)] = "post.description" rows="10" >{{post.description}}</textarea>
                     <div class="comment panel-footer">
                         <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>

@@ -6,7 +6,7 @@ var Post = require('../models/addPost');
 var Request = require('../models/FriendRequest');
 var jwt = require('jsonwebtoken');
 var multer = require('multer');
-
+var path = require('path');
 router.post('/register', function (req, res, next) {
     addToDB(req, res);
 });
@@ -82,25 +82,46 @@ router.post('/sendRequest', function(req, res, next) {
     });
 });
 
-router.post('/addPost', function(req, res, next) {
-    addToPostDB(req, res);
-});
+router.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "http://localhost:4200");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 
-async function addToPostDB(req, res) {
-    const post = new Post({
-        userId: req.body.userId,
-        userName: req.body.userName,
-        title: req.body.title,
-        description: req.body.description
+var blogStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, '../blogging-server/static/blogImages')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname + '-' + Date.now());
+    }
+  });
+
+var blogImagesUpload = multer({ storage: blogStorage });
+
+router.post('/addPost', blogImagesUpload.array("uploads[]", 12), function(req, res, next) {
+    var blogData = JSON.parse(req.body.forminput);
+    var imgUrl = req.files.map((file) => {
+        return {
+            filename: file.filename
+        }
+      })
+    const blog = new Post({
+        userId: blogData.userId,
+        userName: blogData.userName,
+        title: blogData.title,
+        description: blogData.description,
+        imageUrl: imgUrl
     });
     try {
-        doc = await post.save();
+        doc = blog.save();
         return res.status(201).json(doc);
     }
     catch (err) {
         return res.status(501).json(err);
     }
-}
+});
+
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -121,7 +142,6 @@ var storage = multer.diskStorage({
         else {
             if (!user) { res.json({ success: false, message: 'User not found.' });}
             else {
-                console.log(req.body)
                 var updatedDetails = JSON.parse(req.body.forminput);
                 if(req.file) {
                     var imgUrl = req.file.filename;

@@ -38,22 +38,25 @@ export class UserService {
     getPostById(id: string) {
         return this.http.get('http://127.0.0.1:3000/api/getPostById/' + id, {
             observe: 'body',
-            withCredentials: true,
+            withCredentials:true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
         });
     }
 
-    addPost(body: any) {
-        return this.http.post('http://127.0.0.1:3000/api/addPost', body, {
+    addPost(formData: any) {
+        return this.http.post('http://127.0.0.1:3000/api/addPost', formData, {
             observe: 'body',
-            headers: new HttpHeaders().append('Content-Type', 'application/json')
+            withCredentials: true,
+            // headers: new HttpHeaders().append('Content-Type', 'multipart/form-data')
+            // .append('Content-Type', 'text/html')
+    
         });
     }
 
     showPost() {
         return this.http.get('http://127.0.0.1:3000/api/allPost', {
             observe: 'body',
-            withCredentials: true,
+            withCredentials:true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
         });
     }
@@ -61,6 +64,7 @@ export class UserService {
     addComment(body: any) {
         return this.http.post('http://127.0.0.1:3000/api/addComment', body, {
             observe: 'body',
+            withCredentials: true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
         });
     }
@@ -68,6 +72,7 @@ export class UserService {
     addReply(body: any) {
         return this.http.post('http://127.0.0.1:3000/api/addReply', body, {
             observe: 'body',
+            withCredentials:true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
         });
     }
@@ -90,7 +95,7 @@ export class UserService {
     displayProfile() {
         return this.http.get('http://127.0.0.1:3000/api/displayProfilePicture/', {
             observe: 'body',
-            withCredentials: true,
+            withCredentials:true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
         });
     }
