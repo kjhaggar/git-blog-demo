@@ -18,7 +18,6 @@ var postSchema = new Schema({
     imageUrl:[{
         filename: { type: String, required: true }
     }],
-
     comments: [{
         content: { type: String},
         commenterId: { type: String },

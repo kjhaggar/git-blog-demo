@@ -57,7 +57,7 @@
                     placeholder="Search Location" autocorrect="off" autocapitalize="off" spellcheck="off"
                     #search>
                 </div> -->
-                <button type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages()">Upload Photo(s)</button>
+                <button type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages()">Upload Media</button>
                 <div class="form-group" *ngIf= "uploadBlogImages">
                     <div class="col-md-9">
                         <input formControlName="image" id="image" name="image" type="file" 
@@ -89,7 +89,9 @@
                         </div>
                     </mat-expansion-panel-header>
                     <p class = "description" cols="80" rows="4">{{post.description}}</p>
-                    <img *ngFor="let count of post.imageUrl" class = "logo" [src] = GetBlogImageUrl(count.filename)/>
+                    <div *ngFor="let count of post.imageUrl">
+                            <img style="margin: 10px 145px" [src] = GetBlogImageUrl(count.filename)/>
+                        </div>
                     
                     <div class="comment panel-footer">
                         <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
@@ -149,10 +151,10 @@
     <h2>My Blogs</h2>
     <mat-accordion>
     <div class = "displayPost panel panel-primary" *ngFor = "let post of displayMyPost; index as i">
-        <form [formGroup]="updatePost">
+        <form [formGroup]="updatePost" enctype="multipart/form-data">
                 <mat-expansion-panel [expanded]="panelOpenState[i]" (closed)="panelOpenState[i] = false;
                 displayUpdatedBlog[i] = false; displayComment[i] = false; displayOriginalBlog[i] = false;
-                commentClicked = false; dispalyReplyBox[j] =false" (open)="panelOpenState[i] = true" >
+                commentClicked = false; dispalyReplyBox[j] =false;" (open)="panelOpenState[i] = true" >
                     <mat-expansion-panel-header>
                         <div class="panel-heading row clearfix">
                             <div *ngFor = "let user of usersProfile; index as j" class="panel-title pull-left">
@@ -164,15 +166,18 @@
                     </mat-expansion-panel-header>
                     <p *ngIf = "!displayOriginalBlog[i]" class = "description">{{post.description}}</p>
                     <textarea *ngIf = "displayUpdatedBlog[i]" class = "description form-control" formControlName = "description" [(ngModel)] = "post.description" rows="10" >{{post.description}}</textarea>
-                    <img *ngFor="let count of post.imageUrl" class = "logo" [src] = GetBlogImageUrl(count.filename)/>
-                    <button *ngIf = "displayUpdatedBlog[i]" type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages(i)">Upload Photo(s)</button>
-                    <div class="form-group" *ngIf= "uploadBlogImages[i]">
+                    <button *ngIf = "displayUpdatedBlog[i]" type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages(i)">Upload Media</button>
+                    <div class="form-group" *ngIf= "uploadUpdatedBlogImages[i]">
                         <div class="col-md-9">
                             <input formControlName="image" id="image" name="image" type="file" 
                             (change)="fileChangeEvent($event)" placeholder="Upload a file..." multiple/>
                         </div>
                         <!-- <img [src]="url" height="100" alt="preview"> <br/>  -->
                     </div>
+                    <div *ngFor="let count of post.imageUrl">
+                        <img style="margin: 10px 145px" [src] = GetBlogImageUrl(count.filename)/>
+                    </div>
+        
                     <div class="comment panel-footer">
                         <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
                         <button type="button" class="btn btn-sm btn-primary" (click)="DeletePost(post._id)">Delete Post</button>

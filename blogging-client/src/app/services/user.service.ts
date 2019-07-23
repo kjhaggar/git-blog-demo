@@ -80,7 +80,7 @@ export class UserService {
         return this.http.put('http://127.0.0.1:3000/api/updatePost/' + postId, body, {
             observe:'body',
             withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
+            // headers:new HttpHeaders().append('Content-Type','application/json')
         })
     }
 

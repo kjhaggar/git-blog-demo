@@ -122,6 +122,51 @@ router.post('/addPost', blogImagesUpload.array("uploads[]", 12), function(req, r
     }
 });
 
+router.put('/updatePost/:id', blogImagesUpload.array("uploads[]", 12), function(req, res, next) {
+    Post.findOne({ _id: req.params.id }, function (err, post) {
+        if (err) {
+            res.json({ success: false, message: 'Something went wrong' });
+        }
+        else {
+            if (!post) { res.json({ success: false, message: 'Post not found.' });}
+            else {
+                var updatedDetails = JSON.parse(req.body.forminput);
+                if(req.files) {
+                    var imgUrl = req.files.map((file) => {
+                        return { 
+                            filename: file.filename
+                        }
+                      })
+
+                      console.log(imgUrl)
+                    if(imgUrl != null) {
+                        post.imageUrl = imgUrl;
+                        // post.imageUrl.push({
+                        //     filename: imgUrl
+                        // });
+                    }
+                }
+                post.description =updatedDetails;
+
+                post.save((err) => {
+                    if (err) {
+                        res.json({ success: false, message: 'Something went wrong.' });
+                    } else {
+                        res.json(post);
+                    }
+                });
+            }
+        }
+        });
+  });
+
+router.delete('/deletePost/:id', function(req, res, next) {
+    Post.findByIdAndRemove(req.params.id, req.body, function (err, post) {
+    if (err) return next(err);
+    res.json(post);
+  });
+  });
+
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -256,20 +301,6 @@ async function addToReplyDB(req, res) {
         }
     });
 }
-
-router.put('/updatePost/:id', function(req, res, next) {
-    Post.findByIdAndUpdate(req.params.id, req.body , function (err, post) {
-    if (err) return next(err);
-    res.json(post);
-  });
-  });
-
-router.delete('/deletePost/:id', function(req, res, next) {
-    Post.findByIdAndRemove(req.params.id, req.body, function (err, post) {
-    if (err) return next(err);
-    res.json(post);
-  });
-  });
 
   router.get('/getProfileData/:id', verifyToken, (req, res) => {
     User.findOne({ _id: req.params.id }).exec((err, user) => {

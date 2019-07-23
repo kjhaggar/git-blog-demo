@@ -30,7 +30,7 @@ export class ProfileComponent implements OnInit {
     url: any;
     labelName : string = 'My Blogs';
     panelOpenState = [];
-    newBlogLink = 'New BLog';
+    newBlogLink = 'New Blog';
     displayOriginalBlog = [];
     displayUpdatedBlog = [];
     dispalyReplyBox = [];
@@ -47,6 +47,7 @@ export class ProfileComponent implements OnInit {
     zoom:number;
     address: string;
     uploadBlogImages: boolean;
+    uploadUpdatedBlogImages = [];
     filesToUpload: Array<File> = [];
     submitted: boolean;
   
@@ -57,7 +58,8 @@ export class ProfileComponent implements OnInit {
     });
 
     updatePost: FormGroup = new FormGroup({
-        description: new FormControl(null, Validators.required)
+        description: new FormControl(null, Validators.required),
+        image: new FormControl(null)
     });
 
     commentForm: FormGroup = new FormGroup({
@@ -129,11 +131,11 @@ export class ProfileComponent implements OnInit {
 
     get f() { return this.postForm.controls; }
 
-    UploadBlogImages(index: number){ debugger
+    UploadBlogImages(index: number){
         this.uploadBlogImages = !this.uploadBlogImages;
         this.submitted = false;
         if(this.showMyPost) {
-            this.uploadBlogImages[index] = !this.uploadBlogImages[index];
+            this.uploadUpdatedBlogImages[index] = !this.uploadUpdatedBlogImages[index];
         }
     }
 
@@ -173,6 +175,32 @@ export class ProfileComponent implements OnInit {
                 console.error(error);
             }
         );
+    }
+
+    UpdatePost(postId: string,index: number){
+        this.panelOpenState[index] = true;
+        this.displayOriginalBlog[index] = !this.displayOriginalBlog[index] ;
+        this.displayUpdatedBlog[index]= !this.displayUpdatedBlog[index];
+        const formData: any = new FormData();
+        const files: Array<File> = this.filesToUpload;
+
+        if(files.length > 0) {
+            for(let i =0; i < files.length; i++){
+                formData.append("uploads[]", files[i], files[i]['name']);
+            }
+        }
+        formData.append("forminput", JSON.stringify(this.updatePost.value.description));
+        if (!this.updatePost.valid) {
+            return;
+        }
+        this.userService.updatePost(postId, formData).subscribe(
+          data=> {
+              this.uploadUpdatedBlogImages[index] = false;
+              this.ShowAllPost();
+              this.DisplayMyPost();
+            },
+            error=>console.error(error)
+        )
     }
 
     fileChangeEvent(fileInput: any) {
@@ -405,18 +433,6 @@ export class ProfileComponent implements OnInit {
         this.dispalyReplyBox = [];
         this.replyClicked = [];
     }
-
-    UpdatePost(postId: string,index: number){
-
-        this.displayOriginalBlog[index] = !this.displayOriginalBlog[index] ;
-        this.displayUpdatedBlog[index]= !this.displayUpdatedBlog[index];
-        this.userService.updatePost(postId, JSON.stringify(this.updatePost.value)).subscribe(
-          data=> {
-              this.ShowAllPost();
-            },
-            error=>console.error(error)
-        )
-      }
 
     DeletePost(postId){
         this.userService.deletePost(postId).subscribe(
