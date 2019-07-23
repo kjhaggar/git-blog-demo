@@ -133,17 +133,14 @@ router.put('/updatePost/:id', blogImagesUpload.array("uploads[]", 12), function(
                 var updatedDetails = JSON.parse(req.body.forminput);
                 if(req.files) {
                     var imgUrl = req.files.map((file) => {
-                        return { 
-                            filename: file.filename
-                        }
+                        return file.filename;
                       })
-
-                      console.log(imgUrl)
                     if(imgUrl != null) {
-                        post.imageUrl = imgUrl;
-                        // post.imageUrl.push({
-                        //     filename: imgUrl
-                        // });
+                        // post.imageUrl.push(imgUrl); 
+                        imgUrl.forEach(element => {
+                            post.imageUrl.push({filename: element});                      
+                        });
+                        imgUrl=[];
                     }
                 }
                 post.description =updatedDetails;

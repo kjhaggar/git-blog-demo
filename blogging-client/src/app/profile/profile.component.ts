@@ -182,6 +182,9 @@ export class ProfileComponent implements OnInit {
         this.displayOriginalBlog[index] = !this.displayOriginalBlog[index] ;
         this.displayUpdatedBlog[index]= !this.displayUpdatedBlog[index];
         const formData: any = new FormData();
+        if(this.displayUpdatedBlog[index]) {
+            this.filesToUpload = [];
+        }
         const files: Array<File> = this.filesToUpload;
 
         if(files.length > 0) {
@@ -269,6 +272,7 @@ export class ProfileComponent implements OnInit {
     }
 
     clickedMyPost() {
+        this.panelOpenState=[];
         this.postForm.reset();
         this.submitted = false;
         this.uploadBlogImages = false
