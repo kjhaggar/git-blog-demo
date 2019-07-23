@@ -48,11 +48,12 @@ export class ProfileComponent implements OnInit {
     address: string;
     uploadBlogImages: boolean;
     filesToUpload: Array<File> = [];
+    submitted: boolean;
   
     postForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
         description: new FormControl(null, Validators.required),
-        image: new FormControl(null, Validators.required)
+        image: new FormControl(null)
     });
 
     updatePost: FormGroup = new FormGroup({
@@ -126,11 +127,55 @@ export class ProfileComponent implements OnInit {
         }
       }
 
-    UploadBlogImages(){
+    get f() { return this.postForm.controls; }
+
+    UploadBlogImages(index: number){ debugger
         this.uploadBlogImages = !this.uploadBlogImages;
+        this.submitted = false;
+        if(this.showMyPost) {
+            this.uploadBlogImages[index] = !this.uploadBlogImages[index];
+        }
     }
 
-    fileChangeEvent(fileInput: any) {debugger
+    AddPost() {
+        this.submitted = true;
+        const formData: any = new FormData();
+        const files: Array<File> = this.filesToUpload;
+
+        if(files.length > 0) {
+            for(let i =0; i < files.length; i++){
+                formData.append("uploads[]", files[i], files[i]['name']);
+            }
+        }
+        if (!this.postForm.valid) {
+            return;
+        }
+        const obj = {
+            title: this.postForm.value.title,
+            description: this.postForm.value.description,
+            userId: this.getCurrentUserId,
+            userName: this.getCurrentUserName
+        };
+
+        formData.append("forminput", JSON.stringify(obj));
+        this.userService.addPost( formData ).subscribe(
+            data => {
+                this.socket.emit('post',obj);
+                this.displayAddPost = !this.displayAddPost;
+                this.submitted = false;
+                this.postForm.reset();
+                this.newBlogLink = 'New Blog';
+                this.ShowAllPost();
+                this.DisplayProfile();
+            },
+            error => {
+                this.incorrectPost = true;
+                console.error(error);
+            }
+        );
+    }
+
+    fileChangeEvent(fileInput: any) {
     this.filesToUpload = <Array<File>>fileInput.target.files;
     }
     
@@ -196,6 +241,9 @@ export class ProfileComponent implements OnInit {
     }
 
     clickedMyPost() {
+        this.postForm.reset();
+        this.submitted = false;
+        this.uploadBlogImages = false
         this.showMyFriends = false;
         this.displayAddPost = !this.displayAddPost;
         this.newBlogLink = "New Blog";
@@ -335,6 +383,7 @@ export class ProfileComponent implements OnInit {
     DisplayPostBox=() => {
         this.displayAddPost = !this.displayAddPost;
         this.newBlogLink = "";
+        this.panelOpenState =[];
     }
 
     GetImageUrl(filename){
@@ -346,52 +395,9 @@ export class ProfileComponent implements OnInit {
         return this.sanitized.bypassSecurityTrustUrl(this.url);
     }
 
-    GetBlogImageUrl(filename){debugger
-        if(filename == undefined){
-            // this.url = 'http://localhost:3000/images/download.jpeg';
-        } else {
-            this.url = 'http://localhost:3000/blogImages/' + filename;
-        }
+    GetBlogImageUrl(filename){
+        this.url = 'http://localhost:3000/blogImages/' + filename;
         return this.sanitized.bypassSecurityTrustUrl(this.url);
-    }
-
-
-    AddPost() {debugger
-        console.log(this.filesToUpload)
-        const formData: any = new FormData();
-        const files: Array<File> = this.filesToUpload;
-        console.log(files);
-
-        for(let i =0; i < files.length; i++){
-            formData.append("uploads[]", files[i], files[i]['name']);
-        }
-        if (!this.postForm.valid) {
-            this.incorrectPost = true;
-            return;
-        }
-        const obj = {
-            title: this.postForm.value.title,
-            description: this.postForm.value.description,
-            userId: this.getCurrentUserId,
-            userName: this.getCurrentUserName
-        };
-
-        formData.append("forminput", JSON.stringify(obj));
-        this.userService.addPost( formData ).subscribe(
-            data => {debugger
-                this.socket.emit('post',obj);
-                this.displayAddPost = !this.displayAddPost;
-                this.ShowAllPost();
-                this.DisplayProfile();
-            },
-            error => {
-                this.incorrectPost = true;
-                console.error(error);
-            }
-        );
-
-        this.postForm.reset();
-        this.newBlogLink = 'New Blog';
     }
 
     ShowCommentBox(id: string, index: number) {

@@ -27,20 +27,25 @@
 <div class= "container" *ngIf = "displayAddPost">
     <div class= "post">
         <div class= "col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 border border-primary rounded ">
-            <button type="button" class="close" (click)="displayAddPost = false; newBlogLink = 'New Blog'">
+            <button type="button" class="close" (click)="displayAddPost = false; newBlogLink = 'New Blog'; postForm.reset(); submitted = false; uploadBlogImages = false">
                 <span aria-hidden="true">&times;</span>
             </button>
             <form [formGroup]="postForm" enctype="multipart/form-data">
-                <div>
-					<label *ngIf = "incorrectPost">Enter Valid Details..</label>
-				</div>
                 <div class="form-group" >
                     <label for="exampleInputEmail1">Title</label>
-                    <input name="title" type="text" formControlName="title" class="form-control" placeholder="Enter title">
+                    <input name="title" type="text" formControlName="title" class="form-control"
+                    placeholder="Enter title" [ngClass]="{ 'is-invalid': submitted && f.title.errors }">
+                    <div *ngIf="submitted && f.title.errors" class="invalid-feedback">
+                        <div *ngIf="f.title.errors.required">No title provided</div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="exampleInputPassword1">Description</label>
-                    <textarea name="description" formControlName="description" rows="4" class="form-control" placeholder="Your post..!!"></textarea>
+                    <textarea name="description" formControlName="description" rows="4" class="form-control"
+                    placeholder="Your post..!!" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+                    <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
+                        <div *ngIf="f.description.errors.required">Enter valid information</div>
+                    </div>
                 </div>
                 <button type="button" class="btn btn-sm btn-primary" (click) = "showGoogleMap = true">Add Location</button>
                 <!-- <div *ngIf = "showGoogleMap">
@@ -58,7 +63,7 @@
                         <input formControlName="image" id="image" name="image" type="file" 
                         (change)="fileChangeEvent($event)" placeholder="Upload a file..." multiple/>
                     </div>
-                    <!-- <img [src]="url" height="100" alt="preview"> <br/> -->
+                    <!-- <img [src]="url" height="100" alt="preview"> <br/>  -->
                 </div>
                 <button type="button" class="btn btn-sm btn-primary" (click) = "AddPost()">Post</button>
             </form>
@@ -158,8 +163,16 @@
                         </div>
                     </mat-expansion-panel-header>
                     <p *ngIf = "!displayOriginalBlog[i]" class = "description">{{post.description}}</p>
-                    <img *ngFor="let count of post.imageUrl" class = "logo" [src] = GetBlogImageUrl(count.filename)/>
                     <textarea *ngIf = "displayUpdatedBlog[i]" class = "description form-control" formControlName = "description" [(ngModel)] = "post.description" rows="10" >{{post.description}}</textarea>
+                    <img *ngFor="let count of post.imageUrl" class = "logo" [src] = GetBlogImageUrl(count.filename)/>
+                    <button *ngIf = "displayUpdatedBlog[i]" type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages(i)">Upload Photo(s)</button>
+                    <div class="form-group" *ngIf= "uploadBlogImages[i]">
+                        <div class="col-md-9">
+                            <input formControlName="image" id="image" name="image" type="file" 
+                            (change)="fileChangeEvent($event)" placeholder="Upload a file..." multiple/>
+                        </div>
+                        <!-- <img [src]="url" height="100" alt="preview"> <br/>  -->
+                    </div>
                     <div class="comment panel-footer">
                         <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
                         <button type="button" class="btn btn-sm btn-primary" (click)="DeletePost(post._id)">Delete Post</button>
