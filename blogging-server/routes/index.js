@@ -4,9 +4,10 @@ var passport = require('passport');
 var User = require('../models/user');
 var Post = require('../models/addPost');
 var Request = require('../models/FriendRequest');
+var Notify = require('../models/newTagNotify');
 var jwt = require('jsonwebtoken');
 var multer = require('multer');
-var path = require('path');
+
 router.post('/register', function (req, res, next) {
     addToDB(req, res);
 });
@@ -82,6 +83,23 @@ router.post('/sendRequest', function(req, res, next) {
     });
 });
 
+router.post('/storeTaggedUsers', function(req, res, next) {
+    var notify = new Notify({
+        postId: req.body.postId,
+        taggedBy: req.body.taggedBy
+    });
+    for (var i = 0; i < req.body.users.length; i++) {
+        notify.taggedUsers.push({
+            userName: req.body.users[i]});
+    }
+    notify.save((err) => {
+        if (err) {
+            res.json({ success: false, message: 'Something went wrong.' });
+        } else {
+            res.json({ success: true, message: 'Saved' });
+        }
+    });
+});
 router.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "http://localhost:4200");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -115,7 +133,7 @@ router.post('/addPost', blogImagesUpload.array("uploads[]", 12), function(req, r
     });
     try {
         doc = blog.save();
-        return res.status(201).json(doc);
+        return res.status(201).json(blog);
     }
     catch (err) {
         return res.status(501).json(err);
@@ -234,7 +252,7 @@ router.get('/allPost',function(req,res){
 router.get('/getPostById/:id', function(req, res) {
     Post.find({userId: req.params.id}).exec(function (err, posts) {
         if (err) {
-        // console.log("Error:", err);
+        console.log("Error:", err);
         } else {
             res.send(posts);
         }
@@ -349,6 +367,17 @@ router.get('/requestList/:id', function(req, res) {
     });
 });
 
+router.get('/getNotified/:userName', function(req, res) {
+    Notify.find({ "taggedUsers.userName" : req.params.userName}).exec(function (err, user) {
+        console.log(user)
+        if (err) {
+            console.log("Error:", err);
+        } else {
+            res.send(user)
+        }
+    });
+});
+
 router.get('/sentRequestList/:id', function(req, res) {
     Request.find({ user: req.params.id}).exec(function (err, request) {
         if (err) {
@@ -362,11 +391,22 @@ router.get('/sentRequestList/:id', function(req, res) {
 });
 
 router.delete('/deleteFriendRequest/:userId/:requestToId', function(req, res, next) {
-    console.log("user: " + req.param.userId)
-    console.log("requestTo: " + req.params.requestToId)
+    // console.log("user: " + req.param.userId)
+    // console.log("requestTo: " + req.params.requestToId)
     Request.findOneAndDelete({user: req.param.userId, requestTo: req.params.requestToId}).exec(function(err, user) {
         if (err) return next(err);
         res.json(user);
   });
   });
+
+  router.get('/tagUser', function(req, res) {
+    User.find({}).select('userName').exec(function (err, user) {
+        if (err) {
+        console.log("Error:", err);
+        } else {
+            var uName = user.map(({userName}) => userName);
+            res.json({uName,user});
+        }
+    });
+});
 module.exports = router;

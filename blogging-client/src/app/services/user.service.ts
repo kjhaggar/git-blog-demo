@@ -19,6 +19,14 @@ export class UserService {
         })
     }
 
+    sendNotification(body) {
+        return this.http.post('http://127.0.0.1:3000/api/storeTaggedUsers', body, {
+            observe:'body',
+            withCredentials:true,
+            headers:new HttpHeaders().append('Content-Type','application/json')
+        })
+    }
+
     getUsersList() {
         return this.http.get('http://127.0.0.1:3000/api/getUsersList/', {
             observe: 'body',
@@ -46,10 +54,7 @@ export class UserService {
     addPost(formData: any) {
         return this.http.post('http://127.0.0.1:3000/api/addPost', formData, {
             observe: 'body',
-            withCredentials: true,
-            // headers: new HttpHeaders().append('Content-Type', 'multipart/form-data')
-            // .append('Content-Type', 'text/html')
-    
+            withCredentials: true
         });
     }
 
@@ -116,6 +121,14 @@ export class UserService {
         })
     }
 
+    NotificationList(userName: string) {
+        return this.http.get('http://127.0.0.1:3000/api/getNotified/' + userName, {
+            observe:'body',
+            withCredentials:true,
+            headers:new HttpHeaders().append('Content-Type','application/json')
+        })
+    }
+
     SentRequestList(userId: string) {
         return this.http.get('http://127.0.0.1:3000/api/sentRequestList/' + userId, {
             observe:'body',
@@ -132,6 +145,13 @@ export class UserService {
         })
     }
 
+    tagUser(){
+        return this.http.get('http://127.0.0.1:3000/api/tagUser',{
+            observe:'body',
+            withCredentials:true,
+            headers:new HttpHeaders().append('Content-Type','application/json')
+        })
+    }
     newCommentReceived() {
         let observable = new Observable<any>(observer => {
             this.socket.on('new comment', (data) => {
@@ -166,6 +186,16 @@ export class UserService {
         let observable = new Observable<any>(observer=>{
             this.socket.on('newFriendRequest', (friend)=>{
                 observer.next(friend);
+            });
+            return () => {this.socket.disconnect();}
+        });
+        return observable;
+    }
+
+    newTag(){
+        let observable = new Observable<any>(observer=>{
+            this.socket.on('newTag', (data)=>{
+                observer.next(data);
             });
             return () => {this.socket.disconnect();}
         });

@@ -11,6 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { AgmCoreModule } from '@agm/core';
+import { MentionModule } from 'angular-mentions';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -47,8 +48,9 @@ export const authInterceptorProviders = [
     BrowserAnimationsModule,
     MatExpansionModule,
     MatIconModule,
+    MentionModule,
     AgmCoreModule.forRoot({
-      apiKey: '',
+      apiKey: 'AIzaSyBrxHHLSeiR4FDhJvKuip315yE1o8qogqI',
       libraries: ['places']
     })
   ],

@@ -23,6 +23,16 @@
         </ul>
     </div>
 </nav>
+<div  *ngIf="hideSuccessMessage && getCurrentUserName != getTaggedByUser">
+    <div class="col-18">
+      <p class="alert alert-success">
+            <button type="button" class="close" (click)="hideSuccessMessage = false">
+                <span aria-hidden="true">&times;</span>
+            </button>
+          <strong >You were tagged in a new blog by {{getTaggedByUser | titlecase}} </strong>                 
+      </p>
+    </div>
+</div>
 
 <div class= "container" *ngIf = "displayAddPost">
     <div class= "post">
@@ -42,21 +52,25 @@
                 <div class="form-group">
                     <label for="exampleInputPassword1">Description</label>
                     <textarea name="description" formControlName="description" rows="4" class="form-control"
-                    placeholder="Your post..!!" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+                    placeholder="Your post..!!" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"
+                    [mention]="items" [mentionConfig]="{maxItems:10, labelKey: 'tag'}" ></textarea>
+                    <!-- <div class="mention-highlight"></div> -->
                     <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
                         <div *ngIf="f.description.errors.required">Enter valid information</div>
                     </div>
                 </div>
                 <button type="button" class="btn btn-sm btn-primary" (click) = "showGoogleMap = true">Add Location</button>
-                <!-- <div *ngIf = "showGoogleMap">
+                <div *ngIf = "showGoogleMap">
                     <agm-map [latitude]="latitude" [longitude]="longitude" [zoom]="zoom">
-                            <agm-marker [latitude]="latitude" [longitude]="longitude" [markerDraggable]="true"></agm-marker>
+                            <agm-marker [latitude]="latitude" [longitude]="longitude" [markerDraggable]="true" (dragEnd)="markerDragEnd($event)"></agm-marker>
                     </agm-map>
+                    <h5>Current Address: {{address}}</h5>
                     <label>Enter address</label>
-                    <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()"
-                    placeholder="Search Location" autocorrect="off" autocapitalize="off" spellcheck="off"
-                    #search>
-                </div> -->
+                    <form>
+                        <input type="text" class="form-group" [(ngModel)]="searchInfo.location" name="searchInfo">
+                        <button class="btn btn-sm btn-primary" (click)="searchLoc(searchInfo)">Search</button>
+                    </form>
+                </div>
                 <button type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages()">Upload Media</button>
                 <div class="form-group" *ngIf= "uploadBlogImages">
                     <div class="col-md-9">
@@ -84,13 +98,13 @@
                             <div *ngFor = "let user of usersProfile; index as j" class="panel-title pull-left">
                                 <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
                             </div>
-                            <label class="panel-title title col-md-2" ><em>{{ post.title | titlecase}}</em></label>
+                            <label class="panel-title title col-lg-2" ><em>{{ post.title | titlecase}}</em></label>
                             <small class="info col-lg-5" >Posted by {{post.userName | titlecase}} on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>
                         </div>
                     </mat-expansion-panel-header>
                     <p class = "description" cols="80" rows="4">{{post.description}}</p>
                     <div *ngFor="let count of post.imageUrl">
-                            <img style="margin: 10px 145px" [src] = GetBlogImageUrl(count.filename)/>
+                            <img style="margin: 10px 175px; height: 30%; width: 30%" [src] = GetBlogImageUrl(count.filename)/>
                         </div>
                     
                     <div class="comment panel-footer">
@@ -175,7 +189,7 @@
                         <!-- <img [src]="url" height="100" alt="preview"> <br/>  -->
                     </div>
                     <div *ngFor="let count of post.imageUrl">
-                        <img style="margin: 10px 145px" [src] = GetBlogImageUrl(count.filename)/>
+                        <img style="margin: 10px 175px; height: 30%; width: 30%" [src] = GetBlogImageUrl(count.filename)/>
                     </div>
         
                     <div class="comment panel-footer">
