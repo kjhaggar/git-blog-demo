@@ -25,6 +25,7 @@ import { AuthGuard } from './guards/auth.guard';
 
 import { AuthInterceptor } from './interceptor/auth-interceptor';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
+import { BlogComponent } from './blog/blog.component';
 
 export const authInterceptorProviders = [
   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
@@ -36,7 +37,8 @@ export const authInterceptorProviders = [
     LoginComponent,
     RegisterComponent,
     ProfileComponent,
-    EditProfileComponent
+    EditProfileComponent,
+    BlogComponent
   ],
   imports: [
     BrowserModule,
@@ -50,7 +52,7 @@ export const authInterceptorProviders = [
     MatIconModule,
     MentionModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyBrxHHLSeiR4FDhJvKuip315yE1o8qogqI',
+      apiKey: 'AIzaSyBzS-pIcW-xUtwOFGXt2ErDPfpAbLCRgSc',
       libraries: ['places']
     })
   ],

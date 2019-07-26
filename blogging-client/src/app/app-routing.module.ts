@@ -1,3 +1,4 @@
+import { BlogComponent } from './blog/blog.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent},
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
   { path: 'editProfile', component: EditProfileComponent, canActivate: [AuthGuard] },
+  { path: 'blog/:id', component: BlogComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

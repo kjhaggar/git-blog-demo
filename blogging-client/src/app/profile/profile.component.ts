@@ -1,6 +1,6 @@
 import { UserService } from './../services/user.service';
 import { AuthService } from '../services/auth.service';
-import { Component, OnInit, ViewChild, NgZone} from '@angular/core';
+import { Component, OnInit, NgZone} from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -29,7 +29,6 @@ export class ProfileComponent implements OnInit {
     incorrectPost: boolean;
     usersProfile: any;
     url: any;
-    labelName : string = 'My Blogs';
     panelOpenState = [];
     newBlogLink = 'New Blog';
     displayOriginalBlog = [];
@@ -57,6 +56,8 @@ export class ProfileComponent implements OnInit {
     mentionedUsers: Array<string>;
     hideSuccessMessage: boolean;
     getTaggedByUser: string;
+    showNotification: boolean;
+    recentNotification
 
     searchForm: FormGroup = new FormGroup({
         searchInfo: new FormControl()
@@ -123,9 +124,9 @@ export class ProfileComponent implements OnInit {
         this.userService.newTag().subscribe(
             data => {
                 if(data.users.includes(this.getCurrentUserName)) {
-                    this.getTaggedByUser = data.taggedBy;
+                    this.getTaggedByUser = data.taggedBy
                     this.hideSuccessMessage = true;
-                    //     this.newNotification();
+                    this.newNotification();
                 }
             },
             error => console.log(error)
@@ -148,7 +149,7 @@ export class ProfileComponent implements OnInit {
         }
     
         this.mapsAPILoader.load().then(() => {
-            // this.setCurrentLocation();
+            this.setCurrentLocation();
             this.geoCoder = new google.maps.Geocoder;
             // let autocomplete = new google.maps.places.Autocomplete(this.search, {
             //     types: ["address"]
@@ -188,7 +189,6 @@ export class ProfileComponent implements OnInit {
           console.log(this.searchForm.controls.searchInfo.value)
           debugger
         this.geoCoder.geocode({'address': temp.location} , (results, status) => {
-            console.log(results);
             // console.log(status);
             // if (status === 'OK') {
             //     if (results[0]) {
@@ -207,8 +207,8 @@ export class ProfileComponent implements OnInit {
       getAddress(latitude, longitude) {
         
             this.geoCoder.geocode({ 'location': { lat: latitude, lng: longitude }}, (results, status) => {
-            console.log(results);
-            console.log(status);
+            // console.log(results);
+            // console.log(status);
             if (status === 'OK') {
                 if (results[0]) {
                 this.zoom = 12;
@@ -217,7 +217,7 @@ export class ProfileComponent implements OnInit {
                 window.alert('No results found');
                 }
             } else {
-                window.alert('Geocoder failed due to: ' + status);
+                // window.alert('Geocoder failed due to: ' + status);
             }
         
           });
@@ -394,9 +394,14 @@ export class ProfileComponent implements OnInit {
         )
     }
 
-    newNotification() {
+    newNotification(userTaggedBy?: string) {
+        this.getTaggedByUser = userTaggedBy;
         this.userService.NotificationList(this.getCurrentUserName).subscribe(
-            data => console.log(data),
+            (data: {taggedBy: string}) => {
+                this.getTaggedByUser = data.taggedBy;
+                this.hideSuccessMessage = true;
+                this.recentNotification= data
+            },
             error => console.log(error)
         )
     }
@@ -437,7 +442,22 @@ export class ProfileComponent implements OnInit {
             error => console.log(error)
         )
     }
+    Notify() {
+        this.displayAddPost = false;
+        this.showAllPost = false;
+        this.showMyPost = false;
+        this.showMyFriends = false;
+        this.showNotification = true;
+    }
 
+    clickedHome() {
+        this.showAllPost = true;
+        this.displayAddPost = false;
+        this.newBlogLink = 'New Blog';
+        this.showMyPost = false;
+        this.showMyFriends = false;
+        this.showNotification = false;
+    }
     clickedMyPost() {
         this.panelOpenState=[];
         this.postForm.reset();
@@ -446,14 +466,9 @@ export class ProfileComponent implements OnInit {
         this.showMyFriends = false;
         this.displayAddPost = !this.displayAddPost;
         this.newBlogLink = "New Blog";
-        if(this.showMyPost == true) {
-            this.labelName = "My Blogs";
-        } else {
-            this.labelName = "Dashboard";
-        }
         this.displayAddPost = false;
-        this.showAllPost = !this.showAllPost;
-        this.showMyPost = !this.showMyPost;
+        this.showAllPost =false;
+        this.showMyPost = true;
         this.displayComment = [];
         this.dispalyReplyBox = [];
         this.replyClicked = [];

@@ -1,0 +1,73 @@
+<div class="container">
+    <div class= "col-md-10 col-md-offset-1">
+        <div *ngFor= "let post of post">
+            <header style="text-align: center"> 
+                <h1><b>MY BLOG</b></h1>
+                <p>Welcome to the blog of <span class="w3-tag">{{post.userName | titlecase}}</span></p>
+            </header>
+            <br>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <div class="w3-container">
+                        <h3><b>{{post.title}}</b></h3>
+                        <h5>Created at: <span class="w3-opacity">{{ post.createdAt | date:'MMM dd, yyyy'}}</span></h5>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <p class = "description" cols="80" rows="4">{{post.description}}</p>
+                    <div *ngFor="let count of post.imageUrl">
+                        <img style="margin: 10px 300px; height: 30%; width: 30%" [src] = GetBlogImageUrl(count.filename)/>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox()">{{toggleCommentButton}}</button>
+                </div>
+                <div class="panel-footer">
+                    <div *ngIf = "displayComment" class="showCommentBox">
+                        <div  *ngIf = "post.comments.length > 0; else noComments" >
+                            <div *ngFor="let item of post.comments; index as j" class="row">
+                                <div class="col-sm-10">
+                                    <span><strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}</span>
+                                </div>
+                                <a (click)="openReplyText(j)" style="cursor: pointer">Show Replies</a>
+
+                                <div *ngIf="dispalyReplyBox[j]" class="showReplyBox">
+
+                                        <div  *ngIf = "post.comments[j].replies.length > 0; else noComments" >
+                                            <div *ngFor="let reply of post.comments[j].replies; index as k" class="row">
+                                                <div>
+                                                    <span ><strong>{{reply.commenterName | titlecase}} : </strong> {{reply.content}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ng-template #noComments>No replies.</ng-template>
+                                        <br>
+                                        <i class="material-icons" style="cursor: pointer;" (click) = "openReplyForm(j)">reply</i>
+                                    <form [formGroup] = "replyForm" *ngIf = "replyClicked[j]">
+                                        <input type="text" class="form-control" formControlName="content"/>
+                                        
+                                        <button mat-raised-button type="submit" (click)="addReply(post._id, item._id, j, i)" (click)="$event.stopPropagation();">Send</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #noComments>No comments. Be the first one to comment.</ng-template>
+                        <br>
+                        <i class="material-icons" style="cursor: pointer;" (click) = "openCommentForm()">sms</i>
+                        <form [formGroup]="commentForm" *ngIf = "commentClicked">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" formControlName="content"
+                                    placeholder="Start Typing here.." >
+                                </div>
+                                <div class="col-sm-2">
+                                    <button mat-raised-button type="submit" class="btn btn-sm btn-success pull-right"
+                                    (click)="PostComment(post._id,i)" (click)="$event.stopPropagation();"
+                                    [disabled]="!commentForm.valid">Send</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

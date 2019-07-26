@@ -228,7 +228,7 @@ var storage = multer.diskStorage({
     });
 
 router.get('/displayProfilePicture', function(req, res) {
-    User.find({}).select('image').exec(function (err, user) {
+    User.find({}).select('image userName').exec(function (err, user) {
         if (err) {
         console.log("Error:", err);
         } else {
@@ -255,6 +255,16 @@ router.get('/getPostById/:id', function(req, res) {
         console.log("Error:", err);
         } else {
             res.send(posts);
+        }
+    });
+});
+
+router.get('/getBlogById/:id', function(req, res) {
+    Post.find({_id: req.params.id}).exec(function (err, post) {
+        if (err) {
+        console.log("Error:", err);
+        } else {
+            res.send(post);
         }
     });
 });
@@ -369,7 +379,6 @@ router.get('/requestList/:id', function(req, res) {
 
 router.get('/getNotified/:userName', function(req, res) {
     Notify.find({ "taggedUsers.userName" : req.params.userName}).exec(function (err, user) {
-        console.log(user)
         if (err) {
             console.log("Error:", err);
         } else {

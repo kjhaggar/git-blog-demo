@@ -51,6 +51,14 @@ export class UserService {
         });
     }
 
+    getBlogById(id: string) {
+        return this.http.get('http://127.0.0.1:3000/api/getBlogById/' + id, {
+            observe: 'body',
+            withCredentials:true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json')
+        });
+    }
+
     addPost(formData: any) {
         return this.http.post('http://127.0.0.1:3000/api/addPost', formData, {
             observe: 'body',
