@@ -70,7 +70,7 @@ export class BlogComponent implements OnInit {
 		}
         this.dispalyReplyBox = [];
         this.replyClicked = [];
-    }
+    } 
 	
 	openCommentForm() {
         this.commentClicked = !this.commentClicked;

@@ -8,6 +8,7 @@ import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as io from 'socket.io-client';
 import { MapsAPILoader, MouseEvent } from '@agm/core';
+import { ThrowStmt } from '@angular/compiler';
 var parse = require('parse-mentions');
 
 @Component({
@@ -128,6 +129,15 @@ export class ProfileComponent implements OnInit {
                     this.hideSuccessMessage = true;
                     this.newNotification();
                 }
+            },
+            error => console.log(error)
+        )
+
+        this.userService.canceledRequestReceived().subscribe(
+            data => {
+                this.newRequest();
+                this.acceptRequest[data] = false;
+                this.friendRequestSent[data] = false;
             },
             error => console.log(error)
         )
@@ -271,11 +281,33 @@ export class ProfileComponent implements OnInit {
         )
     }
 
-    format=(item):any => {
-        // this.mentionedUsers.map(item => item)
-        // .filter((value, index, self) => self.indexOf(value) === index)
-        return '@' + item['tag']
-      }
+    newNotification(userTaggedBy?: string) {
+        this.getTaggedByUser = userTaggedBy;
+        this.userService.NotificationList(this.getCurrentUserName).subscribe(
+            (data: {taggedBy: string, taggedUsers: any}) => {
+                this.getTaggedByUser = data.taggedBy;
+                for( var index in data ){
+                    var x = data[index]["taggedUsers"]
+                    for( var temp in x ) {
+                        if(x[temp]["userName"] == this.getCurrentUserName && x[temp]["read"] == false) {
+                            this.hideSuccessMessage = true;
+                        }
+                    }
+                }
+                
+                this.recentNotification= data
+            },
+            error => console.log(error)
+        )
+    }
+
+    changeStatus(id: string) {
+        this.userService.changePostStatus(id, this.getCurrentUserName).subscribe(
+            (data) => {},
+            error => console.log(error)
+            
+        )
+    }
 
     UploadBlogImages(index: number){
         this.uploadBlogImages = !this.uploadBlogImages;
@@ -370,10 +402,27 @@ export class ProfileComponent implements OnInit {
     fileChangeEvent(fileInput: any) {
     this.filesToUpload = <Array<File>>fileInput.target.files;
     }
+
+    AcceptFriendRequest(userId: string) {}
     
-    DeleteFriendRequest(userId: string) {debugger
+    DeleteFriendRequest(userId: string) {
         this.userService.deleteFriendRequest(userId, this.getCurrentUserId).subscribe(
             data=> {
+                this.socket.emit('cancelFriendRequest', this.getCurrentUserId);
+                this.acceptRequest[userId] = false;
+                this.friendRequestSent[userId] = false;
+                this.newRequest();
+                this.sentRequest();
+              },
+              error=>console.error(error)
+          )
+    }
+    CancelFriendRequest(userId: string) {
+        this.userService.cancelFriendRequest(this.getCurrentUserId, userId).subscribe(
+            data=> {
+                this.socket.emit('cancelFriendRequest', this.getCurrentUserId);
+                this.acceptRequest[userId] = false;
+                this.friendRequestSent[userId] = false;
                 this.newRequest();
                 this.sentRequest();
               },
@@ -394,17 +443,6 @@ export class ProfileComponent implements OnInit {
         )
     }
 
-    newNotification(userTaggedBy?: string) {
-        this.getTaggedByUser = userTaggedBy;
-        this.userService.NotificationList(this.getCurrentUserName).subscribe(
-            (data: {taggedBy: string}) => {
-                this.getTaggedByUser = data.taggedBy;
-                this.hideSuccessMessage = true;
-                this.recentNotification= data
-            },
-            error => console.log(error)
-        )
-    }
     sentRequest() {
         this.userService.SentRequestList(this.getCurrentUserId).subscribe(
             (data: {pendingRequestId : string}) => {
@@ -435,6 +473,7 @@ export class ProfileComponent implements OnInit {
         this.showAllPost = false;
         this.showMyPost = false;
         this.showMyFriends = true;
+        this.showNotification = false;
         this.userService.getUsersList().subscribe(
             data => {
                 this.usersInfo = data;
@@ -599,9 +638,4 @@ export class ProfileComponent implements OnInit {
 
     Logout=() => this.authService.logout();
 
-    FadeOutSuccessMsg() {
-        setTimeout( () => {
-            this.hideSuccessMessage = false;
-        }, 6000);
-    }
 }

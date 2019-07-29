@@ -100,6 +100,28 @@ router.post('/storeTaggedUsers', function(req, res, next) {
         }
     });
 });
+
+router.put('/changePostStatus/:id', function(req, res, next) {
+    Notify.findByIdAndUpdate(req.params.id).exec(function (err, blog) {
+        if (err) {
+            console.log("Error:", err);
+        } else {
+            blog.taggedUsers.forEach(function (item) {
+                    var y = item.userName
+                    if(y == req.body.user)
+                    item.read = true;
+            });
+            try {
+                doc = blog.save();
+                return res.status(201).json(blog);
+            }
+            catch (err) {
+                return res.status(501).json(err);
+            }
+        }
+    });
+})
+
 router.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "http://localhost:4200");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -154,7 +176,6 @@ router.put('/updatePost/:id', blogImagesUpload.array("uploads[]", 12), function(
                         return file.filename;
                       })
                     if(imgUrl != null) {
-                        // post.imageUrl.push(imgUrl); 
                         imgUrl.forEach(element => {
                             post.imageUrl.push({filename: element});                      
                         });
@@ -362,8 +383,8 @@ router.get('/requestList/:id', function(req, res) {
     Request.find({ requestTo: req.params.id}).exec(function (err, request) {
         if (err) {
         console.log("Error:", err);
-        } else {
-
+        }
+        else {
             var pendingRequestId = request.map(({user}) => user);
             User.find({_id: { $in: pendingRequestId }}).exec(function (err, pendingUserProfile) {
                 if(err) {
@@ -399,10 +420,15 @@ router.get('/sentRequestList/:id', function(req, res) {
     });
 });
 
-router.delete('/deleteFriendRequest/:userId/:requestToId', function(req, res, next) {
-    // console.log("user: " + req.param.userId)
-    // console.log("requestTo: " + req.params.requestToId)
-    Request.findOneAndDelete({user: req.param.userId, requestTo: req.params.requestToId}).exec(function(err, user) {
+router.delete('/deleteFriendRequest', function(req, res, next) {
+    Request.findOneAndDelete({user: req.body.user, requestTo: req.body.requestTo}).exec(function(err, user) {
+        if (err) return next(err);
+        res.json(user);
+  });
+  });
+
+  router.delete('/cancelFriendRequest', function(req, res, next) {
+    Request.findOneAndDelete({user: req.body.user, requestTo: req.body.requestTo}).exec(function(err, user) {
         if (err) return next(err);
         res.json(user);
   });

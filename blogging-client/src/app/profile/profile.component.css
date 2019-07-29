@@ -61,7 +61,7 @@ a{
 .list {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     max-width: 200px;
-    margin: 10px auto;
+    margin: 30px auto;
     text-align: center;
     font-family: arial;
 }
@@ -94,7 +94,7 @@ a{
 button:hover, a:hover {
     opacity: 0.7;
 }
-.reqColumn.col-md-8 {
+.reqColumn {
     width: 40%
 }
 agm-map {

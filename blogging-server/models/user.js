@@ -11,9 +11,11 @@ var userSchema = new Schema({
     image: { type: String },
     friends: [{
         friendName: {
-            type: Schema.ObjectId,
-            required: true,
+            type: String, required: true,
             ref: 'User'
+        },
+        friendId: {
+            type: Schema.ObjectId
         }
     }]
 });

@@ -96,9 +96,19 @@ export class UserService {
             // headers:new HttpHeaders().append('Content-Type','application/json')
         })
     }
+    changePostStatus(id: string, userName : string){
+        var body = {
+            user: userName
+        }
+        return this.http.put('http://127.0.0.1:3000/api/changePostStatus/' + id, body, {
+            observe:'body',
+            withCredentials:true,
+            // headers:new HttpHeaders().append('Content-Type','application/json')
+        })
+    }
 
     deletePost(postId: string){
-        return this.http.delete('http://127.0.0.1:3000/api/deletePost/' + postId,{
+        return this.http.delete('http://127.0.0.1:3000/api/deletePost/' + postId, {
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
@@ -145,12 +155,37 @@ export class UserService {
         })
     }
 
-    deleteFriendRequest(userId: string, requestToId: string){debugger
-        return this.http.delete('http://127.0.0.1:3000/api/deleteFriendRequest/' + userId+ "/"+ requestToId,{
+    acceptFriendRequest(userId: string, requestToId: string){
+        return this.http.put('http://127.0.0.1:3000/api/acceptFriendRequest/' + userId, {
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
         })
+    }
+    deleteFriendRequest(userId: string, requestToId: string){
+        return this.http.request('DELETE', 'http://127.0.0.1:3000/api/deleteFriendRequest', {
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type','application/json'),
+            body: {
+                user : userId,
+                requestTo: requestToId
+            }
+        }
+        )
+    }
+
+    cancelFriendRequest(userId: string, requestToId: string){
+        return this.http.request('DELETE', 'http://127.0.0.1:3000/api/deleteFriendRequest', {
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type','application/json'),
+            body: {
+                user : userId,
+                requestTo: requestToId
+            }
+        }
+        )
     }
 
     tagUser(){
@@ -194,6 +229,16 @@ export class UserService {
         let observable = new Observable<any>(observer=>{
             this.socket.on('newFriendRequest', (friend)=>{
                 observer.next(friend);
+            });
+            return () => {this.socket.disconnect();}
+        });
+        return observable;
+    }
+
+    canceledRequestReceived(){
+        let observable = new Observable<any>(observer=>{
+            this.socket.on('cancelRequest', (userId)=>{
+                observer.next(userId);
             });
             return () => {this.socket.disconnect();}
         });
