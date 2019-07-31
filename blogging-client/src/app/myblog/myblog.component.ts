@@ -1,18 +1,18 @@
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { UserService } from './../services/user.service';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { UserService } from '../services/user.service';
+import { DomSanitizer } from '@angular/platform-browser';
 import * as io from 'socket.io-client';
 
 @Component({
-  selector: 'app-blog',
-  templateUrl: './blog.component.html',
-  styleUrls: ['./blog.component.css']
+  selector: 'app-myblog',
+  templateUrl: './myblog.component.html',
+  styleUrls: ['./myblog.component.css']
 })
-export class BlogComponent implements OnInit {
-	id: string;
+export class MyblogComponent implements OnInit {
+  id: string;
 	private sub: any;
 	post: Object;
 	url: any;
@@ -26,10 +26,11 @@ export class BlogComponent implements OnInit {
 	private subscription: Subscription = new Subscription();
 	private socket = io('http://127.0.0.1:3000');
 	usersProfile: any;
-	displayOriginalBlog = [];
-	displayUpdatedBlog =[];
+	displayOriginalBlog: boolean;
+	displayUpdatedBlog: boolean;
 	filesToUpload: Array<File> = [];
-	uploadUpdatedBlogImages = [];
+  uploadUpdatedBlogImages: boolean;
+  submitted: boolean;
 
 	commentForm: FormGroup = new FormGroup({
         content: new FormControl(null, Validators.required)
@@ -97,8 +98,8 @@ export class BlogComponent implements OnInit {
 		} else {
 			this.toggleCommentButton = "Show Comments"
 		}
-        this.dispalyReplyBox = [];
-        this.replyClicked = [];
+    this.dispalyReplyBox = [];
+    this.replyClicked = [];
     } 
 	
 	openCommentForm() {
@@ -172,11 +173,11 @@ export class BlogComponent implements OnInit {
 		alert("Blog no longer available.. \n Go back to Home Page")
     }
 	
-	UpdatePost(postId: string,index: number){
-        this.displayOriginalBlog[index] = !this.displayOriginalBlog[index] ;
-        this.displayUpdatedBlog[index]= !this.displayUpdatedBlog[index];
+	UpdatePost(postId: string){
+        this.displayOriginalBlog = !this.displayOriginalBlog ;
+        this.displayUpdatedBlog = !this.displayUpdatedBlog;
         const formData: any = new FormData();
-        if(this.displayUpdatedBlog[index]) {
+        if(this.displayUpdatedBlog) {
             this.filesToUpload = [];
         }
         const files: Array<File> = this.filesToUpload;
@@ -192,14 +193,19 @@ export class BlogComponent implements OnInit {
         }
         this.userService.updatePost(postId, formData).subscribe(
           data=> {
-			  this.uploadUpdatedBlogImages[index] = false;
+			  this.uploadUpdatedBlogImages = false;
 			  this.getBlog();
             },
             error=>console.error(error)
         )
     }
+
+    UploadBlogImages(){
+      this.submitted = false;
+      this.uploadUpdatedBlogImages = !this.uploadUpdatedBlogImages;
+  }
+
 	ngOnDestroy() {
 		this.sub.unsubscribe();
 	  }
-
 }

@@ -38,6 +38,15 @@
     </p>
 </div>
 
+<div class= "container" *ngIf="newFriendAdded">
+    <p class="alert alert-success col-md-3 col-md-offset-4" style="text-align: center">
+        <strong [ngClass] ="FadeOutSuccessMsg()">Friend Request accepted..!!</strong>
+        <button type="button" class="close" (click)="newFriendAdded = false">
+            <span aria-hidden="true">&times;</span>
+        </button>     
+    </p>     
+</div>
+
 <div class= "container" *ngIf = "displayAddPost">
     <div class= "post">
         <div class= "col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 border border-primary rounded ">
@@ -90,26 +99,20 @@
 
 <div class= "container" *ngIf = "showAllPost">
     <h2>All Blogs</h2>
-    <mat-accordion>
         <div class = "displayPost panel panel-primary" *ngFor = "let post of postList; index as i">
             <form>
-                <mat-expansion-panel [expanded]="panelOpenState[i]" (closed)="panelOpenState[i] = false;
-                displayComment[i] = false; dispalyReplyBox[j] = false; commentClicked = false; dispalyReplyBox[j] =false"
-                (open)="panelOpenState[i] = true; commentClicked = false" >
-                    <mat-expansion-panel-header>
-                        <div class="panel-heading row clearfix">
-                            <div *ngFor = "let user of usersProfile; index as j" class="panel-title pull-left">
-                                <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
-                            </div>
-                            <label class="panel-title title col-lg-2" ><em>{{ post.title | titlecase}}</em></label>
-                            <small class="info col-lg-5" >Posted by {{post.userName | titlecase}} on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>
-                        </div>
-                    </mat-expansion-panel-header>
-                    <p class = "description" cols="80" rows="4">{{post.description | slice:0:80 }}...
-                        <a [routerLink]="['/blog', post._id]">
-                            Show More
-                        </a>
-                    </p>
+                <div class="panel-heading row clearfix">
+                    <div *ngFor = "let user of usersProfile; index as j" class="panel-title pull-left">
+                        <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
+                    </div>
+                    <label class="panel-title title col-lg-2" ><em>{{ post.title | titlecase}}</em></label>
+                    <small class="info col-lg-5" >Posted by {{post.userName | titlecase}} on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>
+                </div>
+                <p class = "description" cols="80" rows="4">{{post.description | slice:0:234 }}...
+                    <a [routerLink]="['/blog', post._id]">
+                        Show More
+                    </a>
+                </p>
                     <!-- <div *ngFor="let count of post.imageUrl">
                         <img style="margin: 10px 175px; height: 30%; width: 30%" [src] = GetBlogImageUrl(count.filename)/>
                     </div> -->
@@ -162,21 +165,15 @@
                             </div>
                         </form>
                     </div>
-                </mat-expansion-panel>
             </form>
         </div>
-    </mat-accordion>
 </div>
 
 <div class= "container" *ngIf = "showMyPost">
     <h2>My Blogs</h2>
-    <mat-accordion>
     <div class = "displayPost panel panel-primary" *ngFor = "let post of displayMyPost; index as i">
         <form [formGroup]="updatePost" enctype="multipart/form-data">
-                <mat-expansion-panel [expanded]="panelOpenState[i]" (closed)="panelOpenState[i] = false;
-                displayUpdatedBlog[i] = false; displayComment[i] = false; displayOriginalBlog[i] = false;
-                commentClicked = false; dispalyReplyBox[j] =false;" (open)="panelOpenState[i] = true" >
-                    <mat-expansion-panel-header>
+                
                         <div class="panel-heading row clearfix">
                             <div *ngFor = "let user of usersProfile; index as j" class="panel-title pull-left">
                                 <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
@@ -184,9 +181,8 @@
                             <label class="panel-title title col-lg-2" ><em>{{ post.title | titlecase}}</em></label>
                             <small class="info col-lg-4" >Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>   
                         </div>
-                    </mat-expansion-panel-header>
-                    <p *ngIf = "!displayOriginalBlog[i]" class = "description">{{post.description | slice:0:80 }}...
-                        <a [routerLink]="['/blog', post._id]">
+                    <p *ngIf = "!displayOriginalBlog[i]" class = "description">{{post.description | slice:0:234 }}...
+                        <a [routerLink]="['/myBlog', post._id]">
                             Show More
                         </a>
                     </p>
@@ -203,11 +199,11 @@
                         <img style="margin: 10px 175px; height: 30%; width: 30%" [src] = GetBlogImageUrl(count.filename)/>
                     </div>
         
-                    <div class="comment panel-footer">
+                    <!-- <div class="comment panel-footer">
                         <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
                         <button type="button" class="btn btn-sm btn-primary" (click)="DeletePost(post._id)">Delete Post</button>
                         <button type="button" class="btn btn-sm btn-primary" (click)="UpdatePost(post._id,i)">Edit Post</button>
-                    </div>
+                    </div> -->
                     <div *ngIf = "displayComment[i]" class="showCommentBox">
                         <div  *ngIf = "post.comments.length > 0; else noComments" >
                             <div *ngFor="let item of post.comments; index as j" class="row">
@@ -253,16 +249,14 @@
                             </div>
                         </form>
                     </div>
-                </mat-expansion-panel>
             </form>
         </div>
-    </mat-accordion>
 </div>
 
 <div class= "container row" *ngIf = "showMyFriends">
     <!-- <input type="text" name="searchfriend" placeholder="username">
     <input type="submit" value="search"><br> -->
-    <div class = " col-md-6" *ngIf = "newFriendRequest">
+    <div class = "col-md-6 col-md-offset-1" *ngIf = "newFriendRequest">
         <h3>Friend Requests</h3>
         <div class="reqColumn" *ngFor ="let new of newFriend">
             <div class="row">
@@ -270,22 +264,25 @@
                 <h5 class="column" style="margin-top: 35px ">{{new.firstName | titlecase}} {{new.lastName | titlecase}}</h5>
             </div>
             <div class="row" *ngIf = "acceptRequest[new._id]">
-                <button class=" col-md-4 acceptRequest" (click) = "AcceptFriendRequest(new._id)">Accept</button>
+                <button class="col-md-4 acceptRequest" (click) = "AcceptFriendRequest(new._id, new.userName)">Accept</button>
                 <button class="col-md-4 acceptRequest" (click)="DeleteFriendRequest(new._id)">Delete</button>
             </div>
         </div>
     </div>
-    <div class = " col-md-6"  *ngFor = "let profile of usersInfo">
-        <div class="list" *ngIf= "getCurrentUserId != profile._id">
+    <div class = "col-md-3 col-md-offset-9"  *ngFor = "let profile of usersInfo">
+        <div *ngIf= "getCurrentUserId != profile._id">
             <div class="row">
                 <img class="logo" [src] = GetImageUrl(profile.image) alt="Your Profile Picture" >
                 <h5 style="margin-top: 35px ">{{profile.firstName | titlecase}} {{profile.lastName | titlecase}}</h5>
             </div>
-            <p *ngIf = "!acceptRequest[profile._id] && !friendRequestSent[profile._id]">
-                <button type="button" class="sendRequest" (click)="sendRequest(profile._id)">Send Request</button>
+            <p *ngIf = "!acceptRequest[profile._id] && !friendRequestSent[profile._id] && !visitUsersProfile[profile._id]">
+                <button type="button" class="sendRequest" (click)="sendRequestButton(profile._id)">Send Request</button>
             </p>
-            <p *ngIf = "friendRequestSent[profile._id]">
+            <p *ngIf = "friendRequestSent[profile._id] && !visitUsersProfile[profile._id]">
                 <button type="button" class="sendRequest" (click) = "CancelFriendRequest(profile._id)">Friend Request Sent <br> Cancel??</button>
+            </p>
+            <p *ngIf = "visitUsersProfile[profile._id]">
+                <button type="button" class="sendRequest">Visit Profile</button>
             </p>
             </div>
         <br>
@@ -298,7 +295,7 @@
                 <img class = "notifyProfile" *ngIf = "new.taggedBy==user.userName" [src] = GetImageUrl(user.image)/>
         </div>
         <div class="col-sm-11" style="margin: 7px">
-            <b>{{new.taggedBy}}</b> mentioned you in a blog {{new.time| date:'MMM dd, yyyy'}}
+            <b>{{new.taggedBy}}</b> mentioned you in a blog, created on: {{new.time| date:'MMM dd, yyyy'}}
         </div>
         <br>
     </div>

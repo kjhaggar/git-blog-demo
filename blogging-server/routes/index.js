@@ -122,6 +122,30 @@ router.put('/changePostStatus/:id', function(req, res, next) {
     });
 })
 
+router.put('/acceptFriendRequest', function(req, res, next) {
+    User.findOne({ _id: req.body.userId }, (err, user) => {
+        if (err) {
+            res.json({ success: false, message: 'Invalid user id' });
+        } else {
+            if (!user) {
+                res.json({ success: false, message: 'User not found.' });
+            } else {
+                user.friends.push({
+                    friendName: req.body.friendUserName,
+                    friendId: req.body.friendId
+                });
+                user.save((err) => {
+                    if (err) {
+                        res.json({ success: false, message: 'Something went wrong.' });
+                    } else {
+                        res.json({ success: true, message: 'New Friend Added' });
+                    }
+                });
+            }
+        }
+    });
+});
+
 router.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "http://localhost:4200");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -380,7 +404,7 @@ async function addToReplyDB(req, res) {
 });
 
 router.get('/requestList/:id', function(req, res) {
-    Request.find({ requestTo: req.params.id}).exec(function (err, request) {
+    Request.find({ requestTo: req.params.id, status: "false"}).exec(function (err, request) {
         if (err) {
         console.log("Error:", err);
         }
@@ -393,10 +417,54 @@ router.get('/requestList/:id', function(req, res) {
 
                     res.send({ pendingUserProfile, pendingRequestId });
                 }
-            } )
+            })
         }
     });
 });
+
+router.get('/sentRequestList/:id', function(req, res) {
+    Request.find({ user: req.params.id, status: "false"}).exec(function (err, request) {
+        if (err) {
+        console.log("Error:", err);
+        } else {
+            console.log("requests send by current user:")
+            console.log(request)
+            var pendingRequestId = request.map(({requestTo}) => requestTo);
+            res.send({pendingRequestId});
+        }
+    });
+});
+
+router.get('/friendsList/:id', function(req, res) {
+    User.findOne({ _id: req.params.id}).exec(function (err, friends) {
+        if (err) {
+        console.log("Error:", err);
+        }
+        else {
+            console.log("friendsList of current user: " + req.params.id);
+            console.log(friends);
+            res.send(friends)
+
+        }
+    });
+});
+
+router.put('/changeRequestStatus', function(req, res, next) {
+    Request.findOneAndUpdate({user: req.body.friend, requestTo: req.body.user}).exec(function(err, request) {
+        if (err) {
+            console.log("Error:", err);
+        } else {
+            request.status = true;
+            request.save((err) => {
+                if (err) {
+                    res.json({ success: false, message: 'Something went wrong.' });
+                } else {
+                    res.json(request);
+                }
+            });
+        }
+  });
+})
 
 router.get('/getNotified/:userName', function(req, res) {
     Notify.find({ "taggedUsers.userName" : req.params.userName}).exec(function (err, user) {
@@ -404,18 +472,6 @@ router.get('/getNotified/:userName', function(req, res) {
             console.log("Error:", err);
         } else {
             res.send(user)
-        }
-    });
-});
-
-router.get('/sentRequestList/:id', function(req, res) {
-    Request.find({ user: req.params.id}).exec(function (err, request) {
-        if (err) {
-        console.log("Error:", err);
-        } else {
-            var pendingRequestId = request.map(({requestTo}) => requestTo);
-            res.send({pendingRequestId});
-
         }
     });
 });

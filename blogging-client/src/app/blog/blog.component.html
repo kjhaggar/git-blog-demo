@@ -1,16 +1,15 @@
 <div class="container">
     <div class= "col-md-10 col-md-offset-1">
         <div *ngFor= "let post of post">
-            <header style="text-align: center"> 
-                <h1><b>BLOG</b></h1>
-                <p>Welcome to the blog of <span class="w3-tag">{{post.userName | titlecase}}</span></p>
-            </header>
             <br>
             <div class="panel panel-info">
                 <div class="panel-heading">
-                    <div class="w3-container">
-                        <h3><b>{{post.title}}</b></h3>
-                        <h5>Created at: <span class="w3-opacity">{{ post.createdAt | date:'MMM dd, yyyy'}}</span></h5>
+                    <div *ngFor = "let user of usersProfile" class="pull-left">
+                        <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
+                    </div>
+                    <div>
+                        <h3 class="title" ><b>{{post.title}}</b></h3>
+                        <h5 class="info">Created on: <span class="w3-opacity">{{ post.createdAt | date:'MMM dd, yyyy'}}</span></h5>
                     </div>
                 </div>
                 <div class="panel-body">
@@ -66,6 +65,7 @@
                             </div>
                         </form>
                     </div>
+                   
                 </div>
             </div>
         </div>

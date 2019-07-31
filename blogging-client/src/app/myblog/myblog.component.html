@@ -1,0 +1,87 @@
+<div class="container">
+        <div class= "col-md-10 col-md-offset-1">
+            <div *ngFor= "let post of post">
+                <form [formGroup]="updatePost" enctype="multipart/form-data">
+                <br>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <div *ngFor = "let user of usersProfile" class="pull-left">
+                            <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
+                        </div>
+                        <div>
+                            <h3 class="title" ><b>{{post.title}}</b></h3>
+                            <h5 class="info">Created on: <span class="w3-opacity">{{ post.createdAt | date:'MMM dd, yyyy'}}</span></h5>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <p *ngIf = "!displayOriginalBlog"  class = "description" cols="80" rows="4">{{post.description}}</p>
+                        <textarea *ngIf = "displayUpdatedBlog" class = "description form-control" formControlName = "description" [(ngModel)] = "post.description" rows="10" >{{post.description}}</textarea>
+                    <button *ngIf = "displayUpdatedBlog" type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages">Upload Media</button>
+                    <div class="form-group" *ngIf= "uploadUpdatedBlogImages">
+                        <div class="col-md-9">
+                            <input formControlName="image" id="image" name="image" type="file" 
+                            (change)="fileChangeEvent($event)" placeholder="Upload a file..." multiple/>
+                        </div>
+                        <!-- <img [src]="url" height="100" alt="preview"> <br/>  -->
+                    </div>
+                    <div *ngFor="let count of post.imageUrl">
+                        <img style="margin: 10px 175px; height: 30%; width: 30%" [src] = GetBlogImageUrl(count.filename)/>
+                    </div>
+                        <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox()">{{toggleCommentButton}}</button>
+                        <button type="button" class="btn btn-sm btn-primary" (click)="DeletePost(post._id)">Delete Post</button>
+                        <button type="button" class="btn btn-sm btn-primary" (click)="UpdatePost(post._id)">Edit Post</button>
+                    
+                    </div>
+                    <div class="panel-footer">
+                        <div *ngIf = "displayComment" class="showCommentBox">
+                            <div  *ngIf = "post.comments.length > 0; else noComments" >
+                                <div *ngFor="let item of post.comments; index as j" class="row">
+                                    <div class="col-sm-10">
+                                        <span><strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}</span>
+                                    </div>
+                                    <a (click)="openReplyText(j)" style="cursor: pointer">Show Replies</a>
+    
+                                    <div *ngIf="dispalyReplyBox[j]" class="showReplyBox">
+    
+                                            <div  *ngIf = "post.comments[j].replies.length > 0; else noComments" >
+                                                <div *ngFor="let reply of post.comments[j].replies; index as k" class="row">
+                                                    <div>
+                                                        <span ><strong>{{reply.commenterName | titlecase}} : </strong> {{reply.content}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <ng-template #noComments>No replies.</ng-template>
+                                            <br>
+                                            <i class="material-icons" style="cursor: pointer;" (click) = "openReplyForm(j)">reply</i>
+                                        <form [formGroup] = "replyForm" *ngIf = "replyClicked[j]">
+                                            <input type="text" class="form-control" formControlName="content"/>
+                                            
+                                            <button mat-raised-button type="submit" (click)="addReply(post._id, item._id, j, i)" (click)="$event.stopPropagation();">Send</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <ng-template #noComments>No comments. Be the first one to comment.</ng-template>
+                            <br>
+                            <i class="material-icons" style="cursor: pointer;" (click) = "openCommentForm()">sms</i>
+                            <form [formGroup]="commentForm" *ngIf = "commentClicked">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" formControlName="content"
+                                        placeholder="Start Typing here.." >
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button mat-raised-button type="submit" class="btn btn-sm btn-success pull-right"
+                                        (click)="PostComment(post._id,i)" (click)="$event.stopPropagation();"
+                                        [disabled]="!commentForm.valid">Send</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                       
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>

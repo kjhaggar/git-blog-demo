@@ -26,6 +26,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { AuthInterceptor } from './interceptor/auth-interceptor';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { BlogComponent } from './blog/blog.component';
+import { MyblogComponent } from './myblog/myblog.component';
 
 export const authInterceptorProviders = [
   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
@@ -38,7 +39,8 @@ export const authInterceptorProviders = [
     RegisterComponent,
     ProfileComponent,
     EditProfileComponent,
-    BlogComponent
+    BlogComponent,
+    MyblogComponent
   ],
   imports: [
     BrowserModule,

@@ -23,6 +23,8 @@ h2{
 }
 .description{
     text-align: justify;
+    margin: 0px 20px;
+    margin-bottom: 20px;
 }
 textarea{
     margin-right: 20px;

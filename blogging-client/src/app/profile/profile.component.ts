@@ -43,6 +43,7 @@ export class ProfileComponent implements OnInit {
     newFriend: any;
     acceptRequest = [];
     friendRequestSent = [];
+    visitUsersProfile = [];
     latitude: number;
     longitude: number;
     zoom:number;
@@ -56,6 +57,7 @@ export class ProfileComponent implements OnInit {
     searchInfo: any;
     mentionedUsers: Array<string>;
     hideSuccessMessage: boolean;
+    newFriendAdded: boolean;
     getTaggedByUser: string;
     showNotification: boolean;
     recentNotification
@@ -151,6 +153,7 @@ export class ProfileComponent implements OnInit {
         this.DisplayProfile();
         this.newRequest();
         this.sentRequest();
+        this.friends();
         this.tagUser();
         this.newNotification();
 
@@ -159,7 +162,7 @@ export class ProfileComponent implements OnInit {
         }
     
         this.mapsAPILoader.load().then(() => {
-            this.setCurrentLocation();
+            // this.setCurrentLocation();
             this.geoCoder = new google.maps.Geocoder;
             // let autocomplete = new google.maps.places.Autocomplete(this.search, {
             //     types: ["address"]
@@ -359,7 +362,7 @@ export class ProfileComponent implements OnInit {
                 }
                 this.socket.emit('tag', mentioned);
                 this.userService.sendNotification(mentioned).subscribe(
-                    data => {console.log(data)},
+                    data => {},
                     err => console.log(err)
                 )
             },
@@ -403,8 +406,29 @@ export class ProfileComponent implements OnInit {
     this.filesToUpload = <Array<File>>fileInput.target.files;
     }
 
-    AcceptFriendRequest(userId: string) {}
+    AcceptFriendRequest(friendId: string, friendUserName: string) {
+        this.userService.changeRequestStatus(this.getCurrentUserId, friendId).subscribe(
+            data => {debugger
+                console.log(data)
+                this.updateFriendList(this.getCurrentUserId, this.getCurrentUserName, friendId, friendUserName);
+                this.updateFriendList(friendId, friendUserName, this.getCurrentUserId, this.getCurrentUserName);
+                this.newRequest();
+                this.friends();
+                this.newFriendAdded = true;
+            },
+            error => console.log(error)
+        );
+    }
     
+    updateFriendList(userId: string, userName: string, friendId: string, friendUserName: string) {
+        this.userService.acceptFriendRequest(userId, userName, friendId, friendUserName).subscribe(
+            data => {
+                this.visitUsersProfile[userId] = true;
+            },
+            error => console.log(error)
+        )
+    }
+
     DeleteFriendRequest(userId: string) {
         this.userService.deleteFriendRequest(userId, this.getCurrentUserId).subscribe(
             data=> {
@@ -430,7 +454,7 @@ export class ProfileComponent implements OnInit {
           )
     }
 
-    newRequest() {
+    newRequest(userId? : string) {
         this.userService.RequestList(this.getCurrentUserId).subscribe(
             (data: {pendingUserProfile: any, pendingRequestId: any}) => {
                 this.newFriendRequest = true;
@@ -454,7 +478,23 @@ export class ProfileComponent implements OnInit {
         )
     }
 
-    sendRequest(receiverId: string) {
+    friends() {
+        this.userService.FriendsList(this.getCurrentUserId).subscribe(
+            (data: {friends: any}) => {
+                console.log("List of friend id of " + this.getCurrentUserName)
+                console.log(data.friends)
+                // for( var i=0; i< data.friends.length;i++) {
+                //     // this.acceptRequest[data.friends[i]] = true;
+                //     // this.friendRequestSent[data.friends[i]] = true;
+                //     this.visitUsersProfile[data.friends[i]] = true;
+                // }
+            },
+        error => {
+            console.log(error)}
+        )
+    }
+
+    sendRequestButton(receiverId: string) {
         var request = {
             receiverId: receiverId,            // receiver of friend request
             senderId: this.getCurrentUserId    // sender of friend request
@@ -636,6 +676,12 @@ export class ProfileComponent implements OnInit {
         )
     }
 
+    FadeOutSuccessMsg() {
+        setTimeout( () => {
+            // this.hideSuccessMessage = false;
+            this.newFriendAdded = false;
+        }, 4000);
+    }
     Logout=() => this.authService.logout();
 
 }

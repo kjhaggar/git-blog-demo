@@ -107,6 +107,18 @@ export class UserService {
         })
     }
 
+    changeRequestStatus(userId: string, friendId : string){debugger
+        var body = {
+            user: userId,
+            friend: friendId
+        }
+        return this.http.put('http://127.0.0.1:3000/api/changeRequestStatus', body, {
+            observe:'body',
+            withCredentials:true,
+            headers:new HttpHeaders().append('Content-Type','application/json')
+        })
+    }
+
     deletePost(postId: string){
         return this.http.delete('http://127.0.0.1:3000/api/deletePost/' + postId, {
             observe:'body',
@@ -139,14 +151,6 @@ export class UserService {
         })
     }
 
-    NotificationList(userName: string) {
-        return this.http.get('http://127.0.0.1:3000/api/getNotified/' + userName, {
-            observe:'body',
-            withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
-        })
-    }
-
     SentRequestList(userId: string) {
         return this.http.get('http://127.0.0.1:3000/api/sentRequestList/' + userId, {
             observe:'body',
@@ -155,8 +159,31 @@ export class UserService {
         })
     }
 
-    acceptFriendRequest(userId: string, requestToId: string){
-        return this.http.put('http://127.0.0.1:3000/api/acceptFriendRequest/' + userId, {
+    FriendsList(userId: string) {
+        return this.http.get('http://127.0.0.1:3000/api/friendsList/' + userId, {
+            observe:'body',
+            withCredentials:true,
+            headers:new HttpHeaders().append('Content-Type','application/json')
+        })
+    }
+
+    NotificationList(userName: string) {
+        return this.http.get('http://127.0.0.1:3000/api/getNotified/' + userName, {
+            observe:'body',
+            withCredentials:true,
+            headers:new HttpHeaders().append('Content-Type','application/json')
+        })
+    }
+
+
+    acceptFriendRequest(userId: string, userName: string, friendId: string, friendUserName: string){
+        var body = {
+            userId: userId,
+            userName: userName,
+            friendId: friendId,
+            friendUserName: friendUserName
+        }
+        return this.http.put('http://127.0.0.1:3000/api/acceptFriendRequest', body ,{
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
