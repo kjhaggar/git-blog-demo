@@ -12,6 +12,7 @@ button{
 .logo{
     height: 70px;
     width: 70px;
+    align-items: center;
 }
 .info {
     padding-left: 690px;

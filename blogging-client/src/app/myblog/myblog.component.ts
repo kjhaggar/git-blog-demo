@@ -29,8 +29,8 @@ export class MyblogComponent implements OnInit {
 	displayOriginalBlog: boolean;
 	displayUpdatedBlog: boolean;
 	filesToUpload: Array<File> = [];
-  uploadUpdatedBlogImages: boolean;
-  submitted: boolean;
+    uploadUpdatedBlogImages: boolean;
+    submitted: boolean;
 
 	commentForm: FormGroup = new FormGroup({
         content: new FormControl(null, Validators.required)
@@ -203,7 +203,11 @@ export class MyblogComponent implements OnInit {
     UploadBlogImages(){
       this.submitted = false;
       this.uploadUpdatedBlogImages = !this.uploadUpdatedBlogImages;
-  }
+    }
+    
+    fileChangeEvent(fileInput: any) {
+    this.filesToUpload = <Array<File>>fileInput.target.files;
+    }
 
 	ngOnDestroy() {
 		this.sub.unsubscribe();

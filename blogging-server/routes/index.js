@@ -31,12 +31,13 @@ async function addToDB(req, res) {
 }
 
 function verifyToken(req, res, next){
+    console.log(req.headers)
     if (!req.headers.authorization){
         return res.status(401).send('Unauthorised request');
     }
     let token = req.headers.authorization.split(' ')[1];
     if(token == 'null'){
-        return res.status(401).send('Unauthorised request');
+        return res.status(401).send('Unauthorised request. No token found');
     }
     let payload = jwt.verify(token, 'qwerty@12345');
     if(!payload){

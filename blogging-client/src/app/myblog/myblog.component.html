@@ -1,3 +1,4 @@
+<button type="button" class="btn btn-sm btn-primary" routerLink="/profile">Go Back to Home</button><div class="container">
 <div class="container">
         <div class= "col-md-10 col-md-offset-1">
             <div *ngFor= "let post of post">
@@ -9,27 +10,29 @@
                             <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
                         </div>
                         <div>
-                            <h3 class="title" ><b>{{post.title}}</b></h3>
+                            <h3 class="title" ><b>{{post.title | titlecase}}</b></h3>
                             <h5 class="info">Created on: <span class="w3-opacity">{{ post.createdAt | date:'MMM dd, yyyy'}}</span></h5>
                         </div>
                     </div>
                     <div class="panel-body">
                         <p *ngIf = "!displayOriginalBlog"  class = "description" cols="80" rows="4">{{post.description}}</p>
                         <textarea *ngIf = "displayUpdatedBlog" class = "description form-control" formControlName = "description" [(ngModel)] = "post.description" rows="10" >{{post.description}}</textarea>
-                    <button *ngIf = "displayUpdatedBlog" type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages">Upload Media</button>
-                    <div class="form-group" *ngIf= "uploadUpdatedBlogImages">
-                        <div class="col-md-9">
-                            <input formControlName="image" id="image" name="image" type="file" 
-                            (change)="fileChangeEvent($event)" placeholder="Upload a file..." multiple/>
+                        <div *ngFor="let count of post.imageUrl">
+                            <img style="height: 30%; width: 30%; margin: 20px 270px" [src] = GetBlogImageUrl(count.filename)/>
                         </div>
-                        <!-- <img [src]="url" height="100" alt="preview"> <br/>  -->
-                    </div>
-                    <div *ngFor="let count of post.imageUrl">
-                        <img style="margin: 10px 175px; height: 30%; width: 30%" [src] = GetBlogImageUrl(count.filename)/>
-                    </div>
                         <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox()">{{toggleCommentButton}}</button>
                         <button type="button" class="btn btn-sm btn-primary" (click)="DeletePost(post._id)">Delete Post</button>
                         <button type="button" class="btn btn-sm btn-primary" (click)="UpdatePost(post._id)">Edit Post</button>
+                        <div *ngIf = "displayUpdatedBlog">
+                            <button type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages()">Upload Media</button>
+                        </div>
+                        <div class="form-group" *ngIf= "uploadUpdatedBlogImages">
+                            <div class="col-md-9">
+                                <input formControlName="image" id="image" name="image" type="file" 
+                                (change)="fileChangeEvent($event)" placeholder="Upload a file..." multiple/>
+                            </div>
+                        <!-- <img [src]="url" height="100" alt="preview"> <br/>  -->
+                        </div>
                     
                     </div>
                     <div class="panel-footer">

@@ -8,13 +8,25 @@ import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as io from 'socket.io-client';
 import { MapsAPILoader, MouseEvent } from '@agm/core';
-import { ThrowStmt } from '@angular/compiler';
+import { trigger, state, style, transition, animate} from '@angular/animations';
 var parse = require('parse-mentions');
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
+  animations: [
+    trigger('slideInOut', [
+      state('in', style({
+        transform: 'translate3d(0, 0, 0)'
+      })),
+      state('out', style({
+        transform: 'translate3d(100%, 0, 0)'
+      })),
+      transition('in => out', animate('500ms ease-in')),
+      transition('out => in', animate('500ms ease-out'))
+    ]),
+  ]
 })
 export class ProfileComponent implements OnInit {
     private socket = io('http://127.0.0.1:3000');
@@ -59,8 +71,9 @@ export class ProfileComponent implements OnInit {
     hideSuccessMessage: boolean;
     newFriendAdded: boolean;
     getTaggedByUser: string;
-    showNotification: boolean;
-    recentNotification
+    recentNotification: any;
+    menuState:string = 'out';
+    numberOfNotification: number;
 
     searchForm: FormGroup = new FormGroup({
         searchInfo: new FormControl()
@@ -297,8 +310,8 @@ export class ProfileComponent implements OnInit {
                         }
                     }
                 }
-                
-                this.recentNotification= data
+                this.recentNotification= data;
+                this.numberOfNotification = this.recentNotification.length;
             },
             error => console.log(error)
         )
@@ -409,7 +422,6 @@ export class ProfileComponent implements OnInit {
     AcceptFriendRequest(friendId: string, friendUserName: string) {
         this.userService.changeRequestStatus(this.getCurrentUserId, friendId).subscribe(
             data => {debugger
-                console.log(data)
                 this.updateFriendList(this.getCurrentUserId, this.getCurrentUserName, friendId, friendUserName);
                 this.updateFriendList(friendId, friendUserName, this.getCurrentUserId, this.getCurrentUserName);
                 this.newRequest();
@@ -483,11 +495,6 @@ export class ProfileComponent implements OnInit {
             (data: {friends: any}) => {
                 console.log("List of friend id of " + this.getCurrentUserName)
                 console.log(data.friends)
-                // for( var i=0; i< data.friends.length;i++) {
-                //     // this.acceptRequest[data.friends[i]] = true;
-                //     // this.friendRequestSent[data.friends[i]] = true;
-                //     this.visitUsersProfile[data.friends[i]] = true;
-                // }
             },
         error => {
             console.log(error)}
@@ -513,7 +520,6 @@ export class ProfileComponent implements OnInit {
         this.showAllPost = false;
         this.showMyPost = false;
         this.showMyFriends = true;
-        this.showNotification = false;
         this.userService.getUsersList().subscribe(
             data => {
                 this.usersInfo = data;
@@ -522,11 +528,7 @@ export class ProfileComponent implements OnInit {
         )
     }
     Notify() {
-        this.displayAddPost = false;
-        this.showAllPost = false;
-        this.showMyPost = false;
-        this.showMyFriends = false;
-        this.showNotification = true;
+        this.menuState = this.menuState === 'out' ? 'in' : 'out';
     }
 
     clickedHome() {
@@ -535,7 +537,6 @@ export class ProfileComponent implements OnInit {
         this.newBlogLink = 'New Blog';
         this.showMyPost = false;
         this.showMyFriends = false;
-        this.showNotification = false;
     }
     clickedMyPost() {
         this.panelOpenState=[];
@@ -680,6 +681,7 @@ export class ProfileComponent implements OnInit {
         setTimeout( () => {
             // this.hideSuccessMessage = false;
             this.newFriendAdded = false;
+            this.menuState = 'out'
         }, 4000);
     }
     Logout=() => this.authService.logout();

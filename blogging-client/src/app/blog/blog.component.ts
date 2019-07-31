@@ -12,24 +12,24 @@ import * as io from 'socket.io-client';
   styleUrls: ['./blog.component.css']
 })
 export class BlogComponent implements OnInit {
-	id: string;
+	private id: string;
 	private sub: any;
-	post: Object;
-	url: any;
-	toggleCommentButton = "Show Comments"
-	displayComment: boolean;
-	dispalyReplyBox = [];
-	replyClicked = [];
-	commentClicked: boolean;
-	getCurrentUserId: string;
-	getCurrentUserName: string;
-	private subscription: Subscription = new Subscription();
-	private socket = io('http://127.0.0.1:3000');
-	usersProfile: any;
-	displayOriginalBlog = [];
-	displayUpdatedBlog =[];
-	filesToUpload: Array<File> = [];
-	uploadUpdatedBlogImages = [];
+	private url: any;
+	private displayComment: boolean;
+	private dispalyReplyBox= [];
+	private replyClicked= [];
+	private commentClicked: boolean;
+	private getCurrentUserId: string;
+	private getCurrentUserName: string;
+	private subscription: Subscription= new Subscription();
+	private socket= io('http://127.0.0.1:3000');
+	private displayOriginalBlog= [];
+	private displayUpdatedBlog=[];
+	private filesToUpload: Array<File>= [];
+    private uploadUpdatedBlogImages= [];
+    public usersProfile: any;
+    public toggleCommentButton= "Show Comments";
+    public post: Object;
 
 	commentForm: FormGroup = new FormGroup({
         content: new FormControl(null, Validators.required)
@@ -45,28 +45,29 @@ export class BlogComponent implements OnInit {
     });
 
 	constructor(private route: ActivatedRoute, private userService: UserService,
-		private sanitized: DomSanitizer) { }
+		private sanitized: DomSanitizer) {}
 
 	ngOnInit() {
 		this.sub = this.route.params.subscribe(params => {
-		this.id = params['id'];
-	});
+            this.id = params['id'];
+        });
 	this.getCurrentUserId = localStorage.getItem('userId');
     this.getCurrentUserName = localStorage.getItem('user');
 	this.getBlog();
 	this.DisplayProfilePicture();
 	}
 
-	DisplayProfilePicture(){
+	DisplayProfilePicture = () => {
         this.userService.displayProfile().subscribe(
-            (data:{user: Object})=> {console.log(data)
+            (data: { user: Object })=> {
                 this.usersProfile = data.user;
-                },
+            },
             err => {
-                console.log(err)}
+                console.log(err)
+            }
         )
     }
-	getBlog() {
+	getBlog = () => {
 		this.userService.getBlogById(this.id).subscribe(
 			data => {
 				this.post = data;
@@ -75,39 +76,38 @@ export class BlogComponent implements OnInit {
 		)
 	}
 
-	GetImageUrl(filename){
-        if(filename == undefined){
-            this.url = 'http://localhost:3000/images/download.jpeg';
+	GetImageUrl = (filename: string) => {
+        if(filename == undefined) {
+            this.url= 'http://localhost:3000/images/download.jpeg';
         } else {
-            this.url = 'http://localhost:3000/images/' + filename;
+            this.url= 'http://localhost:3000/images/' + filename;
         }
         return this.sanitized.bypassSecurityTrustUrl(this.url);
     }
 
-	GetBlogImageUrl(filename){
-        this.url = 'http://localhost:3000/blogImages/' + filename;
+	GetBlogImageUrl = (filename: string) => {
+        this.url= 'http://localhost:3000/blogImages/' + filename;
         return this.sanitized.bypassSecurityTrustUrl(this.url);
 	}
 
-	ShowCommentBox() {
+	ShowCommentBox = () => {
 		this.displayComment= !this.displayComment;
-		this.commentClicked = false;
+		this.commentClicked= false;
 		if(this.displayComment) {
-			this.toggleCommentButton = "Close Comments"
+			this.toggleCommentButton= "Close Comments"
 		} else {
-			this.toggleCommentButton = "Show Comments"
+			this.toggleCommentButton= "Show Comments"
 		}
-        this.dispalyReplyBox = [];
-        this.replyClicked = [];
+        this.dispalyReplyBox= [];
+        this.replyClicked= [];
     } 
 	
-	openCommentForm() {
-        this.commentClicked = !this.commentClicked;
+	openCommentForm = () => {
+        this.commentClicked= !this.commentClicked;
 	}
 	
-	PostComment(postId: string, index: number) {
-
-        const obj = {
+	PostComment = (postId: string) => {
+        const obj= {
             postId: postId,
             comment: this.commentForm.value.content,
             userId: this.getCurrentUserId,
@@ -122,21 +122,20 @@ export class BlogComponent implements OnInit {
                     this.socket.emit('comment',obj); 
 					this.commentForm.reset();
 					this.getBlog();
-                },
-                error => {
                 }
             )
         );
-	}
-	openReplyText(index: number){
-        this.dispalyReplyBox[index] = !this.dispalyReplyBox[index];
+    }
+    
+	openReplyText = (index: number) => {
+        this.dispalyReplyBox[index]= !this.dispalyReplyBox[index];
     }
 	
-	openReplyForm(index) {
-        this.replyClicked[index] = !this.replyClicked[index];
+	openReplyForm = (index) => {
+        this.replyClicked[index]= !this.replyClicked[index];
 	}
 	
-	addReply(postId: string, commentId: string, index: number,blogIndex: number) {
+	addReply = (postId: string, commentId: string, index: number) => {
         if (!this.replyForm.valid) {
             return;
         }
@@ -163,23 +162,26 @@ export class BlogComponent implements OnInit {
         );
 	}
 
-	DeletePost(postId){
+	DeletePost = (postId) => {
         this.userService.deletePost(postId).subscribe(
-		  data=> {this.getBlog();
+		  data => {
+              this.getBlog();
             },
-            error=>console.error(error)
+            error => {
+                console.error(error)
+            }
 		)
 		alert("Blog no longer available.. \n Go back to Home Page")
     }
 	
-	UpdatePost(postId: string,index: number){
-        this.displayOriginalBlog[index] = !this.displayOriginalBlog[index] ;
+	UpdatePost = (postId: string, index: number) => {
+        this.displayOriginalBlog[index]= !this.displayOriginalBlog[index] ;
         this.displayUpdatedBlog[index]= !this.displayUpdatedBlog[index];
-        const formData: any = new FormData();
+        const formData: any= new FormData();
         if(this.displayUpdatedBlog[index]) {
-            this.filesToUpload = [];
+            this.filesToUpload= [];
         }
-        const files: Array<File> = this.filesToUpload;
+        const files: Array<File>= this.filesToUpload;
 
         if(files.length > 0) {
             for(let i =0; i < files.length; i++){
@@ -198,8 +200,9 @@ export class BlogComponent implements OnInit {
             error=>console.error(error)
         )
     }
+
 	ngOnDestroy() {
 		this.sub.unsubscribe();
-	  }
+	}
 
 }

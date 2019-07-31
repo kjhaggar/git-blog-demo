@@ -18,7 +18,9 @@
                 <a class="nav-link" style="cursor:pointer" (click)="UsersList()">Friends</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" style="cursor:pointer" (click)="Notify()">Notification</a>
+                <a class="nav-link" style="cursor:pointer" (click)="Notify()">Notification
+                    <sup>{{numberOfNotification}}</sup>
+                </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" routerLink="/editProfile">Edit Profile</a>
@@ -29,14 +31,14 @@
         </ul>
     </div>
 </nav>
-<div class= "container" *ngIf="hideSuccessMessage && getCurrentUserName != getTaggedByUser">
+<!-- <div class= "container" *ngIf="hideSuccessMessage && getCurrentUserName != getTaggedByUser">
     <p class="alert alert-success col-md-offset-9" style="text-align: center">
         <strong>You have unread notification(s)</strong> 
         <button type="button" class="close" (click)="hideSuccessMessage = false">
             <span aria-hidden="true">&times;</span>
         </button>                
     </p>
-</div>
+</div> -->
 
 <div class= "container" *ngIf="newFriendAdded">
     <p class="alert alert-success col-md-3 col-md-offset-4" style="text-align: center">
@@ -89,7 +91,6 @@
                         <input formControlName="image" id="image" name="image" type="file" 
                         (change)="fileChangeEvent($event)" placeholder="Upload a file..." multiple/>
                     </div>
-                    <!-- <img [src]="url" height="100" alt="preview"> <br/>  -->
                 </div>
                 <button type="button" class="btn btn-sm btn-primary" (click) = "AddPost()">Post</button>
             </form>
@@ -99,202 +100,90 @@
 
 <div class= "container" *ngIf = "showAllPost">
     <h2>All Blogs</h2>
-        <div class = "displayPost panel panel-primary" *ngFor = "let post of postList; index as i">
-            <form>
-                <div class="panel-heading row clearfix">
-                    <div *ngFor = "let user of usersProfile; index as j" class="panel-title pull-left">
-                        <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
-                    </div>
-                    <label class="panel-title title col-lg-2" ><em>{{ post.title | titlecase}}</em></label>
-                    <small class="info col-lg-5" >Posted by {{post.userName | titlecase}} on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>
+    <div class = "displayPost panel panel-primary" *ngFor = "let post of postList">
+        <form>
+            <div class="panel-heading row clearfix">
+                <div *ngFor = "let user of usersProfile" class="panel-title pull-left">
+                    <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
                 </div>
-                <p class = "description" cols="80" rows="4">{{post.description | slice:0:234 }}...
-                    <a [routerLink]="['/blog', post._id]">
-                        Show More
-                    </a>
-                </p>
-                    <!-- <div *ngFor="let count of post.imageUrl">
-                        <img style="margin: 10px 175px; height: 30%; width: 30%" [src] = GetBlogImageUrl(count.filename)/>
-                    </div> -->
-                    <!-- <div class="comment panel-footer">
-                        <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
-                    </div> -->
-                    <div *ngIf = "displayComment[i]" class="showCommentBox">
-                        <div  *ngIf = "post.comments.length > 0; else noComments" >
-                            <div *ngFor="let item of post.comments; index as j" class="row">
-                                <div class="col-lg-9">
-                                    <span><strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}</span>
-                                </div>
-                                <a (click)="openReplyText(j)" style="cursor: pointer;">Show Replies</a>
-
-                                <div *ngIf="dispalyReplyBox[j]" class="showReplyBox">
-
-                                        <div  *ngIf = "post.comments[j].replies.length > 0; else noComments" >
-                                                <div *ngFor="let reply of post.comments[j].replies; index as k" class="row">
-                                                    <div class="col-sm-12">
-                                                        <span ><strong>{{reply.commenterName | titlecase}} : </strong> {{reply.content}}</span>
-                                                    </div>
-                                                </div>
-                                        </div>
-                                        <ng-template #noComments>No replies.</ng-template>
-                                        <br>
-                                        <i class="material-icons" style="cursor: pointer;" (click) = "openReplyForm(j)">reply</i>
-                                    <form [formGroup] = "replyForm" *ngIf = "replyClicked[j]">
-                                        <input type="text" class="form-control" formControlName="content"/>
-                                        
-                                        <button mat-raised-button type="submit" (click)="addReply(post._id, item._id, j, i)" (click)="$event.stopPropagation();">Send</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <ng-template #noComments>No comments. Be the first one to comment.</ng-template>
-                        <br>
-                        <i class="material-icons tooltip" style="cursor: pointer;" (click) = "openCommentForm()">sms
-                            <span class="tooltiptext">Comment</span></i>
-                        <form [formGroup]="commentForm" *ngIf = "commentClicked">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <input type="text" class="form-control" formControlName="content"
-                                    placeholder="Start Typing here.." >
-                                </div>
-                                <div class="col-sm-2">
-                                    <button mat-raised-button type="submit" class="btn btn-sm btn-success pull-right"
-                                    (click)="PostComment(post._id,i)" (click)="$event.stopPropagation();"
-                                    [disabled]="!commentForm.valid">Send</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-            </form>
-        </div>
+                <label class="panel-title title col-lg-2" ><em>{{ post.title | titlecase}}</em></label>
+                <small class="info col-lg-5" >Posted by {{post.userName | titlecase}} on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>
+            </div>
+            <p class = "description" cols="80" rows="4">{{post.description | slice:0:234 }}...
+                <a [routerLink]="['/blog', post._id]">Show More</a>
+            </p>
+        </form>
+    </div>
 </div>
 
 <div class= "container" *ngIf = "showMyPost">
     <h2>My Blogs</h2>
-    <div class = "displayPost panel panel-primary" *ngFor = "let post of displayMyPost; index as i">
-        <form [formGroup]="updatePost" enctype="multipart/form-data">
-                
-                        <div class="panel-heading row clearfix">
-                            <div *ngFor = "let user of usersProfile; index as j" class="panel-title pull-left">
-                                <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
-                            </div>
-                            <label class="panel-title title col-lg-2" ><em>{{ post.title | titlecase}}</em></label>
-                            <small class="info col-lg-4" >Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>   
-                        </div>
-                    <p *ngIf = "!displayOriginalBlog[i]" class = "description">{{post.description | slice:0:234 }}...
-                        <a [routerLink]="['/myBlog', post._id]">
-                            Show More
-                        </a>
-                    </p>
-                    <textarea *ngIf = "displayUpdatedBlog[i]" class = "description form-control" formControlName = "description" [(ngModel)] = "post.description" rows="10" >{{post.description}}</textarea>
-                    <button *ngIf = "displayUpdatedBlog[i]" type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages(i)">Upload Media</button>
-                    <div class="form-group" *ngIf= "uploadUpdatedBlogImages[i]">
-                        <div class="col-md-9">
-                            <input formControlName="image" id="image" name="image" type="file" 
-                            (change)="fileChangeEvent($event)" placeholder="Upload a file..." multiple/>
-                        </div>
-                        <!-- <img [src]="url" height="100" alt="preview"> <br/>  -->
-                    </div>
-                    <div *ngFor="let count of post.imageUrl">
-                        <img style="margin: 10px 175px; height: 30%; width: 30%" [src] = GetBlogImageUrl(count.filename)/>
-                    </div>
-        
-                    <!-- <div class="comment panel-footer">
-                        <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox(post._id,i)">Show Comments</button>
-                        <button type="button" class="btn btn-sm btn-primary" (click)="DeletePost(post._id)">Delete Post</button>
-                        <button type="button" class="btn btn-sm btn-primary" (click)="UpdatePost(post._id,i)">Edit Post</button>
-                    </div> -->
-                    <div *ngIf = "displayComment[i]" class="showCommentBox">
-                        <div  *ngIf = "post.comments.length > 0; else noComments" >
-                            <div *ngFor="let item of post.comments; index as j" class="row">
-                                <div class="col-lg-9">
-                                    <span><strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}</span>
-                                </div>
-                                <a (click)="openReplyText(j)" style="cursor: pointer;">Show Replies</a>
-                                
-                                <div *ngIf="dispalyReplyBox[j]" class="showReplyBox">
-                                    <div  *ngIf = "post.comments[j].replies.length > 0; else noReply" >
-                                        <div *ngFor="let reply of post.comments[j].replies; index as k" class="row">
-                                            <div class="col-sm-12">
-                                                <span ><strong>{{reply.commenterName | titlecase}} : </strong> {{reply.content}}</span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <ng-template #noReply>No replies.</ng-template>
-                                    <br>
-                                    <i class="material-icons" style="cursor: pointer;" (click) = "openReplyForm(j)">reply</i>
-                                    <form [formGroup] = "replyForm" *ngIf = "replyClicked[j]">
-                                        <input type="text" class="form-control" formControlName="content"/>
-                                        
-                                        <button mat-raised-button type="submit" (click)="addReply(post._id, item._id, j, i)" (click)="$event.stopPropagation();">Send</button>
-                                    </form>
-                                </div>  
-                            </div>
-                        </div>
-                        <ng-template #noComments>No comments. Be the first one to comment.</ng-template>
-                        <br>
-                        <i class="material-icons" style="cursor: pointer;" (click) = "openCommentForm()">sms</i>
-                        <form [formGroup]="commentForm"  *ngIf = "commentClicked">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <input type="text" class="form-control" formControlName="content"
-                                    placeholder="Start Typing here.." >
-                                </div>
-                                <div class="col-sm-2">
-                                    <button mat-raised-button type="submit" class="btn btn-success pull-right"
-                                    (click)="PostComment(post._id,i)" (click)="$event.stopPropagation();"
-                                    [disabled]="!commentForm.valid">Send</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-            </form>
-        </div>
-</div>
-
-<div class= "container row" *ngIf = "showMyFriends">
-    <!-- <input type="text" name="searchfriend" placeholder="username">
-    <input type="submit" value="search"><br> -->
-    <div class = "col-md-6 col-md-offset-1" *ngIf = "newFriendRequest">
-        <h3>Friend Requests</h3>
-        <div class="reqColumn" *ngFor ="let new of newFriend">
-            <div class="row">
-                <img class="logo column" [src] = GetImageUrl(new.image) alt="Your Profile Picture" >
-                <h5 class="column" style="margin-top: 35px ">{{new.firstName | titlecase}} {{new.lastName | titlecase}}</h5>
+    <div class = "displayPost panel panel-primary" *ngFor = "let post of displayMyPost">
+        <form [formGroup]="updatePost">
+            <div class="panel-heading row clearfix">
+                <div *ngFor = "let user of usersProfile" class="panel-title pull-left">
+                    <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
+                </div>
+                <label class="panel-title title col-lg-2" ><em>{{ post.title | titlecase}}</em></label>
+                <small class="info col-lg-4" >Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>   
             </div>
-            <div class="row" *ngIf = "acceptRequest[new._id]">
-                <button class="col-md-4 acceptRequest" (click) = "AcceptFriendRequest(new._id, new.userName)">Accept</button>
-                <button class="col-md-4 acceptRequest" (click)="DeleteFriendRequest(new._id)">Delete</button>
-            </div>
-        </div>
-    </div>
-    <div class = "col-md-3 col-md-offset-9"  *ngFor = "let profile of usersInfo">
-        <div *ngIf= "getCurrentUserId != profile._id">
-            <div class="row">
-                <img class="logo" [src] = GetImageUrl(profile.image) alt="Your Profile Picture" >
-                <h5 style="margin-top: 35px ">{{profile.firstName | titlecase}} {{profile.lastName | titlecase}}</h5>
-            </div>
-            <p *ngIf = "!acceptRequest[profile._id] && !friendRequestSent[profile._id] && !visitUsersProfile[profile._id]">
-                <button type="button" class="sendRequest" (click)="sendRequestButton(profile._id)">Send Request</button>
+            <p class = "description">{{post.description | slice:0:234 }}...
+                <a [routerLink]="['/myBlog', post._id]">Show More</a>
             </p>
-            <p *ngIf = "friendRequestSent[profile._id] && !visitUsersProfile[profile._id]">
-                <button type="button" class="sendRequest" (click) = "CancelFriendRequest(profile._id)">Friend Request Sent <br> Cancel??</button>
-            </p>
-            <p *ngIf = "visitUsersProfile[profile._id]">
-                <button type="button" class="sendRequest">Visit Profile</button>
-            </p>
+            <div *ngFor="let count of post.imageUrl">
+                <img style="margin: 10px 175px; height: 30%; width: 30%" [src] = GetBlogImageUrl(count.filename)/>
             </div>
-        <br>
+        </form>
     </div>
 </div>
 
-<div class= "container"  *ngIf="showNotification">
-    <div class="row " *ngFor = "let new of recentNotification" style="cursor: pointer" [routerLink]="['/blog', new.postId]" (click) = "changeStatus(new._id)">
-        <div class="col-sm-2" *ngFor = "let user of usersProfile; index as j" class="panel-title pull-left">
-                <img class = "notifyProfile" *ngIf = "new.taggedBy==user.userName" [src] = GetImageUrl(user.image)/>
+<div class= "container" *ngIf = "showMyFriends">
+    <form class="form-inline">
+        <span class="glyphicon glyphicon-search"></span>
+        <input type="text" name="searchfriend" placeholder="Search here..">
+        <button type="button" value="search">Search</button>
+    </form>
+    <div class="row">
+        <div class = "col-md-6 col-md-offset-1" *ngIf = "newFriendRequest">
+            <h3>Friend Requests</h3>
+            <div class="reqColumn" *ngFor ="let new of newFriend">
+                <div class="row">
+                    <img class="logo column" [src] = GetImageUrl(new.image) alt="Your Profile Picture" >
+                    <h5 class="column" style="margin-top: 35px ">{{new.firstName | titlecase}} {{new.lastName | titlecase}}</h5>
+                </div>
+                <div class="row" *ngIf = "acceptRequest[new._id]">
+                    <button class="col-md-4 acceptRequest" (click) = "AcceptFriendRequest(new._id, new.userName)">Accept</button>
+                    <button class="col-md-4 acceptRequest" (click)="DeleteFriendRequest(new._id)">Delete</button>
+                </div>
+            </div>
         </div>
-        <div class="col-sm-11" style="margin: 7px">
+        <div class = "col-md-3 col-md-offset-9"  *ngFor = "let profile of usersInfo">
+            <div *ngIf= "getCurrentUserId != profile._id">
+                <div class="row">
+                    <img class="logo" [src] = GetImageUrl(profile.image) alt="Your Profile Picture" >
+                    <h5 style="margin-top: 35px ">{{profile.firstName | titlecase}} {{profile.lastName | titlecase}}</h5>
+                </div>
+                <p *ngIf = "!acceptRequest[profile._id] && !friendRequestSent[profile._id] && !visitUsersProfile[profile._id]">
+                    <button type="button" class="sendRequest" (click)="sendRequestButton(profile._id)">Send Request</button>
+                </p>
+                <p *ngIf = "friendRequestSent[profile._id] && !visitUsersProfile[profile._id]">
+                    <button type="button" class="sendRequest" (click) = "CancelFriendRequest(profile._id)">Friend Request Sent <br> Cancel??</button>
+                </p>
+                <p *ngIf = "visitUsersProfile[profile._id]">
+                    <button type="button" class="sendRequest">Visit Profile</button>
+                </p>
+                </div>
+            <br>
+        </div>
+    </div>
+</div>
+
+<div class= "container toggleNotification" [@slideInOut]="menuState" [ngClass] ="FadeOutSuccessMsg()">
+    <div class="row newNotify" *ngFor = "let new of recentNotification" style="cursor: pointer" [routerLink]="['/blog', new.postId]" (click) = "changeStatus(new._id)">
+        <div class="col-lg-2" *ngFor = "let user of usersProfile" class="panel-title pull-left">
+            <img class = "notifyProfile" *ngIf = "new.taggedBy==user.userName" [src] = GetImageUrl(user.image)/>
+        </div>
+        <div class="col-lg-10">
             <b>{{new.taggedBy}}</b> mentioned you in a blog, created on: {{new.time| date:'MMM dd, yyyy'}}
         </div>
         <br>

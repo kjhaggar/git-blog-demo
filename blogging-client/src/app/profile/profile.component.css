@@ -117,44 +117,37 @@ agm-map {
     width: 100%;
 }
 .notifyProfile{
-    height: 30px;
-    width: 30px;
+    height: 34px;
+    width: 34px;
+    margin-left: 10px;
 }
-.tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black;
-  }
-  
-  .tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: #555;
+.toggleNotification {
+    background: linear-gradient(to bottom, black, #1E90FF);
     color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -60px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  
-  .tooltip .tooltiptext::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #555 transparent transparent transparent;
-  }
-  
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-    opacity: 1;
-  }
+    position: fixed;
+    top: 100px;
+    padding-bottom: 30px;
+    right: 0;
+    width: 24%;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+.newNotify {
+    font-weight: 400;
+    padding-top: 50px;
+    list-style: none;
+}
+.animateNotification {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    width: 96px;
+    height: 96px;
+    font-size: 0;
+    text-indent: -9999px;
+    cursor: pointer;
+    outline: none;
+    background: none;
+    border: 0;
+}
