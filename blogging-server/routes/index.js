@@ -428,8 +428,8 @@ router.get('/sentRequestList/:id', function(req, res) {
         if (err) {
         console.log("Error:", err);
         } else {
-            console.log("requests send by current user:")
-            console.log(request)
+            // console.log("requests send by current user:")
+            // console.log(request)
             var pendingRequestId = request.map(({requestTo}) => requestTo);
             res.send({pendingRequestId});
         }
@@ -437,15 +437,22 @@ router.get('/sentRequestList/:id', function(req, res) {
 });
 
 router.get('/friendsList/:id', function(req, res) {
-    User.findOne({ _id: req.params.id}).exec(function (err, friends) {
+    User.findOne({ _id: req.params.id}).exec(function (err, user) {
         if (err) {
         console.log("Error:", err);
         }
         else {
             console.log("friendsList of current user: " + req.params.id);
-            console.log(friends);
-            res.send(friends)
+            console.log(user.friends);
+            var friendsId = user.friends.map(({friendId}) => friendId);
+            User.find({_id: { $in: friendsId }}).exec(function (err, friendList) {
+                if(err) {
+                    console.log("Error:", err);
+                } else {
 
+                    res.send({ friendList, friendsId });
+                }
+            })
         }
     });
 });

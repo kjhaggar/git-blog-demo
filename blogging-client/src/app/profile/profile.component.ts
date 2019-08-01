@@ -1,7 +1,7 @@
 import { UserService } from './../services/user.service';
 import { AuthService } from '../services/auth.service';
 import { Component, OnInit, NgZone} from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
@@ -9,6 +9,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import * as io from 'socket.io-client';
 import { MapsAPILoader, MouseEvent } from '@agm/core';
 import { trigger, state, style, transition, animate} from '@angular/animations';
+import { FilterPipe } from 'ngx-filter-pipe';
 var parse = require('parse-mentions');
 
 @Component({
@@ -31,49 +32,52 @@ var parse = require('parse-mentions');
 export class ProfileComponent implements OnInit {
     private socket = io('http://127.0.0.1:3000');
     private subscription: Subscription = new Subscription();
-    getCurrentUserId: string;
-    getCurrentUserName: string;
-    displayAddPost = false;
-    showAllPost = true;
-    postList: any;
-    displayMyPost: any;
-    showMyPost= false;
-    displayComment = [];
-    incorrectPost: boolean;
-    usersProfile: any;
-    url: any;
-    panelOpenState = [];
-    newBlogLink = 'New Blog';
-    displayOriginalBlog = [];
-    displayUpdatedBlog = [];
-    dispalyReplyBox = [];
-    commentClicked: boolean;
-    replyClicked= [];
-    usersInfo: any;
-    showMyFriends = false;
-    newFriendRequest: boolean;
-    newFriend: any;
-    acceptRequest = [];
-    friendRequestSent = [];
-    visitUsersProfile = [];
-    latitude: number;
-    longitude: number;
-    zoom:number;
-    address: string;
-    uploadBlogImages: boolean;
-    uploadUpdatedBlogImages = [];
-    filesToUpload: Array<File> = [];
-    submitted: boolean;
+    private getCurrentUserId: string;
+    private getCurrentUserName: string;
+    private displayAddPost = false;
+    private showMyPost= false;
+    private displayComment = [];
+    private url: any;
+    private panelOpenState = [];
+    private dispalyReplyBox = [];
+    private commentClicked: boolean;
+    private replyClicked= [];
+    private acceptRequest = [];
+    private friendRequestSent = [];
+    private visitUsersProfile = [];
+    private latitude: number;
+    private longitude: number;
+    private uploadBlogImages: boolean;
+    private uploadUpdatedBlogImages = [];
+    private filesToUpload: Array<File> = [];
     private geoCoder;
-    items;
-    searchInfo: any;
-    mentionedUsers: Array<string>;
-    hideSuccessMessage: boolean;
-    newFriendAdded: boolean;
-    getTaggedByUser: string;
-    recentNotification: any;
-    menuState:string = 'out';
-    numberOfNotification: number;
+    private mentionedUsers: Array<string>;
+    private recentNotification: any;
+    private menuState:string = 'out';
+    public numberOfNotification: number;
+    public searchText : string;
+    public showAllPost = true;
+    public postList: any;
+    public displayMyPost: any;
+    public incorrectPost: boolean;
+    public usersProfile: any;
+    public newBlogLink = 'New Blog';
+    public items: any;
+    public showMyFriends = false;
+    public newFriendRequest: boolean;
+    public newFriend: any;
+    public friendsInfo: any;
+    public zoom:number;
+    public address: string;
+    public submitted: boolean;
+    public item: any;
+    public searchInfo: any;
+    public hideSuccessMessage: boolean;
+    public newFriendAdded: boolean;
+    public getTaggedByUser: string;
+    public search: boolean;
+    public displayOriginalBlog = [];
+    public displayUpdatedBlog = [];
 
     searchForm: FormGroup = new FormGroup({
         searchInfo: new FormControl()
@@ -100,7 +104,8 @@ export class ProfileComponent implements OnInit {
 
     constructor(private authService: AuthService, private userService: UserService,
         private router: Router, private sanitized: DomSanitizer,private http: HttpClient,
-        private mapsAPILoader: MapsAPILoader, private ngZone: NgZone) {
+        private mapsAPILoader: MapsAPILoader, private ngZone: NgZone,
+        private filterPipe: FilterPipe) {
         this.userService.newCommentReceived().subscribe(
             data => { 
                 this.ShowAllPost();
@@ -253,45 +258,10 @@ export class ProfileComponent implements OnInit {
 
     get f() { return this.postForm.controls; }
 
-    PostComment(postId: string, index: number) {
-        if(this.panelOpenState[index] == false) { 
-            this.panelOpenState[index] =  !this.panelOpenState[index];
-        } 
-            this.panelOpenState[index] = true;
-        if (!this.commentForm.valid) {
-            return;
-        }
-
-        const obj = {
-            postId: postId,
-            comment: this.commentForm.value.content,
-            userId: this.getCurrentUserId,
-            userName: this.getCurrentUserName
-        };
-
-        this.subscription.add(
-            this.userService.addComment(obj).subscribe(
-                data => {
-                    this.socket.emit('tag',obj);
-                    this.commentClicked = false;
-                    this.socket.emit('comment',obj); 
-                    this.commentForm.reset();
-                    if(this.showMyPost == true) {
-                        this.DisplayMyPost();
-                    } else {
-                    this.ShowAllPost();
-                    }
-                },
-                error => {
-                }
-            )
-        );
-    }
-
     tagUser() {
         this.userService.tagUser().subscribe(
             (data: {uName: string}) => {
-                this.items=data.uName;
+                this.item=data.uName;
             },
             err => console.log(err)
         )
@@ -386,46 +356,16 @@ export class ProfileComponent implements OnInit {
         );
     }
 
-    UpdatePost(postId: string,index: number){
-        this.panelOpenState[index] = true;
-        this.displayOriginalBlog[index] = !this.displayOriginalBlog[index] ;
-        this.displayUpdatedBlog[index]= !this.displayUpdatedBlog[index];
-        const formData: any = new FormData();
-        if(this.displayUpdatedBlog[index]) {
-            this.filesToUpload = [];
-        }
-        const files: Array<File> = this.filesToUpload;
-
-        if(files.length > 0) {
-            for(let i =0; i < files.length; i++){
-                formData.append("uploads[]", files[i], files[i]['name']);
-            }
-        }
-        formData.append("forminput", JSON.stringify(this.updatePost.value.description));
-        if (!this.updatePost.valid) {
-            return;
-        }
-        this.userService.updatePost(postId, formData).subscribe(
-          data=> {
-              this.uploadUpdatedBlogImages[index] = false;
-              this.ShowAllPost();
-              this.DisplayMyPost();
-            },
-            error=>console.error(error)
-        )
-    }
-
     fileChangeEvent(fileInput: any) {
     this.filesToUpload = <Array<File>>fileInput.target.files;
     }
 
     AcceptFriendRequest(friendId: string, friendUserName: string) {
         this.userService.changeRequestStatus(this.getCurrentUserId, friendId).subscribe(
-            data => {debugger
+            data => {
                 this.updateFriendList(this.getCurrentUserId, this.getCurrentUserName, friendId, friendUserName);
                 this.updateFriendList(friendId, friendUserName, this.getCurrentUserId, this.getCurrentUserName);
                 this.newRequest();
-                this.friends();
                 this.newFriendAdded = true;
             },
             error => console.log(error)
@@ -435,6 +375,7 @@ export class ProfileComponent implements OnInit {
     updateFriendList(userId: string, userName: string, friendId: string, friendUserName: string) {
         this.userService.acceptFriendRequest(userId, userName, friendId, friendUserName).subscribe(
             data => {
+                this.newRequest();
                 this.visitUsersProfile[userId] = true;
             },
             error => console.log(error)
@@ -492,9 +433,8 @@ export class ProfileComponent implements OnInit {
 
     friends() {
         this.userService.FriendsList(this.getCurrentUserId).subscribe(
-            (data: {friends: any}) => {
-                console.log("List of friend id of " + this.getCurrentUserName)
-                console.log(data.friends)
+            (data: {friendList: any}) => {
+                this.friendsInfo = data.friendList
             },
         error => {
             console.log(error)}
@@ -522,11 +462,12 @@ export class ProfileComponent implements OnInit {
         this.showMyFriends = true;
         this.userService.getUsersList().subscribe(
             data => {
-                this.usersInfo = data;
+                this.items = data;
             },
             error => console.log(error)
         )
     }
+
     Notify() {
         this.menuState = this.menuState === 'out' ? 'in' : 'out';
     }

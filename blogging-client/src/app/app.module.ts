@@ -1,6 +1,3 @@
-import { Provider } from '@angular/core';
-import { BrowserXhr } from '@angular/http';
-import { CustExtBrowserXhr } from './cust-ext-browser-xhr';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -12,11 +9,16 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { AgmCoreModule } from '@agm/core';
 import { MentionModule } from 'angular-mentions';
+import { FilterPipeModule } from 'ngx-filter-pipe';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ProfileComponent } from './profile/profile.component';
+import { BlogComponent } from './blog/blog.component';
+import { MyblogComponent } from './myblog/myblog.component';
+import { FilterPipe }from './filter.pipe';
+import { Pipe, PipeTransform } from '@angular/core';
 
 import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
@@ -25,8 +27,6 @@ import { AuthGuard } from './guards/auth.guard';
 
 import { AuthInterceptor } from './interceptor/auth-interceptor';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
-import { BlogComponent } from './blog/blog.component';
-import { MyblogComponent } from './myblog/myblog.component';
 
 export const authInterceptorProviders = [
   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
@@ -40,7 +40,8 @@ export const authInterceptorProviders = [
     ProfileComponent,
     EditProfileComponent,
     BlogComponent,
-    MyblogComponent
+    MyblogComponent,
+    FilterPipe
   ],
   imports: [
     BrowserModule,
@@ -53,13 +54,13 @@ export const authInterceptorProviders = [
     MatExpansionModule,
     MatIconModule,
     MentionModule,
+    FilterPipeModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyBzS-pIcW-xUtwOFGXt2ErDPfpAbLCRgSc',
       libraries: ['places']
     })
   ],
   providers: [
-    { provide: BrowserXhr, useClass:CustExtBrowserXhr},
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     AuthInterceptor, UserService, AuthService, AuthGuard],
   bootstrap: [AppComponent]

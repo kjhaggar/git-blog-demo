@@ -8,11 +8,12 @@ import { HttpClient, HttpHeaders} from '@angular/common/http';
 export class AuthService {
   authToken: any;
   user: string;
+  url = 'http://127.0.0.1:3000/api'
 
   constructor(private http: HttpClient, private router : Router) { }
  
   register(body: any) {
-    return this.http.post('http://127.0.0.1:3000/api/register', body,
+    return this.http.post(this.url + '/register', body,
     {
       observe: 'body',
       headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -20,7 +21,7 @@ export class AuthService {
   }
 
   login(body: any) {
-    return this.http.post('http://127.0.0.1:3000/api/login', body,
+    return this.http.post(this.url + '/login', body,
     {
       observe: 'body',
       withCredentials: true,

@@ -8,11 +8,12 @@ import { Observable } from 'rxjs/Observable';
 })
 export class UserService {
     private socket = io('http://127.0.0.1:3000');
+    url = 'http://127.0.0.1:3000/api/'
     
     constructor( private http: HttpClient ) {}
     
     sendRequest(body) {
-        return this.http.post('http://127.0.0.1:3000/api/sendRequest', body, {
+        return this.http.post(this.url + 'sendRequest', body, {
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
@@ -20,7 +21,7 @@ export class UserService {
     }
 
     sendNotification(body) {
-        return this.http.post('http://127.0.0.1:3000/api/storeTaggedUsers', body, {
+        return this.http.post(this.url + 'storeTaggedUsers', body, {
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
@@ -28,7 +29,7 @@ export class UserService {
     }
 
     getUsersList() {
-        return this.http.get('http://127.0.0.1:3000/api/getUsersList/', {
+        return this.http.get(this.url + 'getUsersList/', {
             observe: 'body',
             withCredentials: true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -36,7 +37,7 @@ export class UserService {
     }
 
     getProfileData(userId: string) {
-        return this.http.get('http://127.0.0.1:3000/api/getProfileData/' + userId, {
+        return this.http.get(this.url + 'getProfileData/' + userId, {
             observe: 'body',
             withCredentials: true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -44,7 +45,7 @@ export class UserService {
     }
 
     getPostById(id: string) {
-        return this.http.get('http://127.0.0.1:3000/api/getPostById/' + id, {
+        return this.http.get(this.url + 'getPostById/' + id, {
             observe: 'body',
             withCredentials:true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -52,7 +53,7 @@ export class UserService {
     }
 
     getBlogById(id: string) {
-        return this.http.get('http://127.0.0.1:3000/api/getBlogById/' + id, {
+        return this.http.get(this.url + 'getBlogById/' + id, {
             observe: 'body',
             withCredentials:true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -60,14 +61,14 @@ export class UserService {
     }
 
     addPost(formData: any) {
-        return this.http.post('http://127.0.0.1:3000/api/addPost', formData, {
+        return this.http.post(this.url + 'addPost', formData, {
             observe: 'body',
             withCredentials: true
         });
     }
 
     showPost() {
-        return this.http.get('http://127.0.0.1:3000/api/allPost', {
+        return this.http.get(this.url + 'allPost', {
             observe: 'body',
             withCredentials:true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -75,7 +76,7 @@ export class UserService {
     }
 
     addComment(body: any) {
-        return this.http.post('http://127.0.0.1:3000/api/addComment', body, {
+        return this.http.post(this.url + 'addComment', body, {
             observe: 'body',
             withCredentials: true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -83,14 +84,14 @@ export class UserService {
     }
 
     addReply(body: any) {
-        return this.http.post('http://127.0.0.1:3000/api/addReply', body, {
+        return this.http.post(this.url + 'addReply', body, {
             observe: 'body',
             withCredentials:true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
         });
     }
     updatePost(postId: any, body: any){
-        return this.http.put('http://127.0.0.1:3000/api/updatePost/' + postId, body, {
+        return this.http.put(this.url + 'updatePost/' + postId, body, {
             observe:'body',
             withCredentials:true,
             // headers:new HttpHeaders().append('Content-Type','application/json')
@@ -100,7 +101,7 @@ export class UserService {
         var body = {
             user: userName
         }
-        return this.http.put('http://127.0.0.1:3000/api/changePostStatus/' + id, body, {
+        return this.http.put(this.url + 'changePostStatus/' + id, body, {
             observe:'body',
             withCredentials:true,
             // headers:new HttpHeaders().append('Content-Type','application/json')
@@ -112,7 +113,7 @@ export class UserService {
             user: userId,
             friend: friendId
         }
-        return this.http.put('http://127.0.0.1:3000/api/changeRequestStatus', body, {
+        return this.http.put(this.url + 'changeRequestStatus', body, {
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
@@ -120,7 +121,7 @@ export class UserService {
     }
 
     deletePost(postId: string){
-        return this.http.delete('http://127.0.0.1:3000/api/deletePost/' + postId, {
+        return this.http.delete(this.url + 'deletePost/' + postId, {
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
@@ -128,7 +129,7 @@ export class UserService {
     }
 
     displayProfile() {
-        return this.http.get('http://127.0.0.1:3000/api/displayProfilePicture/', {
+        return this.http.get(this.url + 'displayProfilePicture/', {
             observe: 'body',
             withCredentials:true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -136,7 +137,7 @@ export class UserService {
     }
 
     deleteProfilePicture(userId: string){
-        return this.http.delete('http://127.0.0.1:3000/api/deleteProfilePicture/' + userId,{
+        return this.http.delete(this.url + 'deleteProfilePicture/' + userId,{
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
@@ -144,7 +145,7 @@ export class UserService {
     }
 
     RequestList(userId: string) {
-        return this.http.get('http://127.0.0.1:3000/api/requestList/' + userId, {
+        return this.http.get(this.url + 'requestList/' + userId, {
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
@@ -152,7 +153,7 @@ export class UserService {
     }
 
     SentRequestList(userId: string) {
-        return this.http.get('http://127.0.0.1:3000/api/sentRequestList/' + userId, {
+        return this.http.get(this.url + 'sentRequestList/' + userId, {
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
@@ -160,7 +161,7 @@ export class UserService {
     }
 
     FriendsList(userId: string) {
-        return this.http.get('http://127.0.0.1:3000/api/friendsList/' + userId, {
+        return this.http.get(this.url + 'friendsList/' + userId, {
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
@@ -168,7 +169,7 @@ export class UserService {
     }
 
     NotificationList(userName: string) {
-        return this.http.get('http://127.0.0.1:3000/api/getNotified/' + userName, {
+        return this.http.get(this.url + 'getNotified/' + userName, {
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
@@ -183,14 +184,14 @@ export class UserService {
             friendId: friendId,
             friendUserName: friendUserName
         }
-        return this.http.put('http://127.0.0.1:3000/api/acceptFriendRequest', body ,{
+        return this.http.put(this.url + 'acceptFriendRequest', body ,{
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')
         })
     }
     deleteFriendRequest(userId: string, requestToId: string){
-        return this.http.request('DELETE', 'http://127.0.0.1:3000/api/deleteFriendRequest', {
+        return this.http.request('DELETE', this.url + 'deleteFriendRequest', {
             observe: 'body',
             withCredentials: true,
             headers: new HttpHeaders().append('Content-Type','application/json'),
@@ -203,7 +204,7 @@ export class UserService {
     }
 
     cancelFriendRequest(userId: string, requestToId: string){
-        return this.http.request('DELETE', 'http://127.0.0.1:3000/api/deleteFriendRequest', {
+        return this.http.request('DELETE', this.url + 'deleteFriendRequest', {
             observe: 'body',
             withCredentials: true,
             headers: new HttpHeaders().append('Content-Type','application/json'),
@@ -216,7 +217,7 @@ export class UserService {
     }
 
     tagUser(){
-        return this.http.get('http://127.0.0.1:3000/api/tagUser',{
+        return this.http.get(this.url + 'tagUser',{
             observe:'body',
             withCredentials:true,
             headers:new HttpHeaders().append('Content-Type','application/json')

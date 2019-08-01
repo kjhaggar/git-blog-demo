@@ -68,7 +68,7 @@
                     <label for="exampleInputPassword1">Description</label>
                     <textarea name="description" formControlName="description" rows="4" class="form-control"
                     placeholder="Your post..!!" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"
-                    [mention]="items" [mentionConfig]="{maxItems:10, labelKey: 'tag'}" ></textarea>
+                    [mention]="item" [mentionConfig]="{maxItems:10, labelKey: 'tag'}" ></textarea>
                     <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
                         <div *ngIf="f.description.errors.required">Enter valid information</div>
                     </div>
@@ -138,13 +138,34 @@
 </div>
 
 <div class= "container" *ngIf = "showMyFriends">
-    <form class="form-inline">
+    <form class="form-inline" name="myform">
         <span class="glyphicon glyphicon-search"></span>
-        <input type="text" name="searchfriend" placeholder="Search here..">
-        <button type="button" value="search">Search</button>
+        <input type="text" [(ngModel)]="searchText" name="searchfriend" placeholder="Search here..">
     </form>
+    <ul>
+        <div *ngIf ="searchText">
+        <div *ngFor="let item of items | filter: searchText">
+                <!-- <div *ngFor="let item of items | filter: {userName: searchText, firstName:searchText,  lastName: searchText}">{{item.userName}} -->
+            <form class="form-inline">
+            <div class="row">
+                <img class="logo" [src] = GetImageUrl(item.image) alt="Your Profile Picture" >
+                <h5 style="margin-top: 35px ">{{item.firstName | titlecase}} {{item.lastName | titlecase}}</h5>
+            </div>
+            <p *ngIf = "!acceptRequest[item._id] && !friendRequestSent[item._id] && !visitUsersProfile[item._id]">
+                 <button type="button" class="btn-primary" style='margin: 30px;' (click)="sendRequestButton(item._id)">Send Request <i class='fas fa-user-plus'></i></button>
+            </p>
+            <p *ngIf = "friendRequestSent[item._id] && !visitUsersProfile[item._id]">
+                <button type="button" class="btn-primary" style='margin: 30px;' (click) = "CancelFriendRequest(item._id)">Friend Request Sent <br> Cancel??</button>
+            </p>
+            <br>
+        </form>
+        </div>
+    </div>
+        <!-- <label *ngIf="(usersInfo | filterBy: userFilter).length === 0">No matching elements</label> -->
+    </ul>
+    <hr>
     <div class="row">
-        <div class = "col-md-6 col-md-offset-1" *ngIf = "newFriendRequest">
+        <div class = "col-sm-5 col-md-offset-1" *ngIf = "newFriendRequest">
             <h3>Friend Requests</h3>
             <div class="reqColumn" *ngFor ="let new of newFriend">
                 <div class="row">
@@ -157,7 +178,8 @@
                 </div>
             </div>
         </div>
-        <div class = "col-md-3 col-md-offset-9"  *ngFor = "let profile of usersInfo">
+    
+        <!-- <div class = "col-sm-3 col-md-offset-6"  *ngFor = "let profile of usersInfo">
             <div *ngIf= "getCurrentUserId != profile._id">
                 <div class="row">
                     <img class="logo" [src] = GetImageUrl(profile.image) alt="Your Profile Picture" >
@@ -169,22 +191,30 @@
                 <p *ngIf = "friendRequestSent[profile._id] && !visitUsersProfile[profile._id]">
                     <button type="button" class="sendRequest" (click) = "CancelFriendRequest(profile._id)">Friend Request Sent <br> Cancel??</button>
                 </p>
-                <p *ngIf = "visitUsersProfile[profile._id]">
-                    <button type="button" class="sendRequest">Visit Profile</button>
-                </p>
-                </div>
+            </div>
             <br>
+        </div> -->
+        <div class = "col-sm-3 col-md-offset-6" >
+                <h3>My Friends</h3>
+            <div *ngFor = "let profile of friendsInfo">
+                <div class="row">
+                    <img class="logo" [src] = GetImageUrl(profile.image) alt="Your Profile Picture" >
+                    <h5 style="margin-top: 35px ">{{profile.firstName | titlecase}} {{profile.lastName | titlecase}}</h5>
+                </div>
+                <button type="button" class="sendRequest">Visit Profile</button>
+                <br>
+            </div>
         </div>
     </div>
 </div>
 
-<div class= "container toggleNotification" [@slideInOut]="menuState" [ngClass] ="FadeOutSuccessMsg()">
-    <div class="row newNotify" *ngFor = "let new of recentNotification" style="cursor: pointer" [routerLink]="['/blog', new.postId]" (click) = "changeStatus(new._id)">
+<div  class= "container toggleNotification" [@slideInOut]="menuState">
+    <div class="row newNotify" *ngFor = "let new of recentNotification" (click) = "changeStatus(new._id)">
         <div class="col-lg-2" *ngFor = "let user of usersProfile" class="panel-title pull-left">
             <img class = "notifyProfile" *ngIf = "new.taggedBy==user.userName" [src] = GetImageUrl(user.image)/>
         </div>
         <div class="col-lg-10">
-            <b>{{new.taggedBy}}</b> mentioned you in a blog, created on: {{new.time| date:'MMM dd, yyyy'}}
+            <b>{{new.taggedBy}}</b> mentioned you in a <a [routerLink]="['/blog', new.postId]">blog</a>, created on: {{new.time| date:'MMM dd, yyyy'}}
         </div>
         <br>
     </div>
