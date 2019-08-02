@@ -42,11 +42,6 @@ var corsOptions = {
 }
 app.use(cors(corsOptions));
 
-// app.use(cors({
-//   origin:['http://localhost:4200','http://127.0.0.1:4200'],
-//   credentials:true
-// }));
-
 app.use('/api', indexRouter);
 
 // catch 404 and forward to error handler
