@@ -12,7 +12,6 @@ export class LoginComponent implements OnInit{
     submitted: boolean;
     invalidUser: boolean;
     unauthMessage: string;
-    message: string;
 
     loginForm: FormGroup = new FormGroup({
         userName: new FormControl(null, Validators.required),

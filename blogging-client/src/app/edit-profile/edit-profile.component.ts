@@ -19,10 +19,10 @@ export class EditProfileComponent implements OnInit {
     public submitted: boolean;
     public hideSuccessMessage = false;
     public hideNoUpdateMessage = false;
+    public changePassword = false;
     private selectedFile: File;
     private getCurrentUserId: string;
     private getCurrentProfilePicture: any;
-    private changePassword = false;
     private originalData: any;
     
     constructor( private http: HttpClient, private userService: UserService ) {}

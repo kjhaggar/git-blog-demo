@@ -33,9 +33,6 @@ export class ProfileComponent implements OnInit {
     private socket = io('http://127.0.0.1:3000');
     private subscription: Subscription = new Subscription();
     private getCurrentUserId: string;
-    private getCurrentUserName: string;
-    private displayAddPost = false;
-    private showMyPost= false;
     private displayComment = [];
     private url: any;
     private panelOpenState = [];
@@ -52,8 +49,8 @@ export class ProfileComponent implements OnInit {
     private filesToUpload: Array<File> = [];
     private geoCoder;
     private mentionedUsers: Array<string>;
-    private recentNotification: any;
-    private menuState:string = 'out';
+    public recentNotification: any;
+    public menuState:string = 'out';
     public numberOfNotification: number;
     public searchText : string;
     public showAllPost = true;
@@ -78,6 +75,9 @@ export class ProfileComponent implements OnInit {
     public search: boolean;
     public displayOriginalBlog = [];
     public displayUpdatedBlog = [];
+    public getCurrentUserName: string;
+    public displayAddPost = false;
+    public showMyPost= false;
 
     searchForm: FormGroup = new FormGroup({
         searchInfo: new FormControl()
