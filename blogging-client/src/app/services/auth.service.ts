@@ -8,10 +8,10 @@ import { HttpClient, HttpHeaders} from '@angular/common/http';
 export class AuthService {
   authToken: any;
   user: string;
-  url = 'http://127.0.0.1:3000/api'
+  url = 'http://127.0.0.1:3000/api';
 
-  constructor(private http: HttpClient, private router : Router) { }
- 
+  constructor(private http: HttpClient, private router: Router) { }
+
   register(body: any) {
     return this.http.post(this.url + '/register', body,
     {
@@ -42,7 +42,7 @@ export class AuthService {
     localStorage.setItem('token', token);
     localStorage.setItem('user', user);
     localStorage.setItem('userId', userId);
-    this.authToken = token; 
+    this.authToken = token;
     this.user = user;
   }
 
@@ -50,7 +50,7 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
 
-  getToken(){
+  getToken() {
     return localStorage.getItem('token');
   }
 

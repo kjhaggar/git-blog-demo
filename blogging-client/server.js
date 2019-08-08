@@ -9,6 +9,6 @@ app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname + '/dist/blog-client/index.html'));
 });
 
-app.listen(process.env.PORT || 4000, function(){
+app.listen(process.env.PORT || 4200, function(){
     console.log('Your node js server is running');
 });

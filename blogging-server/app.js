@@ -43,6 +43,10 @@ var corsOptions = {
 }
 app.use(cors(corsOptions));
 
+app.get('/', function (req, res) {
+  res.send("App is Running")
+});
+
 app.use('/api', indexRouter);
 
 // catch 404 and forward to error handler
