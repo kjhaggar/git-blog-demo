@@ -8,7 +8,7 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent implements OnInit {
     submitted: boolean;
     invalidUser: boolean;
     unauthMessage: string;
@@ -22,12 +22,11 @@ export class LoginComponent implements OnInit{
     htmlTag: HTMLElement = document.getElementsByTagName('html')[0];
 
     constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) {}
-    
+
     ngOnInit() {
-        if(localStorage.getItem('token')){
+        if (localStorage.getItem('token')) {
             this.router.navigate(['/profile']);
         }
-   
     }
 
     get f() { return this.loginForm.controls; }
@@ -40,8 +39,8 @@ export class LoginComponent implements OnInit{
         }
         this.authService.login(JSON.stringify(this.loginForm.value)).subscribe(
             (data: { userId: string, userName: string, success: boolean, message: string, token: string}) => {
-                if (data.success){
-                    alert("not a memmber");
+                if (data.success) {
+                    alert('not a memmber');
                 }
                 this.router.navigate(['/profile']);
                 this.authService.storeUserData(data.token, data.userName, data.userId);

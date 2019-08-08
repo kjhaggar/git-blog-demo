@@ -8,24 +8,24 @@ import { Observable } from 'rxjs/Observable';
 })
 export class UserService {
     private socket = io('http://127.0.0.1:3000');
-    url = 'http://127.0.0.1:3000/api/'
-    
+    url = 'http://127.0.0.1:3000/api/';
+
     constructor( private http: HttpClient ) {}
-    
+
     sendRequest(body) {
         return this.http.post(this.url + 'sendRequest', body, {
-            observe:'body',
-            withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json')
+        });
     }
 
     sendNotification(body) {
         return this.http.post(this.url + 'storeTaggedUsers', body, {
-            observe:'body',
-            withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json')
+        });
     }
 
     getUsersList() {
@@ -47,7 +47,7 @@ export class UserService {
     getPostById(id: string) {
         return this.http.get(this.url + 'getPostById/' + id, {
             observe: 'body',
-            withCredentials:true,
+            withCredentials: true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
         });
     }
@@ -55,7 +55,7 @@ export class UserService {
     getBlogById(id: string) {
         return this.http.get(this.url + 'getBlogById/' + id, {
             observe: 'body',
-            withCredentials:true,
+            withCredentials: true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
         });
     }
@@ -70,7 +70,7 @@ export class UserService {
     showPost() {
         return this.http.get(this.url + 'allPost', {
             observe: 'body',
-            withCredentials:true,
+            withCredentials: true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
         });
     }
@@ -86,199 +86,197 @@ export class UserService {
     addReply(body: any) {
         return this.http.post(this.url + 'addReply', body, {
             observe: 'body',
-            withCredentials:true,
+            withCredentials: true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
         });
     }
-    updatePost(postId: any, body: any){
+    updatePost(postId: any, body: any) {
         return this.http.put(this.url + 'updatePost/' + postId, body, {
-            observe:'body',
-            withCredentials:true,
-            // headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+            observe: 'body',
+            withCredentials: true,
+            // headers: new HttpHeaders().append('Content-Type','application/json')
+        });
     }
-    changePostStatus(id: string, userName : string){
-        var body = {
+    changePostStatus(id: string, userName: string) {
+        const body = {
             user: userName
-        }
+        };
         return this.http.put(this.url + 'changePostStatus/' + id, body, {
-            observe:'body',
-            withCredentials:true,
+            observe: 'body',
+            withCredentials: true,
             // headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+        });
     }
 
-    changeRequestStatus(userId: string, friendId : string){debugger
-        var body = {
+    changeRequestStatus(userId: string, friendId: string) {
+        const body = {
             user: userId,
             friend: friendId
-        }
+        };
         return this.http.put(this.url + 'changeRequestStatus', body, {
-            observe:'body',
-            withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json')
+        });
     }
 
-    deletePost(postId: string){
+    deletePost(postId: string) {
         return this.http.delete(this.url + 'deletePost/' + postId, {
-            observe:'body',
-            withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json')
+        });
     }
 
     displayProfile() {
         return this.http.get(this.url + 'displayProfilePicture/', {
             observe: 'body',
-            withCredentials:true,
+            withCredentials: true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
         });
     }
 
-    deleteProfilePicture(userId: string){
-        return this.http.delete(this.url + 'deleteProfilePicture/' + userId,{
-            observe:'body',
-            withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+    deleteProfilePicture(userId: string) {
+        return this.http.delete(this.url + 'deleteProfilePicture/' + userId, {
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json')
+        });
     }
 
     RequestList(userId: string) {
         return this.http.get(this.url + 'requestList/' + userId, {
-            observe:'body',
-            withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json')
+        });
     }
 
     SentRequestList(userId: string) {
         return this.http.get(this.url + 'sentRequestList/' + userId, {
-            observe:'body',
-            withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json')
+        });
     }
 
     FriendsList(userId: string) {
         return this.http.get(this.url + 'friendsList/' + userId, {
-            observe:'body',
-            withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json')
+        });
     }
 
     NotificationList(userName: string) {
         return this.http.get(this.url + 'getNotified/' + userName, {
-            observe:'body',
-            withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json')
+        });
     }
 
 
-    acceptFriendRequest(userId: string, userName: string, friendId: string, friendUserName: string){
-        var body = {
-            userId: userId,
-            userName: userName,
-            friendId: friendId,
-            friendUserName: friendUserName
-        }
-        return this.http.put(this.url + 'acceptFriendRequest', body ,{
-            observe:'body',
-            withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+    acceptFriendRequest(userId: string, userName: string, friendId: string, friendUserName: string) {
+        const body = {
+            userId,
+            userName,
+            friendId,
+            friendUserName
+        };
+        return this.http.put(this.url + 'acceptFriendRequest', body , {
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json')
+        });
     }
-    deleteFriendRequest(userId: string, requestToId: string){
+    deleteFriendRequest(userId: string, requestToId: string) {
         return this.http.request('DELETE', this.url + 'deleteFriendRequest', {
             observe: 'body',
             withCredentials: true,
-            headers: new HttpHeaders().append('Content-Type','application/json'),
+            headers: new HttpHeaders().append('Content-Type', 'application/json'),
             body: {
                 user : userId,
                 requestTo: requestToId
             }
-        }
-        )
+        });
     }
 
-    cancelFriendRequest(userId: string, requestToId: string){
+    cancelFriendRequest(userId: string, requestToId: string) {
         return this.http.request('DELETE', this.url + 'deleteFriendRequest', {
             observe: 'body',
             withCredentials: true,
-            headers: new HttpHeaders().append('Content-Type','application/json'),
+            headers: new HttpHeaders().append('Content-Type', 'application/json'),
             body: {
                 user : userId,
                 requestTo: requestToId
             }
-        }
-        )
+        });
     }
 
-    tagUser(){
-        return this.http.get(this.url + 'tagUser',{
-            observe:'body',
-            withCredentials:true,
-            headers:new HttpHeaders().append('Content-Type','application/json')
-        })
+    tagUser() {
+        return this.http.get(this.url + 'tagUser', {
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json')
+        });
     }
     newCommentReceived() {
-        let observable = new Observable<any>(observer => {
+        const observable = new Observable<any>(observer => {
             this.socket.on('new comment', (data) => {
                 observer.next(data);
                 });
-            return () => { this.socket.disconnect(); }
+            return () => { this.socket.disconnect(); };
         });
         return observable;
     }
 
     newReplyReceived() {
-        let observable = new Observable<any>(observer => {
+        const observable = new Observable<any>(observer => {
             this.socket.on('new reply', (data) => {
                 observer.next(data);
             });
-            return () => { this.socket.disconnect(); }
+            return () => { this.socket.disconnect(); };
         });
         return observable;
     }
 
     newPostReceived() {
-        let observable = new Observable<any>(observer => {
+        const observable = new Observable<any>(observer => {
             this.socket.on('new post', (data) => {
                 observer.next(data);
                 });
-            return () => { this.socket.disconnect(); }
+            return () => { this.socket.disconnect(); };
         });
         return observable;
     }
 
-    newRequestReceived(){
-        let observable = new Observable<any>(observer=>{
-            this.socket.on('newFriendRequest', (friend)=>{
+    newRequestReceived() {
+        const observable = new Observable<any>(observer => {
+            this.socket.on('newFriendRequest', (friend) => {
                 observer.next(friend);
             });
-            return () => {this.socket.disconnect();}
+            return () => {this.socket.disconnect(); };
         });
         return observable;
     }
 
-    canceledRequestReceived(){
-        let observable = new Observable<any>(observer=>{
-            this.socket.on('cancelRequest', (userId)=>{
+    canceledRequestReceived() {
+        const observable = new Observable<any>(observer => {
+            this.socket.on('cancelRequest', (userId) => {
                 observer.next(userId);
             });
-            return () => {this.socket.disconnect();}
+            return () => {this.socket.disconnect(); };
         });
         return observable;
     }
 
-    newTag(){
-        let observable = new Observable<any>(observer=>{
-            this.socket.on('newTag', (data)=>{
+    newTag() {
+        const observable = new Observable<any>(observer => {
+            this.socket.on('newTag', (data) => {
                 observer.next(data);
             });
-            return () => {this.socket.disconnect();}
+            return () => {this.socket.disconnect(); };
         });
         return observable;
     }

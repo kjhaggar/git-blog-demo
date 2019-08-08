@@ -33,10 +33,10 @@
 </nav>
 <!-- <div class= "container" *ngIf="hideSuccessMessage && getCurrentUserName != getTaggedByUser">
     <p class="alert alert-success col-md-offset-9" style="text-align: center">
-        <strong>You have unread notification(s)</strong> 
+        <strong>You have unread notification(s)</strong>
         <button type="button" class="close" (click)="hideSuccessMessage = false">
             <span aria-hidden="true">&times;</span>
-        </button>                
+        </button>
     </p>
 </div> -->
 
@@ -45,8 +45,8 @@
         <strong [ngClass] ="FadeOutSuccessMsg()">Friend Request accepted..!!</strong>
         <button type="button" class="close" (click)="newFriendAdded = false">
             <span aria-hidden="true">&times;</span>
-        </button>     
-    </p>     
+        </button>
+    </p>
 </div>
 
 <div class= "container" *ngIf = "displayAddPost">
@@ -60,8 +60,8 @@
                     <label for="exampleInputEmail1">Title</label>
                     <input name="title" type="text" formControlName="title" class="form-control"
                     placeholder="Enter title" [ngClass]="{ 'is-invalid': submitted && f.title.errors }">
-                    <div *ngIf="submitted && f.title.errors" class="invalid-feedback">
-                        <div *ngIf="f.title.errors.required">No title provided</div>
+                    <div *ngIf="submitted && !!f.title.errors" class="invalid-feedback">
+                        <div *ngIf="!!f.title.errors.required">No title provided</div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -69,8 +69,8 @@
                     <textarea name="description" formControlName="description" rows="4" class="form-control"
                     placeholder="Your post..!!" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"
                     [mention]="item" [mentionConfig]="{maxItems:10, labelKey: 'tag'}" ></textarea>
-                    <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
-                        <div *ngIf="f.description.errors.required">Enter valid information</div>
+                    <div *ngIf="submitted && !!f.description.errors" class="invalid-feedback">
+                        <div *ngIf="!!f.description.errors.required">Enter valid information</div>
                     </div>
                 </div>
                 <button type="button" class="btn btn-sm btn-primary" (click) = "showGoogleMap = true">Add Location</button>
@@ -88,7 +88,7 @@
                 <button type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages()">Upload Media</button>
                 <div class="form-group" *ngIf= "uploadBlogImages">
                     <div class="col-md-9">
-                        <input formControlName="image" id="image" name="image" type="file" 
+                        <input formControlName="image" id="image" name="image" type="file"
                         (change)="fileChangeEvent($event)" placeholder="Upload a file..." multiple/>
                     </div>
                 </div>
@@ -125,14 +125,11 @@
                     <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
                 </div>
                 <label class="panel-title title col-lg-2" ><em>{{ post.title | titlecase}}</em></label>
-                <small class="info col-lg-4" >Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>   
+                <small class="info col-lg-4" >Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>
             </div>
             <p class = "description">{{post.description | slice:0:234 }}...
                 <a [routerLink]="['/myBlog', post._id]">Show More</a>
             </p>
-            <div *ngFor="let count of post.imageUrl">
-                <img style="margin: 10px 175px; height: 30%; width: 30%" [src] = GetBlogImageUrl(count.filename)/>
-            </div>
         </form>
     </div>
 </div>
@@ -178,7 +175,7 @@
                 </div>
             </div>
         </div>
-    
+
         <!-- <div class = "col-sm-3 col-md-offset-6"  *ngFor = "let profile of usersInfo">
             <div *ngIf= "getCurrentUserId != profile._id">
                 <div class="row">
@@ -211,7 +208,7 @@
 <div  class= "container toggleNotification" [@slideInOut]="menuState">
     <div class="row newNotify" *ngFor = "let new of recentNotification" (click) = "changeStatus(new._id)">
         <div class="col-lg-2" *ngFor = "let user of usersProfile" class="panel-title pull-left">
-            <img class = "notifyProfile" *ngIf = "new.taggedBy==user.userName" [src] = GetImageUrl(user.image)/>
+            <img class = "notifyProfile" *ngIf = "new.taggedBy == user.userName" [src] = GetImageUrl(user.image)/>
         </div>
         <div class="col-lg-10">
             <b>{{new.taggedBy}}</b> mentioned you in a <a [routerLink]="['/blog', new.postId]">blog</a>, created on: {{new.time| date:'MMM dd, yyyy'}}

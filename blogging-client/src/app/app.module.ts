@@ -10,6 +10,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { AgmCoreModule } from '@agm/core';
 import { MentionModule } from 'angular-mentions';
 import { FilterPipeModule } from 'ngx-filter-pipe';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -17,8 +19,7 @@ import { RegisterComponent } from './register/register.component';
 import { ProfileComponent } from './profile/profile.component';
 import { BlogComponent } from './blog/blog.component';
 import { MyblogComponent } from './myblog/myblog.component';
-import { FilterPipe }from './filter.pipe';
-import { Pipe, PipeTransform } from '@angular/core';
+import { FilterPipe } from './filter.pipe';
 
 import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
@@ -41,7 +42,7 @@ export const authInterceptorProviders = [
     EditProfileComponent,
     BlogComponent,
     MyblogComponent,
-    FilterPipe
+    FilterPipe,
   ],
   imports: [
     BrowserModule,
@@ -55,6 +56,8 @@ export const authInterceptorProviders = [
     MatIconModule,
     MentionModule,
     FilterPipeModule,
+    EmojiModule,
+    PickerModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyBzS-pIcW-xUtwOFGXt2ErDPfpAbLCRgSc',
       libraries: ['places']

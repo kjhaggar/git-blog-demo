@@ -25,3 +25,7 @@ button {
     font-size: 16px;
     padding-left: 100px;
 }
+.toggle-emoji svg {
+    width: 28px;
+    height: 28px;
+  }
