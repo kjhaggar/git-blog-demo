@@ -9,6 +9,7 @@ db = require('./config/db')
 var indexRouter = require('./routes/index');
 require('./passport-config');
 var multer = require('multer');
+const mongoose = require('mongoose');
 
 var app = express();
 
