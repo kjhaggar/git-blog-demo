@@ -58,6 +58,11 @@ export class BlogComponent implements OnInit {
         this.getCurrentUserName = localStorage.getItem('user');
         this.getBlog();
         this.DisplayProfilePicture();
+
+        // this.replyForm = new FormGroup({})
+        // for(let formModule of this.post.comments){
+        //   this.replyForm.addcontrol(formModule.key,new FormControl(formModule.Value))
+        // }
     }
 
     toggleEmojiPicker() {
@@ -77,11 +82,9 @@ export class BlogComponent implements OnInit {
         this.showReplyEmojiPicker[index] = !this.showReplyEmojiPicker[index];
     }
 
-    addReplyEmoji(event, index: number) {
-        if (index === this.currentReplyIndex) {
-            const text = `${this.replyForm.controls.content.value} ${event.emoji.native}`;
-            this.replyForm.get('content').setValue(text);
-        }
+    addReplyEmoji(event, index: number, value: string) {
+        const text = `${value} ${event.emoji.native}`;
+        this.replyForm.get('content').setValue(text);
         this.showReplyEmojiPicker[index] = false;
     }
 
@@ -98,6 +101,7 @@ export class BlogComponent implements OnInit {
     getBlog = () => {
         this.userService.getBlogById(this.id).subscribe(
             data => {
+
                 this.post = data;
             },
             error => console.log(error)
@@ -160,7 +164,9 @@ export class BlogComponent implements OnInit {
     }
 
     openReplyForm = (index) => {
-        this.replyClicked[index] = !this.replyClicked[index];
+        this.replyClicked = [];
+        this.replyForm.reset();
+        this.replyClicked[index] = true;
     }
 
     addReply = (postId: string, commentId: string, index: number) => {
