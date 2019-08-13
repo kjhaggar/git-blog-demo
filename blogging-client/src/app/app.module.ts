@@ -12,6 +12,7 @@ import { MentionModule } from 'angular-mentions';
 import { FilterPipeModule } from 'ngx-filter-pipe';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { ShareButtonsModule } from '@ngx-share/buttons';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -58,6 +59,7 @@ export const authInterceptorProviders = [
     FilterPipeModule,
     EmojiModule,
     PickerModule,
+    ShareButtonsModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyBzS-pIcW-xUtwOFGXt2ErDPfpAbLCRgSc',
       libraries: ['places']

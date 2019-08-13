@@ -53,10 +53,12 @@ export class EditProfileComponent implements OnInit {
                     this.disableBtn = true;
                     this.validPicture = 'No image uploaded';
                     this.url = 'http://localhost:3000/images/download.jpeg';
+                    // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/download.jpeg';
                 } else {
                     this.disableBtn = false;
                     this.validPicture = 'Delete current picutre';
                     this.url = 'http://localhost:3000/images/' + this.getCurrentProfilePicture;
+                    // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/' + this.getCurrentProfilePicture;
                 }
             },
             error => {
@@ -105,7 +107,7 @@ export class EditProfileComponent implements OnInit {
             }
 
         formData.append('forminput', JSON.stringify(this.updateForm.value));
-        this.http.put('http://127.0.0.1:3000/api/uploadData/' + this.getCurrentUserId, formData)
+        this.http.put('http://localhost:3000/api/uploadData/' + this.getCurrentUserId, formData)
         .subscribe(
             data => {
               this.changePassword = false;

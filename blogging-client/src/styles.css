@@ -1,7 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~bootstrap/dist/css/bootstrap.min.css';
-/* @import '@angular/material/prebuilt-themes/deeppurple-amber.css'; */
+@import '~@ngx-share/button/themes/default/default-theme';
+@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import '~material-design-icons/iconfont/material-icons.css';
+
 .material-icons {
 font-family: 'Material Icons';
 font-weight: normal;
@@ -19,6 +21,7 @@ text-rendering: optimizeLegibility;
 -moz-osx-font-smoothing: grayscale;
 font-feature-settings: ‘liga’;
 }
+
 body{
     background: transparent;
     margin: 0;
@@ -27,4 +30,4 @@ body{
 
 html, app-root {
     margin: 0;
-    }
+}
