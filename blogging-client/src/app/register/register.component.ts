@@ -27,11 +27,10 @@ export class RegisterComponent implements OnInit {
 
     ngOnInit() {}
 
-    get f() { return this.regiForm.controls; } 
+    get f() { return this.regiForm.controls; }
 
-    Register() {debugger
+    Register() {
         this.submitted = true;
-        console.log(this.regiForm.value);
 
         if (this.regiForm.controls.password.value !== this.regiForm.controls.confirmPassword.value) {
             this.matchPassword = true;

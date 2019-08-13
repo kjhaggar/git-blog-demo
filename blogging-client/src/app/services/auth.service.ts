@@ -9,6 +9,7 @@ export class AuthService {
   authToken: any;
   user: string;
   url = 'http://127.0.0.1:3000/api';
+  // url = 'https://backend-blogging-appliaction.herokuapp.com/api';
 
   constructor(private http: HttpClient, private router: Router) { }
 

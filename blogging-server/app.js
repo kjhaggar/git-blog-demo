@@ -34,6 +34,7 @@ app.use(function (req, res, next) {
 });
 
 var originsWhitelist = [ 'http://localhost:4200', 'http://127.0.0.1:4200'];
+// var originsWhitelist = [ 'https://demo-blogging-application.herokuapp.com'];
 var corsOptions = {
   origin: function(origin, callback){
         var isWhitelisted = originsWhitelist.indexOf(origin) !== -1;

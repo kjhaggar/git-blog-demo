@@ -31,7 +31,6 @@ async function addToDB(req, res) {
 }
 
 function verifyToken(req, res, next){
-    console.log(req.headers)
     if (!req.headers.authorization){
         return res.status(401).send('Unauthorised request');
     }
@@ -68,6 +67,7 @@ router.post('/login', function(req, res, next) {
             });
         });
     })(req, res, next);
+    
 });
 
 router.post('/sendRequest', function(req, res, next) {
@@ -148,6 +148,7 @@ router.put('/acceptFriendRequest', function(req, res, next) {
 });
 
 router.use(function (req, res, next) {
+    // res.header("Access-Control-Allow-Origin", "https://demo-blogging-application.herokuapp.com");
     res.header("Access-Control-Allow-Origin", "http://localhost:4200");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
@@ -156,6 +157,7 @@ router.use(function (req, res, next) {
 var blogStorage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, '../blogging-server/static/blogImages')
+    // cb(null, 'static/blogImages')
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname + '-' + Date.now());
@@ -231,7 +233,8 @@ router.delete('/deletePost/:id', function(req, res, next) {
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, '../blogging-server/static/images')
+        cb(null, '../blogging-server/static/images')
+        // cb(null, 'static/images')
     },
     filename: function (req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now());
@@ -442,8 +445,8 @@ router.get('/friendsList/:id', function(req, res) {
         console.log("Error:", err);
         }
         else {
-            console.log("friendsList of current user: " + req.params.id);
-            console.log(user.friends);
+            // console.log("friendsList of current user: " + req.params.id);
+            // console.log(user.friends);
             var friendsId = user.friends.map(({friendId}) => friendId);
             User.find({_id: { $in: friendsId }}).exec(function (err, friendList) {
                 if(err) {

@@ -1,4 +1,4 @@
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { UserService } from './../services/user.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -23,6 +23,7 @@ export class BlogComponent implements OnInit {
     private getCurrentUserName: string;
     private subscription: Subscription = new Subscription();
     private socket = io('http://127.0.0.1:3000');
+    // private socket = io('https://backend-blogging-appliaction.herokuapp.com');
     private displayOriginalBlog = [];
     private displayUpdatedBlog = [];
     private filesToUpload: Array<File> = [];
@@ -32,7 +33,8 @@ export class BlogComponent implements OnInit {
     public post: object;
     public showEmojiPicker = false;
     public showReplyEmojiPicker = [];
-    private currentReplyIndex: number;
+    // replyForm: FormGroup;
+    // items: FormArray;
 
     commentForm: FormGroup = new FormGroup({
         content: new FormControl('', Validators.required)
@@ -47,7 +49,11 @@ export class BlogComponent implements OnInit {
         image: new FormControl(null)
     });
 
-    constructor(private route: ActivatedRoute, private userService: UserService, private sanitized: DomSanitizer) {}
+    constructor(private route: ActivatedRoute, private userService: UserService, private sanitized: DomSanitizer, private fb: FormBuilder) {
+      // this.replyForm = this.fb.group({
+      //   items: this.fb.array([this.createItem])
+      // });
+    }
 
     ngOnInit() {
         this.sub = this.route.params.subscribe(params => {
@@ -65,22 +71,25 @@ export class BlogComponent implements OnInit {
         // }
     }
 
-    toggleEmojiPicker() {
-        this.showEmojiPicker = !this.showEmojiPicker;
-    }
-    passIndexValue(index: number) {
-        this.currentReplyIndex = index;
+    get createItem(): FormGroup {
+      return this.fb.group({
+        content: ['', Validators.required]
+      });
     }
 
-    addEmoji(event) {
+    toggleEmojiPicker() {
+      this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  addEmoji(event) {
     const text = `${this.commentForm.controls.content.value}${event.emoji.native}`;
     this.commentForm.get('content').setValue(text);
     this.showEmojiPicker = false;
     }
 
     toggleReplyEmojiPicker(index: number) {
-        this.showReplyEmojiPicker[index] = !this.showReplyEmojiPicker[index];
-    }
+      this.showReplyEmojiPicker[index] = !this.showReplyEmojiPicker[index];
+  }
 
     addReplyEmoji(event, index: number, value: string) {
         const text = `${value} ${event.emoji.native}`;
@@ -111,14 +120,17 @@ export class BlogComponent implements OnInit {
     GetImageUrl = (filename: string) => {
         if (filename === undefined) {
             this.url = 'http://localhost:3000/images/download.jpeg';
+            // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/download.jpeg';
         } else {
             this.url = 'http://localhost:3000/images/' + filename;
+            // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/' + filename;
         }
         return this.sanitized.bypassSecurityTrustUrl(this.url);
     }
 
     GetBlogImageUrl = (filename: string) => {
         this.url = 'http://localhost:3000/blogImages/' + filename;
+        // this.url = 'https://backend-blogging-appliaction.herokuapp.com/blogImages/' + filename;
         return this.sanitized.bypassSecurityTrustUrl(this.url);
     }
 
@@ -170,10 +182,10 @@ export class BlogComponent implements OnInit {
     }
 
     addReply = (postId: string, commentId: string, index: number) => {
+        // (this.replyForm.get('items') as FormArray).push(this.createItem);
         if (!this.replyForm.valid) {
             return;
         }
-
         const obj = {
             postId,
             commentId,

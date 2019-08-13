@@ -7,6 +7,9 @@ import { Observable } from 'rxjs/Observable';
   providedIn: 'root'
 })
 export class UserService {
+    // private socket = io('https://backend-blogging-appliaction.herokuapp.com');
+    // url = 'https://backend-blogging-appliaction.herokuapp.com/api/';
+
     private socket = io('http://127.0.0.1:3000');
     url = 'http://127.0.0.1:3000/api/';
 

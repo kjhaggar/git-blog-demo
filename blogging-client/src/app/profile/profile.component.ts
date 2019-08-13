@@ -31,6 +31,7 @@ const parse = require('parse-mentions');
 })
 export class ProfileComponent implements OnInit {
     private socket = io('http://127.0.0.1:3000');
+    // private socket = io ('https://backend-blogging-appliaction.herokuapp.com');
     private subscription: Subscription = new Subscription();
     private getCurrentUserId: string;
     private displayComment = [];
@@ -145,7 +146,6 @@ export class ProfileComponent implements OnInit {
 
         this.userService.newTag().subscribe(
             data => {
-                console.log(data.users);
                 if (data.users.includes(this.getCurrentUserName)) {
                     this.getTaggedByUser = data.taggedBy;
                     this.hideSuccessMessage = true;
@@ -598,14 +598,17 @@ export class ProfileComponent implements OnInit {
     GetImageUrl(filename) {
         if (filename === undefined) {
             this.url = 'http://localhost:3000/images/download.jpeg';
+            // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/download.jpeg';
         } else {
             this.url = 'http://localhost:3000/images/' + filename;
+            // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/' + filename;
         }
         return this.sanitized.bypassSecurityTrustUrl(this.url);
     }
 
     GetBlogImageUrl(filename) {
         this.url = 'http://localhost:3000/blogImages/' + filename;
+        // this.url = 'https://backend-blogging-appliaction.herokuapp.com/blogImages/' + filename;
         return this.sanitized.bypassSecurityTrustUrl(this.url);
     }
 

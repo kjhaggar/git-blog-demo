@@ -25,6 +25,7 @@
     getCurrentUserName: string;
     private subscription: Subscription = new Subscription();
     private socket = io('http://127.0.0.1:3000');
+    // private socket = io ('https://backend-blogging-appliaction.herokuapp.com');
     usersProfile: any;
     displayOriginalBlog: boolean;
     displayUpdatedBlog: boolean;
@@ -82,14 +83,17 @@
     GetImageUrl(filename) {
         if (filename === undefined) {
             this.url = 'http://localhost:3000/images/download.jpeg';
+            // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/download.jpeg';
         } else {
             this.url = 'http://localhost:3000/images/' + filename;
+            // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/' + filename;
         }
         return this.sanitized.bypassSecurityTrustUrl(this.url);
     }
 
     GetBlogImageUrl(filename) {
         this.url = 'http://localhost:3000/blogImages/' + filename;
+        // this.url = 'https://backend-blogging-appliaction.herokuapp.com/blogImages/' + filename;
         return this.sanitized.bypassSecurityTrustUrl(this.url);
     }
 

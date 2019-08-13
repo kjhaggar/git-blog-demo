@@ -10,5 +10,5 @@ app.get('/*', function(req, res) {
 });
 
 app.listen(process.env.PORT || 4200, function(){
-    console.log('Your node js server is running');
+    console.log('Your client is running');
 });

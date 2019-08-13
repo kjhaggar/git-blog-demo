@@ -22,6 +22,7 @@
             <div class="panel-footer">
                 <div *ngIf = "displayComment" class="showCommentBox">
                     <div  *ngIf = "post.comments.length > 0; else noComments" >
+
                         <div *ngFor="let item of post.comments; index as j" class="row">
                             <div class="col-sm-10">
                                 <span><strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}</span>
@@ -43,6 +44,16 @@
                                     <button type="button" class="toggle-emoji" (click)="toggleReplyEmojiPicker(j)">Smiley</button>
                                     <emoji-mart class="emoji-mart" set="emojione" (emojiSelect)="addReplyEmoji($event,j, emoticon.value)" *ngIf="showReplyEmojiPicker[j]" title="Pick your emoji…"></emoji-mart>
                                     <button mat-raised-button type="submit" (click)="addReply(post._id, item._id, j)" (click)="$event.stopPropagation();">Send</button>
+
+                                    <!-- <div formArrayName="items">
+                                    <div *ngFor = "let arrayItem of replyForm.controls['items'].controls; let i = index;" [formGroupName]=i>
+                                      <input [id] = j type="text" class="form-control" formControlName="content"/>
+                                      <button type="button" class="toggle-emoji" (click)="toggleReplyEmojiPicker(j)">Smiley</button>
+                                      <emoji-mart class="emoji-mart" set="emojione" (emojiSelect)="addReplyEmoji($event, j, i)" *ngIf="showReplyEmojiPicker[j]" title="Pick your emoji…"></emoji-mart>
+                                      <button mat-raised-button type="submit" (click)="addReply(post._id, item._id, j)" (click)="$event.stopPropagation();">Send</button>
+                                    </div>
+                                    </div> -->
+
                                 </form>
                             </div>
                         </div>
