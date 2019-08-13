@@ -7,6 +7,9 @@ var Request = require('../models/FriendRequest');
 var Notify = require('../models/newTagNotify');
 var jwt = require('jsonwebtoken');
 var multer = require('multer');
+const fs = require('fs');
+const {promisify} = require("es6-promisify");
+const unlinkAsync = promisify(fs.unlink);
 
 router.post('/register', function (req, res, next) {
     addToDB(req, res);
@@ -228,7 +231,7 @@ router.delete('/deletePost/:id', function(req, res, next) {
     if (err) return next(err);
     res.json(post);
   });
-  });
+});
 
 
 var storage = multer.diskStorage({
@@ -347,6 +350,29 @@ async function addToCommentDB(req, res) {
     });
 }
 
+router.delete('/deleteComment', function(req, res, next) {
+    Post.update({_id: req.body.postId},{ $pull: { comments: { _id: req.body.commentId } } }, function (err, blog) {
+        if (err) {
+            return next(err);
+        }
+        else {
+            res.json(blog);
+        }
+    })
+});
+
+router.delete('/deleteReply', function(req, res, next) {
+    Post.update({ _id: req.body.postId, "comments._id": req.body.commentId },
+    { "$pull": { "comments.$.replies": { _id: req.body.replyId } } }, function (err, blog) {
+        if (err) {
+            return next(err);
+        }
+        else {
+            res.json(blog);
+        }
+    })
+});
+
 router.post('/addReply', function(req, res, next){
     addToReplyDB(req, res);
 })
@@ -376,34 +402,45 @@ async function addToReplyDB(req, res) {
     });
 }
 
-  router.get('/getProfileData/:id', verifyToken, (req, res) => {
-    User.findOne({ _id: req.params.id }).exec((err, user) => {
-      if (err) {
-        res.json({ success: false, message: err });
-      } else {
-        if (!user) {
-          res.json({ success: false, message: 'User not found' });
-        } else {
-          res.json({ success: true, user });
-        }
-      }
-    });
-  });
+router.get('/getProfileData/:id', verifyToken, (req, res) => {
+User.findOne({ _id: req.params.id }).exec((err, user) => {
+    if (err) {
+    res.json({ success: false, message: err });
+    } else {
+    if (!user) {
+        res.json({ success: false, message: 'User not found' });
+    } else {
+        res.json({ success: true, user });
+    }
+    }
+});
+});
 
-  router.delete('/deleteProfilePicture/:id', function(req, res, next) {
+router.delete('/deleteProfilePicture/:id', function(req, res, next) {
     User.update({ _id: req.params.id },{$unset: { image: 1}}, function (err, post) {
     if (err) return next(err);
     res.json(post);
-  });
-  });
+    });
+});
 
-  router.get('/getUsersList', function(req, res) {
-    User.find({}).exec(function (err, user) {
+router.delete('/deleteBlogImage', function(req, res, next) {
+    Post.update({_id: req.body.postId},{ $pull: { imageUrl: { _id: req.body.imageId } } }, function (err, blog) {
         if (err) {
-        console.log("Error:", err);
-        } else { 
-            res.json(user);
+            return next(err);
         }
+        else {
+            res.json(blog);
+        }
+    })
+});
+
+router.get('/getUsersList', function(req, res) {
+    User.find({}).exec(function (err, user) {
+    if (err) {
+    console.log("Error:", err);
+    } else { 
+        res.json(user);
+    }
     });
 });
 
@@ -492,16 +529,16 @@ router.delete('/deleteFriendRequest', function(req, res, next) {
         if (err) return next(err);
         res.json(user);
   });
-  });
+});
 
-  router.delete('/cancelFriendRequest', function(req, res, next) {
+router.delete('/cancelFriendRequest', function(req, res, next) {
     Request.findOneAndDelete({user: req.body.user, requestTo: req.body.requestTo}).exec(function(err, user) {
         if (err) return next(err);
         res.json(user);
-  });
-  });
+    });
+});
 
-  router.get('/tagUser', function(req, res) {
+router.get('/tagUser', function(req, res) {
     User.find({}).select('userName').exec(function (err, user) {
         if (err) {
         console.log("Error:", err);

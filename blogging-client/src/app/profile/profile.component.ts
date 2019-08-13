@@ -1,33 +1,33 @@
 import { UserService } from './../services/user.service';
 import { AuthService } from '../services/auth.service';
-import { Component, OnInit, NgZone} from '@angular/core';
-import { FormGroup, FormControl, Validators} from '@angular/forms';
+import { Component, OnInit, NgZone } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as io from 'socket.io-client';
 import { MapsAPILoader, MouseEvent } from '@agm/core';
-import { trigger, state, style, transition, animate} from '@angular/animations';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { FilterPipe } from 'ngx-filter-pipe';
 const parse = require('parse-mentions');
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css'],
-  animations: [
-    trigger('slideInOut', [
-      state('in', style({
-        transform: 'translate3d(0, 0, 0)'
-      })),
-      state('out', style({
-        transform: 'translate3d(100%, 0, 0)'
-      })),
-      transition('in => out', animate('500ms ease-in')),
-      transition('out => in', animate('500ms ease-out'))
-    ]),
-  ]
+    selector: 'app-profile',
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.css'],
+    animations: [
+        trigger('slideInOut', [
+            state('in', style({
+                transform: 'translate3d(0, 0, 0)'
+            })),
+            state('out', style({
+                transform: 'translate3d(100%, 0, 0)'
+            })),
+            transition('in => out', animate('500ms ease-in')),
+            transition('out => in', animate('500ms ease-out'))
+        ]),
+    ]
 })
 export class ProfileComponent implements OnInit {
     private socket = io('http://127.0.0.1:3000');
@@ -178,7 +178,7 @@ export class ProfileComponent implements OnInit {
         this.newNotification();
 
         this.searchInfo = {
-            location : '',
+            location: '',
         };
 
         this.mapsAPILoader.load().then(() => {
@@ -203,23 +203,23 @@ export class ProfileComponent implements OnInit {
 
     private setCurrentLocation() {
         if ('geolocation' in navigator) {
-          navigator.geolocation.getCurrentPosition((position) => {
-            this.latitude = position.coords.latitude;
-            this.longitude = position.coords.longitude;
-            this.zoom = 8;
-            this.getAddress(this.latitude, this.longitude);
-          });
+            navigator.geolocation.getCurrentPosition((position) => {
+                this.latitude = position.coords.latitude;
+                this.longitude = position.coords.longitude;
+                this.zoom = 8;
+                this.getAddress(this.latitude, this.longitude);
+            });
         }
-      }
+    }
 
-      markerDragEnd($event: MouseEvent) {
+    markerDragEnd($event: MouseEvent) {
         console.log($event);
         this.latitude = $event.coords.lat;
         this.longitude = $event.coords.lng;
         this.getAddress(this.latitude, this.longitude);
-      }
-      searchLoc(temp) {
-        this.geoCoder.geocode({address : temp.location} , (results, status) => {
+    }
+    searchLoc(temp) {
+        this.geoCoder.geocode({ address: temp.location }, (results, status) => {
             // console.log(status);
             // if (status === 'OK') {
             //     if (results[0]) {
@@ -232,35 +232,35 @@ export class ProfileComponent implements OnInit {
             //     window.alert('Geocoder failed due to: ' + status);
             // }
 
-            });
+        });
 
     }
-      getAddress(latitude, longitude) {
+    getAddress(latitude, longitude) {
 
-            this.geoCoder.geocode({ location: { lat: latitude, lng: longitude }}, (results, status) => {
+        this.geoCoder.geocode({ location: { lat: latitude, lng: longitude } }, (results, status) => {
             // console.log(results);
             // console.log(status);
             if (status === 'OK') {
                 if (results[0]) {
-                this.zoom = 12;
-                this.address = results[0].formatted_address;
+                    this.zoom = 12;
+                    this.address = results[0].formatted_address;
                 } else {
-                window.alert('No results found');
+                    window.alert('No results found');
                 }
             } else {
                 // window.alert('Geocoder failed due to: ' + status);
             }
 
-          });
+        });
 
 
-      }
+    }
 
     get f() { return this.postForm.controls; }
 
     tagUser() {
         this.userService.tagUser().subscribe(
-            (data: {uName: string}) => {
+            (data: { uName: string }) => {
                 this.item = data.uName;
             },
             err => console.log(err)
@@ -270,26 +270,25 @@ export class ProfileComponent implements OnInit {
     newNotification(userTaggedBy?: string) {
         this.getTaggedByUser = userTaggedBy;
         this.userService.NotificationList(this.getCurrentUserName).subscribe(
-            (data: {taggedBy: string, taggedUsers: any}) => {
+            (data: { taggedBy: string, taggedUsers: any }) => {
                 this.getTaggedByUser = data.taggedBy;
-                for ( const index in data ) {
+                for (const index in data) {
                     if (data.hasOwnProperty(index)) {
-                      const taggedUsers = 'taggedUsers';
-                      const x = data[index][taggedUsers];
-                      for ( const temp in x ) {
-                          if (x.hasOwnProperty(temp)) {
-                              const userName = 'userName';
-                              const read = 'read';
-                              if (x[temp][userName] === this.getCurrentUserName && x[temp][read] === false) {
-                                this.hideSuccessMessage = true;
-                                this.numberOfNotification++;
-                              }
+                        const taggedUsers = 'taggedUsers';
+                        const x = data[index][taggedUsers];
+                        for (const temp in x) {
+                            if (x.hasOwnProperty(temp)) {
+                                const userName = 'userName';
+                                const read = 'read';
+                                if (x[temp][userName] === this.getCurrentUserName && x[temp][read] === false) {
+                                    this.hideSuccessMessage = true;
+                                    this.numberOfNotification++;
+                                }
                             }
                         }
                     }
                 }
                 this.recentNotification = data;
-                // this.numberOfNotification = this.recentNotification.length;
             },
             error => console.log(error)
         );
@@ -297,7 +296,7 @@ export class ProfileComponent implements OnInit {
 
     changeStatus(id: string) {
         this.userService.changePostStatus(id, this.getCurrentUserName).subscribe(
-            (data) => {},
+            (data) => { },
             error => console.log(error)
 
         );
@@ -319,7 +318,7 @@ export class ProfileComponent implements OnInit {
 
         const mentions = parse(this.postForm.value.description);
         this.mentionedUsers = mentions.matches.map(item => item.name)
-        .filter((value, index, self) => self.indexOf(value) === index);
+            .filter((value, index, self) => self.indexOf(value) === index);
 
         const formData: any = new FormData();
         const files: Array<File> = this.filesToUpload;
@@ -338,8 +337,8 @@ export class ProfileComponent implements OnInit {
         };
 
         formData.append('forminput', JSON.stringify(obj));
-        this.userService.addPost( formData ).subscribe(
-            (data: {_id: string}) => {
+        this.userService.addPost(formData).subscribe(
+            (data: { _id: string }) => {
                 this.socket.emit('post', obj);
                 this.displayAddPost = !this.displayAddPost;
                 this.submitted = false;
@@ -365,8 +364,8 @@ export class ProfileComponent implements OnInit {
     }
 
     fileChangeEvent(fileInput: any) {
-    // this.filesToUpload = <Array<File>> fileInput.target.files;
-    this.filesToUpload = fileInput.target.files as Array<File>;
+        // this.filesToUpload = <Array<File>> fileInput.target.files;
+        this.filesToUpload = fileInput.target.files as Array<File>;
     }
 
     AcceptFriendRequest(friendId: string, friendUserName: string) {
@@ -399,9 +398,9 @@ export class ProfileComponent implements OnInit {
                 this.friendRequestSent[userId] = false;
                 this.newRequest();
                 this.sentRequest();
-              },
-              error => console.error(error)
-          );
+            },
+            error => console.error(error)
+        );
     }
     CancelFriendRequest(userId: string) {
         this.userService.cancelFriendRequest(this.getCurrentUserId, userId).subscribe(
@@ -411,17 +410,17 @@ export class ProfileComponent implements OnInit {
                 this.friendRequestSent[userId] = false;
                 this.newRequest();
                 this.sentRequest();
-              },
-              error => console.error(error)
-          );
+            },
+            error => console.error(error)
+        );
     }
 
     newRequest(userId?: string) {
         this.userService.RequestList(this.getCurrentUserId).subscribe(
-            (data: {pendingUserProfile: any, pendingRequestId: any}) => {
+            (data: { pendingUserProfile: any, pendingRequestId: any }) => {
                 this.newFriendRequest = true;
                 this.newFriend = data.pendingUserProfile;
-                for (const i of  data.pendingRequestId) {
+                for (const i of data.pendingRequestId) {
                     this.acceptRequest[data.pendingRequestId[i]] = true;
                 }
             },
@@ -431,7 +430,7 @@ export class ProfileComponent implements OnInit {
 
     sentRequest() {
         this.userService.SentRequestList(this.getCurrentUserId).subscribe(
-            (data: {pendingRequestId: string}) => {
+            (data: { pendingRequestId: string }) => {
                 for (const i of data.pendingRequestId) {
                     this.friendRequestSent[data.pendingRequestId[i]] = true;
                 }
@@ -442,11 +441,12 @@ export class ProfileComponent implements OnInit {
 
     friends() {
         this.userService.FriendsList(this.getCurrentUserId).subscribe(
-            (data: {friendList: any}) => {
+            (data: { friendList: any }) => {
                 this.friendsInfo = data.friendList;
             },
-        error => {
-            console.log(error); }
+            error => {
+                console.log(error);
+            }
         );
     }
 
@@ -564,11 +564,12 @@ export class ProfileComponent implements OnInit {
 
     DisplayProfile() {
         this.userService.displayProfile().subscribe(
-            (data: {user: object}) => {
+            (data: { user: object }) => {
                 this.usersProfile = data.user;
-                },
+            },
             err => {
-                console.log(err); }
+                console.log(err);
+            }
         );
     }
     ShowAllPost() {
@@ -622,16 +623,16 @@ export class ProfileComponent implements OnInit {
 
     DeletePost(postId) {
         this.userService.deletePost(postId).subscribe(
-          data => {
-              this.DisplayMyPost();
-              this.ShowAllPost();
+            data => {
+                this.DisplayMyPost();
+                this.ShowAllPost();
             },
             error => console.error(error)
         );
     }
 
     FadeOutSuccessMsg() {
-        setTimeout( () => {
+        setTimeout(() => {
             // this.hideSuccessMessage = false;
             this.newFriendAdded = false;
             this.menuState = 'out';

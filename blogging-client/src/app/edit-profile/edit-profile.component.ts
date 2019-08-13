@@ -6,9 +6,9 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-edit-profile',
-  templateUrl: './edit-profile.component.html',
-  styleUrls: ['./edit-profile.component.css']
+    selector: 'app-edit-profile',
+    templateUrl: './edit-profile.component.html',
+    styleUrls: ['./edit-profile.component.css']
 })
 export class EditProfileComponent implements OnInit {
     public pwdsubmitted = true;
@@ -25,7 +25,7 @@ export class EditProfileComponent implements OnInit {
     private getCurrentProfilePicture: any;
     private originalData: any;
 
-    constructor( private http: HttpClient, private userService: UserService ) {}
+    constructor(private http: HttpClient, private userService: UserService) { }
 
     updateForm: FormGroup = new FormGroup({
         userName: new FormControl(null, [Validators.required, Validators.minLength(3)]),
@@ -76,7 +76,7 @@ export class EditProfileComponent implements OnInit {
         reader.onload = () => {
             this.url = reader.result;
         };
-        }
+    }
 
     EnablePasswordChange() {
         this.changePassword = !this.changePassword;
@@ -87,7 +87,7 @@ export class EditProfileComponent implements OnInit {
     Update = () => {
         this.submitted = true;
         if (this.updateForm.touched) {
-        this.pwdsubmitted = true;
+            this.pwdsubmitted = true;
         }
         if (!this.updateForm.invalid) {
             return;
@@ -102,26 +102,26 @@ export class EditProfileComponent implements OnInit {
             return;
         }
         const formData = new FormData();
-        if(this.selectedFile) {
+        if (this.selectedFile) {
             formData.append('image', this.selectedFile, this.selectedFile.name);
-            }
+        }
 
         formData.append('forminput', JSON.stringify(this.updateForm.value));
         this.http.put('http://localhost:3000/api/uploadData/' + this.getCurrentUserId, formData)
-        .subscribe(
-            data => {
-              this.changePassword = false;
-                this.hideSuccessMessage = true;
-                this.getProfileData();
-            },
-            error => {
-                console.log(error);
+            .subscribe(
+                data => {
+                    this.changePassword = false;
+                    this.hideSuccessMessage = true;
+                    this.getProfileData();
+                },
+                error => {
+                    console.log(error);
                 }
             );
-        }
+    }
 
     FadeOutSuccessMsg() {
-        setTimeout( () => {
+        setTimeout(() => {
             this.hideSuccessMessage = false;
             this.hideNoUpdateMessage = false;
         }, 4000);
@@ -131,9 +131,9 @@ export class EditProfileComponent implements OnInit {
         this.userService.deleteProfilePicture(this.getCurrentUserId).subscribe(
             data => {
                 this.getProfileData();
-              },
-              error => console.error(error)
-          );
+            },
+            error => console.error(error)
+        );
     }
 
 }

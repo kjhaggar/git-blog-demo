@@ -19,11 +19,11 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" style="cursor:pointer" (click)="Notify()">Notification
-                    <sup>{{numberOfNotification}}</sup>
+                  <sup *ngIf = "numberOfNotification > 0">{{numberOfNotification}}</sup>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" routerLink="/editProfile">Edit Profile</a>
+                <a class="nav-link" routerLink="/editProfile">My Account</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" style="cursor:pointer" (click)="Logout()">Logout</a>
@@ -148,11 +148,16 @@
                 <img class="logo" [src] = GetImageUrl(item.image) alt="Your Profile Picture" >
                 <h5 style="margin-top: 35px ">{{item.firstName | titlecase}} {{item.lastName | titlecase}}</h5>
             </div>
-            <p *ngIf = "!acceptRequest[item._id] && !friendRequestSent[item._id] && !visitUsersProfile[item._id]">
-                 <button type="button" class="btn-primary" style='margin: 30px;' (click)="sendRequestButton(item._id)">Send Request <i class='fas fa-user-plus'></i></button>
-            </p>
+            <!-- <button type="button" class="btn-primary" style='margin: 30px;'>Visit Profile</button> -->
+            <!-- <div *ngIf = "item.userName ==! getCurrentUserName"> -->
+              <p *ngIf = "!acceptRequest[item._id] && !friendRequestSent[item._id] && !visitUsersProfile[item._id]">
+                  <button type="button" class="btn-primary" style='margin-left: 30px;' (click)="sendRequestButton(item._id)">
+                    <i class="material-icons">person_add</i>
+                  </button>
+              </p>
+            <!-- </div> -->
             <p *ngIf = "friendRequestSent[item._id] && !visitUsersProfile[item._id]">
-                <button type="button" class="btn-primary" style='margin: 30px;' (click) = "CancelFriendRequest(item._id)">Friend Request Sent <br> Cancel??</button>
+                <button type="button" class="btn-primary" style='margin-left: 30px;' (click) = "CancelFriendRequest(item._id)">Friend Request Sent <br> Cancel??</button>
             </p>
             <br>
         </form>
@@ -206,12 +211,12 @@
 </div>
 
 <div  class= "container toggleNotification" [@slideInOut]="menuState">
-    <div class="row newNotify" *ngFor = "let new of recentNotification" (click) = "changeStatus(new._id)">
+    <div class="row newNotify" *ngFor = "let new of recentNotification">
         <div class="col-lg-2" *ngFor = "let user of usersProfile" class="panel-title pull-left">
             <img class = "notifyProfile" *ngIf = "new.taggedBy == user.userName" [src] = GetImageUrl(user.image)/>
         </div>
         <div class="col-lg-10">
-            <b>{{new.taggedBy}}</b> mentioned you in a <a [routerLink]="['/blog', new.postId]">blog</a>, created on: {{new.time| date:'MMM dd, yyyy'}}
+            <b>{{new.taggedBy}}</b> mentioned you in a <a [routerLink]="['/blog', new.postId]"  (click) = "changeStatus(new._id)">blog</a>, created on: {{new.time| date:'MMM dd, yyyy'}}
         </div>
         <br>
     </div>

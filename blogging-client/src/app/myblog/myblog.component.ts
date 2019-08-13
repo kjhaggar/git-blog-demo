@@ -1,17 +1,17 @@
-    import { Component, OnInit } from '@angular/core';
-    import { Subscription } from 'rxjs';
-    import { FormGroup, FormControl, Validators } from '@angular/forms';
-    import { ActivatedRoute } from '@angular/router';
-    import { UserService } from '../services/user.service';
-    import { DomSanitizer } from '@angular/platform-browser';
-    import * as io from 'socket.io-client';
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { UserService } from '../services/user.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import * as io from 'socket.io-client';
 
-    @Component({
+@Component({
     selector: 'app-myblog',
     templateUrl: './myblog.component.html',
     styleUrls: ['./myblog.component.css']
-    })
-    export class MyblogComponent implements OnInit {
+})
+export class MyblogComponent implements OnInit {
     id: string;
     private sub: any;
     post: object;
@@ -32,13 +32,15 @@
     filesToUpload: Array<File> = [];
     uploadUpdatedBlogImages: boolean;
     submitted: boolean;
+    public showEmojiPicker = false;
+    public showReplyEmojiPicker = [];
 
     commentForm: FormGroup = new FormGroup({
-        content: new FormControl(null, Validators.required)
+        content: new FormControl('', Validators.required)
     });
 
     replyForm: FormGroup = new FormGroup({
-        content: new FormControl(null, Validators.required)
+        content: new FormControl('', Validators.required)
     });
 
     updatePost: FormGroup = new FormGroup({
@@ -49,22 +51,41 @@
     constructor(private route: ActivatedRoute, private userService: UserService, private sanitized: DomSanitizer) { }
 
     ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-        const id = 'id';
-        this.id = params[id];
-    });
-    this.getCurrentUserId = localStorage.getItem('userId');
-    this.getCurrentUserName = localStorage.getItem('user');
-    this.getBlog();
-    this.DisplayProfilePicture();
+        this.sub = this.route.params.subscribe(params => {
+            const id = 'id';
+            this.id = params[id];
+        });
+        this.getCurrentUserId = localStorage.getItem('userId');
+        this.getCurrentUserName = localStorage.getItem('user');
+        this.getBlog();
+        this.DisplayProfilePicture();
+    }
+
+    toggleEmojiPicker() {
+        this.showEmojiPicker = !this.showEmojiPicker;
+    }
+
+    addEmoji(event) {
+        const text = `${this.commentForm.controls.content.value}${event.emoji.native}`;
+        this.commentForm.get('content').setValue(text);
+        this.showEmojiPicker = false;
+    }
+
+    toggleReplyEmojiPicker(index: number) {
+        this.showReplyEmojiPicker[index] = !this.showReplyEmojiPicker[index];
+    }
+
+    addReplyEmoji(event, index: number, value: string) {
+        const text = `${value} ${event.emoji.native}`;
+        this.replyForm.get('content').setValue(text);
+        this.showReplyEmojiPicker[index] = false;
     }
 
     DisplayProfilePicture() {
         this.userService.displayProfile().subscribe(
-            (data: {user: object}) => {
-                console.log(data);
+            (data: { user: object }) => {
                 this.usersProfile = data.user;
-                },
+            },
             err => {
                 console.log(err);
             }
@@ -141,6 +162,7 @@
     }
 
     openReplyForm(index) {
+        this.replyClicked = [];
         this.replyClicked[index] = !this.replyClicked[index];
     }
 
@@ -171,17 +193,45 @@
         );
     }
 
-    DeletePost(postId) {
+    DeletePost(postId: string) {
         this.userService.deletePost(postId).subscribe(
-            data => {this.getBlog();
+            data => {
+                this.getBlog();
             },
             error => console.error(error)
         );
         alert('Blog no longer available.. \n Go back to Home Page');
     }
 
+    deleteBlogImage(imageId: string) {
+      this.userService.deleteBlogImage(imageId, this.id).subscribe(
+        (data) => {
+            this.getBlog();
+        },
+        error => console.error(error)
+    );
+    }
+
+    deleteComment(commentId: string) {
+      this.userService.deleteComment(commentId, this.id).subscribe(
+        (data) => {
+            this.getBlog();
+        },
+        error => console.error(error)
+    );
+    }
+
+    deleteReply(replyId: string, commentId: string) {
+      this.userService.deleteReply(replyId, commentId, this.id).subscribe(
+        (data) => {
+            this.getBlog();
+        },
+        error => console.error(error)
+    );
+    }
+
     UpdatePost(postId: string) {
-        this.displayOriginalBlog = !this.displayOriginalBlog ;
+        this.displayOriginalBlog = !this.displayOriginalBlog;
         this.displayUpdatedBlog = !this.displayUpdatedBlog;
         const formData: any = new FormData();
         if (this.displayUpdatedBlog) {
@@ -214,10 +264,10 @@
     }
 
     fileChangeEvent(fileInput: any) {
-    this.filesToUpload = fileInput.target.files as Array<File>;
+        this.filesToUpload = fileInput.target.files as Array<File>;
     }
 
     ngOnDestroy() {
         this.sub.unsubscribe();
-        }
     }
+}

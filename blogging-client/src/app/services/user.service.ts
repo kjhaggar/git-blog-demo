@@ -4,7 +4,7 @@ import * as io from 'socket.io-client';
 import { Observable } from 'rxjs/Observable';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class UserService {
     // private socket = io('https://backend-blogging-appliaction.herokuapp.com');
@@ -13,7 +13,7 @@ export class UserService {
     private socket = io('http://127.0.0.1:3000');
     url = 'http://127.0.0.1:3000/api/';
 
-    constructor( private http: HttpClient ) {}
+    constructor(private http: HttpClient) { }
 
     sendRequest(body) {
         return this.http.post(this.url + 'sendRequest', body, {
@@ -187,7 +187,7 @@ export class UserService {
             friendId,
             friendUserName
         };
-        return this.http.put(this.url + 'acceptFriendRequest', body , {
+        return this.http.put(this.url + 'acceptFriendRequest', body, {
             observe: 'body',
             withCredentials: true,
             headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -199,7 +199,7 @@ export class UserService {
             withCredentials: true,
             headers: new HttpHeaders().append('Content-Type', 'application/json'),
             body: {
-                user : userId,
+                user: userId,
                 requestTo: requestToId
             }
         });
@@ -211,7 +211,7 @@ export class UserService {
             withCredentials: true,
             headers: new HttpHeaders().append('Content-Type', 'application/json'),
             body: {
-                user : userId,
+                user: userId,
                 requestTo: requestToId
             }
         });
@@ -224,11 +224,49 @@ export class UserService {
             headers: new HttpHeaders().append('Content-Type', 'application/json')
         });
     }
+
+    deleteBlogImage(imageId: string, postId: string) {
+        return this.http.request('DELETE', this.url + 'deleteBlogImage', {
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json'),
+            body: {
+                imageId,
+                postId
+            }
+        });
+    }
+
+    deleteComment(commentId: string, postId: string) {
+        return this.http.request('DELETE', this.url + 'deleteComment', {
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json'),
+            body: {
+                commentId,
+                postId
+            }
+        });
+    }
+
+    deleteReply(replyId: string, commentId: string, postId: string) {
+        return this.http.request('DELETE', this.url + 'deleteReply', {
+            observe: 'body',
+            withCredentials: true,
+            headers: new HttpHeaders().append('Content-Type', 'application/json'),
+            body: {
+                replyId,
+                commentId,
+                postId
+            }
+        });
+    }
+
     newCommentReceived() {
         const observable = new Observable<any>(observer => {
             this.socket.on('new comment', (data) => {
                 observer.next(data);
-                });
+            });
             return () => { this.socket.disconnect(); };
         });
         return observable;
@@ -248,7 +286,7 @@ export class UserService {
         const observable = new Observable<any>(observer => {
             this.socket.on('new post', (data) => {
                 observer.next(data);
-                });
+            });
             return () => { this.socket.disconnect(); };
         });
         return observable;
@@ -259,7 +297,7 @@ export class UserService {
             this.socket.on('newFriendRequest', (friend) => {
                 observer.next(friend);
             });
-            return () => {this.socket.disconnect(); };
+            return () => { this.socket.disconnect(); };
         });
         return observable;
     }
@@ -269,7 +307,7 @@ export class UserService {
             this.socket.on('cancelRequest', (userId) => {
                 observer.next(userId);
             });
-            return () => {this.socket.disconnect(); };
+            return () => { this.socket.disconnect(); };
         });
         return observable;
     }
@@ -279,7 +317,7 @@ export class UserService {
             this.socket.on('newTag', (data) => {
                 observer.next(data);
             });
-            return () => {this.socket.disconnect(); };
+            return () => { this.socket.disconnect(); };
         });
         return observable;
     }
