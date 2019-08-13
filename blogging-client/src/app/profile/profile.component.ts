@@ -47,7 +47,7 @@ export class ProfileComponent implements OnInit {
     private mentionedUsers: Array<string>;
     public recentNotification: any;
     public menuState = 'out';
-    public numberOfNotification: number;
+    public numberOfNotification = 0;
     public searchText: string;
     public friendRequestSent = [];
     public acceptRequest = [];
@@ -281,13 +281,15 @@ export class ProfileComponent implements OnInit {
                               const userName = 'userName';
                               const read = 'read';
                               if (x[temp][userName] === this.getCurrentUserName && x[temp][read] === false) {
-                                this.hideSuccessMessage = true; }
+                                this.hideSuccessMessage = true;
+                                this.numberOfNotification++;
+                              }
                             }
                         }
                     }
                 }
                 this.recentNotification = data;
-                this.numberOfNotification = this.recentNotification.length;
+                // this.numberOfNotification = this.recentNotification.length;
             },
             error => console.log(error)
         );
