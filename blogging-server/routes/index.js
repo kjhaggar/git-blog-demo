@@ -7,9 +7,6 @@ var Request = require('../models/FriendRequest');
 var Notify = require('../models/newTagNotify');
 var jwt = require('jsonwebtoken');
 var multer = require('multer');
-const fs = require('fs');
-const {promisify} = require("es6-promisify");
-const unlinkAsync = promisify(fs.unlink);
 
 router.post('/register', function (req, res, next) {
     addToDB(req, res);

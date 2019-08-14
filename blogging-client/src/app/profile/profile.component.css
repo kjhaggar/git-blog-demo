@@ -67,7 +67,7 @@ a{
     text-align: center;
     font-family: arial;
 }
-  
+
 .sendRequest{
     border: none;
     outline: 0;
@@ -92,7 +92,7 @@ a{
     width: 17%;
     font-size: 13px;
 }
-  
+
 button:hover, a:hover {
     opacity: 0.7;
 }
@@ -122,8 +122,9 @@ agm-map {
     margin-left: 10px;
 }
 .toggleNotification {
-    background: linear-gradient(to bottom, black, #1E90FF);
-    color: #fff;
+    background: linear-gradient(to bottom, whitesmoke,  rgb(209, 235, 232));
+    /* background: whitesmoke; */
+    color: rgb(0, 0, 0);
     position: fixed;
     top: 100px;
     padding-bottom: 30px;

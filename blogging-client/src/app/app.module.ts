@@ -13,10 +13,13 @@ import { FilterPipeModule } from 'ngx-filter-pipe';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { ShareButtonsModule } from '@ngx-share/buttons';
+import { TooltipModule } from 'ng2-tooltip-directive';
+import { MDBBootstrapModule } from 'angular-bootstrap-md';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { ProfileComponent } from './profile/profile.component';
 import { BlogComponent } from './blog/blog.component';
 import { MyblogComponent } from './myblog/myblog.component';
@@ -25,10 +28,10 @@ import { FilterPipe } from './filter.pipe';
 import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
 
-import { AuthGuard } from './guards/auth.guard';
-
 import { AuthInterceptor } from './interceptor/auth-interceptor';
-import { EditProfileComponent } from './edit-profile/edit-profile.component';
+import { AuthGuard } from './guards/auth.guard';
+import { PublicProfileComponent } from './public-profile/public-profile.component';
+
 
 export const authInterceptorProviders = [
   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
@@ -44,6 +47,7 @@ export const authInterceptorProviders = [
     BlogComponent,
     MyblogComponent,
     FilterPipe,
+    PublicProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -60,6 +64,8 @@ export const authInterceptorProviders = [
     EmojiModule,
     PickerModule,
     ShareButtonsModule,
+    TooltipModule,
+    MDBBootstrapModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyBzS-pIcW-xUtwOFGXt2ErDPfpAbLCRgSc',
       libraries: ['places']

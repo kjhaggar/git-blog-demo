@@ -1,10 +1,11 @@
 <nav class="navbar navbar-expand-md navbar-light fixed-top" >
-    <div class="navbar-header navbar-text">
-        <h2> Blog - Demo </h2>
-        <a class="navbar-brand">Welcome {{getCurrentUserName | titlecase}}</a>
+  <div class="nav-wrapper">
+    <div  class="brand-logo">
+      <h2> Blog - Demo </h2>
+      <a class="navbar-brand">Welcome {{getCurrentUserName | titlecase}}</a>
     </div>
     <div class="collapse navbar-collapse">
-        <ul class="navbar-nav mr-auto navbar-right ">
+        <ul id="nav-mobile" class="navbar-nav mr-auto navbar-right ">
             <li class="nav-item ">
                 <a class="nav-link" style="cursor:pointer" (click)= "DisplayPostBox()">{{newBlogLink}}</a>
             </li>
@@ -19,7 +20,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" style="cursor:pointer" (click)="Notify()">Notification
-                  <sup *ngIf = "numberOfNotification > 0">{{numberOfNotification}}</sup>
+                  <sup *ngIf = "readNotification">{{numberOfNotification}}</sup>
                 </a>
             </li>
             <li class="nav-item">
@@ -30,6 +31,7 @@
             </li>
         </ul>
     </div>
+  </div>
 </nav>
 <!-- <div class= "container" *ngIf="hideSuccessMessage && getCurrentUserName != getTaggedByUser">
     <p class="alert alert-success col-md-offset-9" style="text-align: center">
@@ -142,20 +144,16 @@
     <ul>
         <div *ngIf ="searchText">
         <div *ngFor="let item of items | filter: searchText">
-                <!-- <div *ngFor="let item of items | filter: {userName: searchText, firstName:searchText,  lastName: searchText}">{{item.userName}} -->
             <form class="form-inline">
-            <div class="row">
+            <div class="row" style="cursor: pointer" tooltip="Vist Profile" placement="top" show-delay="500" [routerLink]="['/publicProfile', item._id]">
                 <img class="logo" [src] = GetImageUrl(item.image) alt="Your Profile Picture" >
                 <h5 style="margin-top: 35px ">{{item.firstName | titlecase}} {{item.lastName | titlecase}}</h5>
             </div>
-            <!-- <button type="button" class="btn-primary" style='margin: 30px;'>Visit Profile</button> -->
-            <!-- <div *ngIf = "item.userName ==! getCurrentUserName"> -->
-              <p *ngIf = "!acceptRequest[item._id] && !friendRequestSent[item._id] && !visitUsersProfile[item._id]">
-                  <button type="button" class="btn-primary" style='margin-left: 30px;' (click)="sendRequestButton(item._id)">
-                    <i class="material-icons">person_add</i>
-                  </button>
-              </p>
-            <!-- </div> -->
+            <p *ngIf = "!acceptRequest[item._id] && !friendRequestSent[item._id] && !visitUsersProfile[item._id]">
+                <button type="button" class="btn-primary" style='margin-left: 30px;' (click)="sendRequestButton(item._id)">
+                  <i class="material-icons">person_add</i>
+                </button>
+            </p>
             <p *ngIf = "friendRequestSent[item._id] && !visitUsersProfile[item._id]">
                 <button type="button" class="btn-primary" style='margin-left: 30px;' (click) = "CancelFriendRequest(item._id)">Friend Request Sent <br> Cancel??</button>
             </p>
@@ -171,8 +169,8 @@
             <h3>Friend Requests</h3>
             <div class="reqColumn" *ngFor ="let new of newFriend">
                 <div class="row">
-                    <img class="logo column" [src] = GetImageUrl(new.image) alt="Your Profile Picture" >
-                    <h5 class="column" style="margin-top: 35px ">{{new.firstName | titlecase}} {{new.lastName | titlecase}}</h5>
+                  <img class="logo column" [src] = GetImageUrl(new.image) alt="Your Profile Picture" [routerLink]="['/publicProfile', new._id]" >
+                  <h5 class="column" style="margin-top: 35px " [routerLink]="['/publicProfile', new._id]">{{new.firstName | titlecase}} {{new.lastName | titlecase}}</h5>
                 </div>
                 <div class="row" *ngIf = "acceptRequest[new._id]">
                     <button class="col-md-4 acceptRequest" (click) = "AcceptFriendRequest(new._id, new.userName)">Accept</button>

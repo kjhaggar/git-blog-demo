@@ -7,9 +7,9 @@ import { Subscription } from 'rxjs';
 import * as io from 'socket.io-client';
 
 @Component({
-  selector: 'app-blog',
-  templateUrl: './blog.component.html',
-  styleUrls: ['./blog.component.css']
+    selector: 'app-blog',
+    templateUrl: './blog.component.html',
+    styleUrls: ['./blog.component.css']
 })
 export class BlogComponent implements OnInit {
     private id: string;
@@ -19,8 +19,8 @@ export class BlogComponent implements OnInit {
     public dispalyReplyBox = [];
     public replyClicked = [];
     public commentClicked: boolean;
-    private getCurrentUserId: string;
-    private getCurrentUserName: string;
+    public getCurrentUserId: string;
+    public getCurrentUserName: string;
     private subscription: Subscription = new Subscription();
     private socket = io('http://127.0.0.1:3000');
     // private socket = io('https://backend-blogging-appliaction.herokuapp.com');
@@ -50,9 +50,21 @@ export class BlogComponent implements OnInit {
     });
 
     constructor(private route: ActivatedRoute, private userService: UserService, private sanitized: DomSanitizer, private fb: FormBuilder) {
-      // this.replyForm = this.fb.group({
-      //   items: this.fb.array([this.createItem])
-      // });
+        // this.replyForm = this.fb.group({
+        //   items: this.fb.array([this.createItem])
+        // });
+
+        this.userService.newCommentReceived().subscribe(
+            data => {
+                this.getBlog();
+            }
+        );
+
+        this.userService.newReplyReceived().subscribe(
+            data => {
+                this.getBlog();
+            }
+        );
     }
 
     ngOnInit() {
@@ -72,24 +84,24 @@ export class BlogComponent implements OnInit {
     }
 
     get createItem(): FormGroup {
-      return this.fb.group({
-        content: ['', Validators.required]
-      });
+        return this.fb.group({
+            content: ['', Validators.required]
+        });
     }
 
     toggleEmojiPicker() {
-      this.showEmojiPicker = !this.showEmojiPicker;
-  }
+        this.showEmojiPicker = !this.showEmojiPicker;
+    }
 
-  addEmoji(event) {
-    const text = `${this.commentForm.controls.content.value}${event.emoji.native}`;
-    this.commentForm.get('content').setValue(text);
-    this.showEmojiPicker = false;
+    addEmoji(event) {
+        const text = `${this.commentForm.controls.content.value}${event.emoji.native}`;
+        this.commentForm.get('content').setValue(text);
+        this.showEmojiPicker = false;
     }
 
     toggleReplyEmojiPicker(index: number) {
-      this.showReplyEmojiPicker[index] = !this.showReplyEmojiPicker[index];
-  }
+        this.showReplyEmojiPicker[index] = !this.showReplyEmojiPicker[index];
+    }
 
     addReplyEmoji(event, index: number, value: string) {
         const text = `${value} ${event.emoji.native}`;
@@ -171,6 +183,25 @@ export class BlogComponent implements OnInit {
         );
     }
 
+    deleteComment(commentId: string) {
+      this.userService.deleteComment(commentId, this.id).subscribe(
+        (data) => {
+            this.socket.emit('delete comment', commentId);
+            this.getBlog();
+        },
+        error => console.error(error)
+    );
+    }
+
+    deleteReply(replyId: string, commentId: string) {
+      this.userService.deleteReply(replyId, commentId, this.id).subscribe(
+        (data) => {
+            this.getBlog();
+        },
+        error => console.error(error)
+    );
+    }
+
     openReplyText = (index: number) => {
         this.dispalyReplyBox[index] = !this.dispalyReplyBox[index];
     }
@@ -221,7 +252,7 @@ export class BlogComponent implements OnInit {
     }
 
     UpdatePost = (postId: string, index: number) => {
-        this.displayOriginalBlog[index] = !this.displayOriginalBlog[index] ;
+        this.displayOriginalBlog[index] = !this.displayOriginalBlog[index];
         this.displayUpdatedBlog[index] = !this.displayUpdatedBlog[index];
         const formData: any = new FormData();
         if (this.displayUpdatedBlog[index]) {
@@ -240,9 +271,9 @@ export class BlogComponent implements OnInit {
             return;
         }
         this.userService.updatePost(postId, formData).subscribe(
-          data => {
-            this.uploadUpdatedBlogImages[index] = false;
-            this.getBlog();
+            data => {
+                this.uploadUpdatedBlogImages[index] = false;
+                this.getBlog();
             },
             error => console.error(error)
         );

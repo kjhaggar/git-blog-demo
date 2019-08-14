@@ -47,6 +47,7 @@ export class ProfileComponent implements OnInit {
     private mentionedUsers: Array<string>;
     public recentNotification: any;
     public menuState = 'out';
+    public readNotification = true;
     public numberOfNotification = 0;
     public searchText: string;
     public friendRequestSent = [];
@@ -479,6 +480,7 @@ export class ProfileComponent implements OnInit {
 
     Notify() {
         this.menuState = this.menuState === 'out' ? 'in' : 'out';
+        this.readNotification = false;
     }
 
     clickedHome() {

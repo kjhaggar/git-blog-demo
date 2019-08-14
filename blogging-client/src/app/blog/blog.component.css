@@ -7,10 +7,13 @@ button {
     float: right;
 }
 
-.showCommentBox .showReplyBox{
-    margin: 40px;
+.showCommentBox {
+    margin: 30px;
 }
 
+.showReplyBox {
+  margin: 10px 40px;
+}
 .logo {
     height: 70px;
     width: 70px;
