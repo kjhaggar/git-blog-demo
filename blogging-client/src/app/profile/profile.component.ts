@@ -295,12 +295,15 @@ export class ProfileComponent implements OnInit {
         );
     }
 
-    changeStatus(id: string) {
-        this.userService.changePostStatus(id, this.getCurrentUserName).subscribe(
-            (data) => { },
-            error => console.log(error)
-
-        );
+    changeStatus() {
+        this.recentNotification.forEach(element => {
+            this.userService.changePostStatus(element._id, this.getCurrentUserName).subscribe(
+                (data) => {
+                    this.readNotification = false;
+                },
+                error => console.log(error)
+            );
+        });
     }
 
     UploadBlogImages(index: number) {
@@ -340,12 +343,12 @@ export class ProfileComponent implements OnInit {
         formData.append('forminput', JSON.stringify(obj));
         this.userService.addPost(formData).subscribe(
             (data: { _id: string }) => {
+                this.ShowAllPost();
                 this.socket.emit('post', obj);
                 this.displayAddPost = !this.displayAddPost;
                 this.submitted = false;
                 this.postForm.reset();
                 this.newBlogLink = 'New Blog';
-                this.ShowAllPost();
                 this.DisplayProfile();
                 const mentioned = {
                     postId: data._id,
@@ -480,7 +483,7 @@ export class ProfileComponent implements OnInit {
 
     Notify() {
         this.menuState = this.menuState === 'out' ? 'in' : 'out';
-        this.readNotification = false;
+        this.changeStatus();
     }
 
     clickedHome() {

@@ -100,11 +100,12 @@ export class UserService {
             // headers: new HttpHeaders().append('Content-Type','application/json')
         });
     }
-    changePostStatus(id: string, userName: string) {
+    changePostStatus(blogIdList: any, userName: string) {
         const body = {
-            user: userName
+            blogIdList,
+            userName
         };
-        return this.http.put(this.url + 'changePostStatus/' + id, body, {
+        return this.http.put(this.url + 'changePostStatus', body, {
             observe: 'body',
             withCredentials: true,
             // headers:new HttpHeaders().append('Content-Type','application/json')

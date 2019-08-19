@@ -102,19 +102,20 @@ router.post('/storeTaggedUsers', function(req, res, next) {
     });
 });
 
-router.put('/changePostStatus/:id', function(req, res, next) {
-    Notify.findByIdAndUpdate(req.params.id).exec(function (err, blog) {
+router.put('/changePostStatus', function(req, res, next) {
+    Notify.findByIdAndUpdate({_id: req.body.blogIdList}).exec(function (err, blog) {
         if (err) {
             console.log("Error:", err);
         } else {
+            console.log(blog)
             blog.taggedUsers.forEach(function (item) {
                     var y = item.userName
-                    if(y == req.body.user)
+                    if(y === req.body.userName)
                     item.read = true;
             });
             try {
                 doc = blog.save();
-                return res.status(201).json(blog);
+                res.status(201).json(blog);
             }
             catch (err) {
                 return res.status(501).json(err);
