@@ -76,7 +76,7 @@
                 </form>
             </div>
         </div>
-        <a class="btn btn-block btn-success" routerLink="/profile">Back to Dashboard</a>
+        <a class="btn btn-block btn-success" [routerLink]="['/publicProfile', getCurrentUserId]">Back to Dashboard</a>
         <div  *ngIf="hideSuccessMessage">
             <div class="col-18">
               <p class="alert alert-success">

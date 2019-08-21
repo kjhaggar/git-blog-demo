@@ -1,1 +1,60 @@
-<p>public-profile works!</p>
+<div class="container">
+    <div class="row profile">
+		<div class="col-md-3">
+			<div class="profile-sidebar" *ngIf="profile">
+				<div class="profile-userpic">
+					<img *ngIf = "url" [src] = "url" class="img-responsive" alt="preview">
+				</div>
+				<div class="profile-usertitle">
+					<div class="profile-usertitle-name">
+						{{profile.firstName}} {{profile.lastName}}
+					</div>
+					<div class="profile-usertitle-job">
+						{{profile.email}}
+					</div>
+				</div>
+				<div class="profile-userbuttons" *ngIf= "getCurrentUserId !== id">
+					<button *ngIf= "!friendRequestSent && !friends && !acceptRequest" type="button" class="btn btn-success btn-sm" (click)="sendRequestButton(profile._id)">Follow</button>
+          <button *ngIf= "friendRequestSent" type="button" class="btn btn-danger btn-sm" (click) = "CancelFriendRequest(profile._id)">Cancel Request</button>
+          <button *ngIf = "friends" type="button" class="btn btn-success btn-sm">Following</button>
+          <div *ngIf = "acceptRequest && !friends">
+              <button type="button" class="btn btn-success btn-sm" (click) = "AcceptFriendRequest(profile._id, profile.userName)">Accept</button>
+              <button type="button" class="btn btn-success btn-sm" (click)="DeleteFriendRequest(profile._id)">Delete</button>
+          </div>
+				</div>
+				<div class="profile-usermenu">
+					<ul class="nav">
+						<li class="active">
+							<a routerLink="/profile">
+							<i class="glyphicon glyphicon-home"></i>
+							Home </a>
+						</li>
+						<li *ngIf ="getCurrentUserId === id">
+							<a routerLink="/editProfile">
+							<i class="glyphicon glyphicon-user"></i>
+							Account Settings </a>
+						</li>
+						<!-- <li>
+							<a href="#" target="_blank">
+							<i class="glyphicon glyphicon-ok"></i>
+							Tasks </a>
+						</li>
+						<li>
+							<a href="#">
+							<i class="glyphicon glyphicon-flag"></i>
+							Help </a>
+						</li> -->
+					</ul>
+        </div>
+
+			</div>
+		</div>
+		<div class="col-md-9">
+            <div class="profile-content">
+			   Some user related content goes here...
+            </div>
+		</div>
+	</div>
+</div>
+<br>
+<br>

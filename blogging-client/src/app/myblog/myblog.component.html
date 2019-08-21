@@ -29,19 +29,25 @@
                               <img style="height: 30%; width: 30%; margin: 20px 270px" [src] = GetBlogImageUrl(count.filename)/>
                           </div>
                         </div>
-
-                        <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox()">{{toggleCommentButton}}</button>
-                        <button type="button" class="btn btn-sm btn-primary" (click)="DeletePost(post._id)">Delete Post</button>
-                        <button type="button" class="btn btn-sm btn-primary" (click)="UpdatePost(post._id)">Edit Post</button>
+                        <button type="button" class="btn btn-sm btn-primary" (click)="DeletePost(post._id)" tooltip="Remove this blog..??" placement="top" show-delay="500">
+                            <i class="fa fa-fw fa-trash"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary" (click)="ShowCommentBox()" tooltip="Add Comment" placement="top" show-delay="500">
+                            <i class="fa fa-fw fa-comments"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary" (click)="UpdatePost(post._id)" tooltip="Modify Blog" placement="top" show-delay="500">
+                          <i class="fa fa-fw fa-edit"></i>
+                        </button>
                         <div *ngIf = "displayUpdatedBlog">
-                            <button type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages()">Upload Media</button>
+                            <button type="button" class="btn btn-sm btn-primary" (click) ="UploadBlogImages()" tooltip="Upload Media" placement="top" show-delay="500">
+                              <i class="fa fa-fw fa-upload"></i>
+                            </button>
                         </div>
                         <div class="form-group" *ngIf= "uploadUpdatedBlogImages">
                             <div class="col-md-9">
                                 <input formControlName="image" id="image" name="image" type="file"
                                 (change)="fileChangeEvent($event)" placeholder="Upload a file..." multiple/>
                             </div>
-                        <!-- <img [src]="url" height="100" alt="preview"> <br/>  -->
                         </div>
 
                     </div>
@@ -52,7 +58,9 @@
                                     <div class="col-sm-10">
                                         <span><strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}</span>
                                     </div>
-                                    <a (click)="openReplyText(j)" style="cursor: pointer">Show Replies</a>
+                                    <a (click)="openReplyText(j)" style="cursor: pointer">
+                                      <i class="material-icons" style="cursor: pointer;" tooltip="Open all the Replies." placement="top" show-delay="500">reply</i>
+                                    </a>
                                     <i class="material-icons" style="cursor: pointer" (click) = "deleteComment(item._id)" tooltip="Delete comment." placement="top" show-delay="500">delete</i>
                                     <div *ngIf="dispalyReplyBox[j]" class="showReplyBox">
                                             <div  *ngIf = "post.comments[j].replies.length > 0; else noComments" >
@@ -68,9 +76,12 @@
                                             <i class="material-icons" style="cursor: pointer;" (click) = "openReplyForm(j)" tooltip="Reply to {{item.commenterName | titlecase}}" placement="top" show-delay="500">reply</i>
                                         <form [formGroup] = "replyForm" *ngIf = "replyClicked[j]">
                                             <input type="text" class="form-control" formControlName="content" #emoticon/>
-                                            <button type="button" class="toggle-emoji" (click)="toggleReplyEmojiPicker(j)">Smiley</button>
+                                            <button type="button" class="toggle-emoji" (click)="toggleReplyEmojiPicker(j)">
+                                                <i class="fa fa-fw fa-smile"></i>
+                                            </button>
                                             <emoji-mart class="emoji-mart" set="emojione" (emojiSelect)="addReplyEmoji($event,j, emoticon.value)" *ngIf="showReplyEmojiPicker[j]" title="Pick your emoji…"></emoji-mart>
-                                            <button mat-raised-button type="submit" (click)="addReply(post._id, item._id, j)" (click)="$event.stopPropagation();">Send</button>
+                                            <button mat-raised-button type="submit" (click)="addReply(post._id, item._id, j)" (click)="$event.stopPropagation();">
+                                                <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
                                         </form>
                                     </div>
                                 </div>
@@ -83,13 +94,17 @@
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control" formControlName="content"
                                         placeholder="Start Typing here.." >
-                                        <button type="button" class="toggle-emoji" (click)="toggleEmojiPicker()">Smiley</button>
-                                <emoji-mart class="emoji-mart" set="emojione" (emojiSelect)="addEmoji($event)" *ngIf="showEmojiPicker" title="Pick your emoji…"></emoji-mart>
+                                        <button type="button" class="toggle-emoji" (click)="toggleEmojiPicker()">
+                                            <i class="fa fa-fw fa-smile"></i>Smiley
+                                        </button>
+                                        <emoji-mart class="emoji-mart" set="emojione" (emojiSelect)="addEmoji($event)" *ngIf="showEmojiPicker" title="Pick your emoji…"></emoji-mart>
                                     </div>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-6">
                                         <button mat-raised-button type="submit" class="btn btn-sm btn-success pull-right"
                                         (click)="PostComment(post._id)" (click)="$event.stopPropagation();"
-                                        [disabled]="!commentForm.valid">Send</button>
+                                        [disabled]="!commentForm.valid" tooltip="Send" placement="left" show-delay="500">
+                                        <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </form>

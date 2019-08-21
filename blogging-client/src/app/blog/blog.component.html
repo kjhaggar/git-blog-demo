@@ -27,10 +27,11 @@
 
                         <div *ngFor="let item of post.comments; index as j" class="row">
                             <div class="col-sm-10">
-                                <span style="cursor: pointer" tooltip="Click to expand reply" placement="top" show-delay="500" (click)="openReplyText(j)">
+                                <span style="cursor: pointer">
                                   <strong>{{item.commenterName | titlecase}} : </strong> {{item.content}}
                                 </span>
                             </div>
+                            <i class="material-icons" style="cursor: pointer;"  (click)="openReplyText(j)" tooltip="Reply to {{item.commenterName | titlecase}}" placement="top" show-delay="500">reply</i>
                             <i *ngIf = "item.commenterName == getCurrentUserName" class="material-icons" tooltip="Delete comment." placement="top" show-delay="500" style="cursor: pointer" (click) = "deleteComment(item._id)">delete</i>
                             <div *ngIf="dispalyReplyBox[j]" class="showReplyBox">
                                 <div  *ngIf = "post.comments[j].replies.length > 0; else noComments" >
@@ -45,10 +46,12 @@
                                 <br>
                                 <i class="material-icons" style="cursor: pointer;" (click) = "openReplyForm(j)" tooltip="Reply to {{item.commenterName | titlecase}}" placement="top" show-delay="500">reply</i>
                                 <form [formGroup] = "replyForm" *ngIf = "replyClicked[j]">
-                                    <input type="text" class="form-control" #emoticon formControlName = content/>
+                                    <input type="text" class="form-control" #emoticon formControlName = content placeholder="Add your reply here..!!"/>
                                     <button type="button" class="toggle-emoji" (click)="toggleReplyEmojiPicker(j)">Smiley</button>
                                     <emoji-mart class="emoji-mart" set="emojione" (emojiSelect)="addReplyEmoji($event,j, emoticon.value)" *ngIf="showReplyEmojiPicker[j]" title="Pick your emoji…"></emoji-mart>
-                                    <button mat-raised-button type="submit" (click)="addReply(post._id, item._id, j)" (click)="$event.stopPropagation();">Send</button>
+                                    <button mat-raised-button type="submit" (click)="addReply(post._id, item._id, j)" (click)="$event.stopPropagation();" tooltip="Send" placement="top" show-delay="500">
+                                      <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                    </button>
 
                                     <!-- <div formArrayName="items">
                                     <div *ngFor = "let arrayItem of replyForm.controls['items'].controls; let i = index;" [formGroupName]=i>
@@ -71,7 +74,12 @@
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" formControlName="content"
                                 placeholder="Start Typing here.." >
-                                <button type="button" class="toggle-emoji" (click)="toggleEmojiPicker()">Smiley</button>
+                                <button type="button" class="toggle-emoji" (click)="toggleEmojiPicker()">
+                                  <i class="material-icons">
+                                    mood
+                                  </i>
+                                  Smiley
+                                </button>
                                 <emoji-mart class="emoji-mart" set="emojione" (emojiSelect)="addEmoji($event)" *ngIf="showEmojiPicker" title="Pick your emoji…"></emoji-mart>
                             </div>
                             <div class="col-sm-2">

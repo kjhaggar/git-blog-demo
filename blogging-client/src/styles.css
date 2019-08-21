@@ -24,10 +24,13 @@ font-feature-settings: ‘liga’;
 
 body{
     background: transparent;
-    margin: 0;
+    margin: 50px;
     font-family: 'Trebuchet MS', Arial, sans-serif;
+    height: 100%;
 }
 
 html, app-root {
     margin: 0;
+    height: 100%;
 }
+

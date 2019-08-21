@@ -21,7 +21,7 @@ export class EditProfileComponent implements OnInit {
     public hideNoUpdateMessage = false;
     public changePassword = false;
     private selectedFile: File;
-    private getCurrentUserId: string;
+    public getCurrentUserId: string;
     private getCurrentProfilePicture: any;
     private originalData: any;
 

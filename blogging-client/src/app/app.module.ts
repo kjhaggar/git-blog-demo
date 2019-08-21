@@ -15,6 +15,7 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { ShareButtonsModule } from '@ngx-share/buttons';
 import { TooltipModule } from 'ng2-tooltip-directive';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
+import { MatToolbarModule, MatSidenavModule, MatListModule, MatButtonModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -66,6 +67,8 @@ export const authInterceptorProviders = [
     ShareButtonsModule,
     TooltipModule,
     MDBBootstrapModule,
+    MatToolbarModule,
+    MatSidenavModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyBzS-pIcW-xUtwOFGXt2ErDPfpAbLCRgSc',
       libraries: ['places']

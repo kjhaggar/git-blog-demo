@@ -1,3 +1,4 @@
+import 'hammerjs';
 import './polyfills';
 import './icon';
 import { enableProdMode } from '@angular/core';

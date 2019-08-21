@@ -204,6 +204,7 @@ export class BlogComponent implements OnInit {
 
     openReplyText = (index: number) => {
         this.dispalyReplyBox[index] = !this.dispalyReplyBox[index];
+        this.replyClicked[index] = false;
     }
 
     openReplyForm = (index) => {

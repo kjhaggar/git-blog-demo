@@ -33,7 +33,7 @@ export class ProfileComponent implements OnInit {
     private socket = io('http://127.0.0.1:3000');
     // private socket = io ('https://backend-blogging-appliaction.herokuapp.com');
     private subscription: Subscription = new Subscription();
-    private getCurrentUserId: string;
+    public getCurrentUserId: string;
     private displayComment = [];
     private url: any;
     private panelOpenState = [];
@@ -47,7 +47,6 @@ export class ProfileComponent implements OnInit {
     private mentionedUsers: Array<string>;
     public recentNotification: any;
     public menuState = 'out';
-    public readNotification = true;
     public numberOfNotification = 0;
     public searchText: string;
     public friendRequestSent = [];
@@ -58,10 +57,9 @@ export class ProfileComponent implements OnInit {
     public incorrectPost: boolean;
     public uploadBlogImages: boolean;
     public usersProfile: any;
-    public newBlogLink = 'New Blog';
     public items: any;
     public showMyFriends = false;
-    public newFriendRequest: boolean;
+    public newFriendRequest = false;
     public newFriend: any;
     public friendsInfo: any;
     public zoom: number;
@@ -107,8 +105,7 @@ export class ProfileComponent implements OnInit {
 
     constructor(private authService: AuthService, private userService: UserService,
         private router: Router, private sanitized: DomSanitizer, private http: HttpClient,
-        private mapsAPILoader: MapsAPILoader, private ngZone: NgZone,
-        private filterPipe: FilterPipe) {
+        private mapsAPILoader: MapsAPILoader, private ngZone: NgZone) {
         this.userService.newCommentReceived().subscribe(
             data => {
                 this.ShowAllPost();
@@ -214,7 +211,6 @@ export class ProfileComponent implements OnInit {
     }
 
     markerDragEnd($event: MouseEvent) {
-        console.log($event);
         this.latitude = $event.coords.lat;
         this.longitude = $event.coords.lng;
         this.getAddress(this.latitude, this.longitude);
@@ -257,6 +253,14 @@ export class ProfileComponent implements OnInit {
 
     }
 
+    public getBgColor(balance: number): string {
+      return balance > 0 ? 'red' : '';
+   }
+
+   public getTextColor(balance: number): string {
+    return balance > 0 ? 'white' : '';
+ }
+
     get f() { return this.postForm.controls; }
 
     tagUser() {
@@ -272,6 +276,7 @@ export class ProfileComponent implements OnInit {
         this.getTaggedByUser = userTaggedBy;
         this.userService.NotificationList(this.getCurrentUserName).subscribe(
             (data: { taggedBy: string, taggedUsers: any }) => {
+                console.log(data);
                 this.getTaggedByUser = data.taggedBy;
                 for (const index in data) {
                     if (data.hasOwnProperty(index)) {
@@ -299,7 +304,7 @@ export class ProfileComponent implements OnInit {
         this.recentNotification.forEach(element => {
             this.userService.changePostStatus(element._id, this.getCurrentUserName).subscribe(
                 (data) => {
-                    this.readNotification = false;
+                    this.numberOfNotification = 0;
                 },
                 error => console.log(error)
             );
@@ -348,7 +353,6 @@ export class ProfileComponent implements OnInit {
                 this.displayAddPost = !this.displayAddPost;
                 this.submitted = false;
                 this.postForm.reset();
-                this.newBlogLink = 'New Blog';
                 this.DisplayProfile();
                 const mentioned = {
                     postId: data._id,
@@ -378,6 +382,7 @@ export class ProfileComponent implements OnInit {
                 this.updateFriendList(this.getCurrentUserId, this.getCurrentUserName, friendId, friendUserName);
                 this.updateFriendList(friendId, friendUserName, this.getCurrentUserId, this.getCurrentUserName);
                 this.newRequest();
+                this.friends();
                 this.newFriendAdded = true;
             },
             error => console.log(error)
@@ -489,7 +494,6 @@ export class ProfileComponent implements OnInit {
     clickedHome() {
         this.showAllPost = true;
         this.displayAddPost = false;
-        this.newBlogLink = 'New Blog';
         this.showMyPost = false;
         this.showMyFriends = false;
     }
@@ -500,7 +504,6 @@ export class ProfileComponent implements OnInit {
         this.uploadBlogImages = false;
         this.showMyFriends = false;
         this.displayAddPost = !this.displayAddPost;
-        this.newBlogLink = 'New Blog';
         this.displayAddPost = false;
         this.showAllPost = false;
         this.showMyPost = true;
@@ -599,7 +602,6 @@ export class ProfileComponent implements OnInit {
 
     DisplayPostBox = () => {
         this.displayAddPost = !this.displayAddPost;
-        this.newBlogLink = '';
         this.panelOpenState = [];
     }
 
