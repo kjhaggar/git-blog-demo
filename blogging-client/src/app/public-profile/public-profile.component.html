@@ -15,7 +15,7 @@
 				</div>
 				<div class="profile-userbuttons" *ngIf= "getCurrentUserId !== id">
 					<button *ngIf= "!friendRequestSent && !friends && !acceptRequest" type="button" class="btn btn-success btn-sm" (click)="sendRequestButton(profile._id)">Follow</button>
-          <button *ngIf= "friendRequestSent" type="button" class="btn btn-danger btn-sm" (click) = "CancelFriendRequest(profile._id)">Cancel Request</button>
+          <button *ngIf= "friendRequestSent && !friends" type="button" class="btn btn-danger btn-sm" (click) = "CancelFriendRequest(profile._id)">Cancel Request</button>
           <button *ngIf = "friends" type="button" class="btn btn-success btn-sm">Following</button>
           <div *ngIf = "acceptRequest && !friends">
               <button type="button" class="btn btn-success btn-sm" (click) = "AcceptFriendRequest(profile._id, profile.userName)">Accept</button>

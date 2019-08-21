@@ -87,7 +87,8 @@ router.post('/sendRequest', function(req, res, next) {
 router.post('/storeTaggedUsers', function(req, res, next) {
     var notify = new Notify({
         postId: req.body.postId,
-        taggedBy: req.body.taggedBy
+        taggedBy: req.body.taggedBy,
+        // newFriend: `${req.body.taggedBy} send you follow request`,
     });
     for (var i = 0; i < req.body.users.length; i++) {
         notify.taggedUsers.push({
@@ -107,7 +108,6 @@ router.put('/changePostStatus', function(req, res, next) {
         if (err) {
             console.log("Error:", err);
         } else {
-            console.log(blog)
             blog.taggedUsers.forEach(function (item) {
                     var y = item.userName
                     if(y === req.body.userName)

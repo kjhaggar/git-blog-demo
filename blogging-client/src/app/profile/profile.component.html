@@ -74,9 +74,9 @@
                 </div>
                 <div class="form-group">
                     <label for="exampleInputPassword1">Description</label>
-                    <textarea name="description" formControlName="description" rows="4" class="form-control"
+                    <textarea contenteditable name="description" id = "placeholder" formControlName="description" rows="4" class="form-control"
                     placeholder="Your post..!!" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"
-                    [mention]="item" [mentionConfig]="{maxItems:10, labelKey: 'tag'}" ></textarea>
+                    [mention]="item" [mentionConfig]="{maxItems:10}" ></textarea>
                     <div *ngIf="submitted && !!f.description.errors" class="invalid-feedback">
                         <div *ngIf="!!f.description.errors.required">Enter valid information</div>
                     </div>
@@ -108,6 +108,7 @@
 
 <div class= "container" *ngIf = "showAllPost">
     <h2>All Blogs</h2>
+    <div *ngIf="sizeOfAllPost > 0; else noAllPost">
     <div class = "displayPost panel panel-primary" *ngFor = "let post of postList">
         <form>
             <div class="panel-heading row clearfix">
@@ -122,10 +123,16 @@
             </p>
         </form>
     </div>
+    </div>
+    <ng-template #noAllPost>
+        <br>
+        <h6>No Blog Posted.</h6>
+      </ng-template>
 </div>
 
 <div class= "container" *ngIf = "showMyPost">
     <h2>My Blogs</h2>
+    <div *ngIf="sizeOfMyPost > 0 ; else noMyPOst">
     <div class = "displayPost panel panel-primary" *ngFor = "let post of displayMyPost">
         <form [formGroup]="updatePost">
             <div class="panel-heading row clearfix">
@@ -139,7 +146,12 @@
                 <a [routerLink]="['/myBlog', post._id]">Show More</a>
             </p>
         </form>
+      </div>
     </div>
+    <ng-template #noMyPOst>
+      <br>
+      <h6>No Blog Uploaded By You.</h6>
+    </ng-template>
 </div>
 
 <div class= "container" *ngIf = "showMyFriends" style="margin: 20px">
@@ -205,7 +217,7 @@
     </div>
 </div>
 
-<div  class= "container toggleNotification" [@slideInOut]="menuState">
+<div *ngIf="sizeOfNotifications > 0; else noMessage" class= "container toggleNotification" [@slideInOut]="menuState">
     <div class="row newNotify" *ngFor = "let new of recentNotification">
         <div class="col-lg-2" *ngFor = "let user of usersProfile" class="panel-title pull-left">
             <img class = "notifyProfile" *ngIf = "new.taggedBy == user.userName" [src] = GetImageUrl(user.image)/>
@@ -213,6 +225,14 @@
         <div class="col-lg-10">
             <b>{{new.taggedBy}}</b> mentioned you in a <a [routerLink]="['/blog', new.postId]"  (click) = "changeStatus(new._id)">blog</a>, created on: {{new.time| date:'MMM dd, yyyy'}}
         </div>
+        <div *ngIf="newFriendNotification" >
+          <div class="col-lg-10" >{{newFriendNotification}}</div>
+          </div>
         <br>
     </div>
 </div>
+<ng-template #noMessage>
+    <div class= "container toggleNotification" [@slideInOut]="menuState">
+        No new notification.
+    </div>
+</ng-template>

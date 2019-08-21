@@ -31,6 +31,14 @@ export class UserService {
         });
     }
 
+    sendFriendReqNotification(body) {
+      return this.http.post(this.url + 'storeTaggedUsers', body, {
+          observe: 'body',
+          withCredentials: true,
+          headers: new HttpHeaders().append('Content-Type', 'application/json')
+      });
+  }
+
     getUsersList() {
         return this.http.get(this.url + 'getUsersList/', {
             observe: 'body',
