@@ -132,6 +132,14 @@ export class UserService {
         });
     }
 
+    updatePendingReqStatus(userId: string) {
+      return this.http.put(this.url + 'changePendingRequestStatus/' + userId, {
+          observe: 'body',
+          withCredentials: true,
+          headers: new HttpHeaders().append('Content-Type', 'application/json')
+      });
+  }
+
     deletePost(postId: string) {
         return this.http.delete(this.url + 'deletePost/' + postId, {
             observe: 'body',

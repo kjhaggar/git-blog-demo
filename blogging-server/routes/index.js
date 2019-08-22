@@ -109,8 +109,7 @@ router.put('/changePostStatus', function(req, res, next) {
             console.log("Error:", err);
         } else {
             blog.taggedUsers.forEach(function (item) {
-                    var y = item.userName
-                    if(y === req.body.userName)
+                    if(item.userName === req.body.userName)
                     item.read = true;
             });
             try {
@@ -454,7 +453,7 @@ router.get('/requestList/:id', function(req, res) {
                     console.log("Error:", err);
                 } else {
 
-                    res.send({ pendingUserProfile, pendingRequestId });
+                    res.send({ pendingUserProfile, pendingRequestId ,request});
                 }
             })
         }
@@ -505,11 +504,20 @@ router.put('/changeRequestStatus', function(req, res, next) {
                 if (err) {
                     res.json({ success: false, message: 'Something went wrong.' });
                 } else {
-                    res.json(request);
+                    res.send(request);
                 }
             });
         }
   });
+})
+
+router.put('/changePendingRequestStatus/:id', function(req, res, next) {
+    Request.update({ requestTo: req.params.id , status: "false" }, {$set: {"read":"true"}}, {multi:true}).exec(function (err, request) {
+        if (err) {
+            console.log("Error:", err);
+        }
+        res.json(request)
+    });
 })
 
 router.get('/getNotified/:userName', function(req, res) {

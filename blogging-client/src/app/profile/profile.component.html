@@ -19,7 +19,9 @@
         </li>
         <li>
             <a style="cursor:pointer" (click)="UsersList()">
-                <i class="fa fa-fw fa-users"></i>Friends</a>
+                <i class="fa fa-fw fa-users"></i><span  [ngStyle]="{'color' : getTextColor(unreadReq)}">Friends</span>
+                <sup *ngIf = "unreadReq > 0" [ngStyle]="{'background-color': getBgColor(unreadReq), 'color': getTextColor(unreadReq)}">{{unreadReq}}</sup>
+              </a>
         </li>
         <li>
             <a style="cursor:pointer" (click)="Notify()">
@@ -225,9 +227,6 @@
         <div class="col-lg-10">
             <b>{{new.taggedBy}}</b> mentioned you in a <a [routerLink]="['/blog', new.postId]"  (click) = "changeStatus(new._id)">blog</a>, created on: {{new.time| date:'MMM dd, yyyy'}}
         </div>
-        <div *ngIf="newFriendNotification" >
-          <div class="col-lg-10" >{{newFriendNotification}}</div>
-          </div>
         <br>
     </div>
 </div>

@@ -9,8 +9,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import * as io from 'socket.io-client';
 import { MapsAPILoader, MouseEvent } from '@agm/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { FilterPipe } from 'ngx-filter-pipe';
-import { UpperCasePipe } from '@angular/common';
 const parse = require('parse-mentions');
 
 @Component({
@@ -62,6 +60,7 @@ export class ProfileComponent implements OnInit {
   public showMyFriends = false;
   public newFriendRequest = false;
   public newFriend: any;
+  public pendingRequest: any;
   public friendsInfo: any;
   public zoom: number;
   public address: string;
@@ -83,6 +82,7 @@ export class ProfileComponent implements OnInit {
   public sizeOfMyPost: number;
   public sizeOfAllPost: number;
   public sizeOfNotifications: number;
+  public unreadReq = 0;
 
   searchForm: FormGroup = new FormGroup({
     searchInfo: new FormControl()
@@ -435,7 +435,13 @@ export class ProfileComponent implements OnInit {
 
   newRequest(userId?: string) {
     this.userService.RequestList(this.getCurrentUserId).subscribe(
-      (data: { pendingUserProfile: any, pendingRequestId: any }) => {
+      (data: { pendingUserProfile: any, pendingRequestId: any , request: any}) => {
+        this.pendingRequest = data.request;
+        data.request.forEach(element => {
+         if (element.read === false) {
+           this.unreadReq++;
+         }
+        });
         this.newFriendRequest = true;
         this.newFriend = data.pendingUserProfile;
         for (const i of data.pendingRequestId) {
@@ -446,6 +452,14 @@ export class ProfileComponent implements OnInit {
     );
   }
 
+  changeRequestStatus() {
+      this.userService.updatePendingReqStatus(this.getCurrentUserId).subscribe(
+        (data) => {
+          this.unreadReq = 0;
+        },
+        error => console.log(error)
+      );
+  }
   sentRequest() {
     this.userService.SentRequestList(this.getCurrentUserId).subscribe(
       (data: { pendingRequestId: string }) => {
@@ -487,6 +501,7 @@ export class ProfileComponent implements OnInit {
     this.showAllPost = false;
     this.showMyPost = false;
     this.showMyFriends = true;
+    this.changeRequestStatus();
     this.userService.getUsersList().subscribe(
       data => {
         this.items = data;
