@@ -540,6 +540,28 @@ router.get('/getNotified/:userName', function(req, res) {
     });
 });
 
+router.get('/publicBlog/:userName/:userId', function(req, res) {
+    Notify.find({"taggedUsers.userName" : req.params.userName}).exec(function (err, friendsBlog) {
+        if (err) {
+            console.log("Error:", err);
+        } else {
+            const postId = [];
+            friendsBlog.forEach(element => {
+                if (element.typeOfMsg == 'taggedOnBlog') {
+                    postId.push(element.postId);
+                }
+            })
+            Post.find({$or : [ {_id: { $in: postId } }, {userId: req.params.userId} ] }).exec(function (err, blog) {
+                if (err) {
+                    console.log("Error:", err);
+                } else {
+                    res.send(blog)
+                }
+            })
+        }
+    });
+});
+
 router.delete('/deleteFriendRequest', function(req, res, next) {
     Request.findOneAndDelete({user: req.body.user, requestTo: req.body.requestTo}).exec(function(err, user) {
         if (err) return next(err);

@@ -24,8 +24,6 @@ export class ProfileComponent implements OnInit {
     private commentClicked: boolean;
     private replyClicked = [];
     private uploadUpdatedBlogImages = [];
-
-
     public showAllPost = true;
     public postList: any;
     public incorrectPost: boolean;
@@ -33,7 +31,6 @@ export class ProfileComponent implements OnInit {
     public showMyFriends = false;
     public submitted: boolean;
     public item: any;
-
     public search: boolean;
     public displayOriginalBlog = [];
     public displayUpdatedBlog = [];
@@ -41,7 +38,6 @@ export class ProfileComponent implements OnInit {
     public displayAddPost = false;
     public showMyPost = false;
     public sizeOfAllPost: number;
-
     public usersProfile: any;
 
     searchForm: FormGroup = new FormGroup({

@@ -1,3 +1,4 @@
+import { DomSanitizer } from '@angular/platform-browser';
 import { UserService } from './../services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
@@ -15,41 +16,20 @@ export class PublicProfileComponent implements OnInit {
   public sub: any;
   public getCurrentUserId: string;
   public getCurrentUserName: string;
-  private getCurrentProfilePicture: any;
-  public url: any;
-  public profile: any;
-  public friendRequestSent: boolean;
-  public friends: boolean;
-  public acceptRequest = false;
+  public blogProfilePic: any;
+  public usersProfile: any;
+  public postList: any;
+  public sizeOfAllPost: number;
 
-  constructor(private route: ActivatedRoute, private userService: UserService) {
+  constructor(private route: ActivatedRoute, private userService: UserService,
+    private sanitized: DomSanitizer) {
 
-    this.userService.newRequestReceived().subscribe(
-      data => {
-        if (this.getCurrentUserId === data.receiverId) {
-          this.newRequest();
+      this.userService.newPostReceived().subscribe(
+        data => {
+          this.getProfileData();
         }
-      },
-      error => console.log(error)
     );
-
-    this.userService.canceledRequestReceived().subscribe(
-      data => {
-        this.newRequest();
-        this.getProfileData();
-        this.acceptRequest = false;
-        this.friendRequestSent = false;
-      },
-      error => console.log(error)
-    );
-
-    this.userService.acceptRequestReceived().subscribe(
-      data => {
-        this.getProfileData();
-      },
-      error => console.log(error)
-    );
-  }
+    }
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
@@ -60,124 +40,48 @@ export class PublicProfileComponent implements OnInit {
     this.getCurrentUserName = localStorage.getItem('user');
 
     this.getProfileData();
-    this.sentRequest();
-    this.newRequest();
+    this.DisplayProfile();
   }
 
   getProfileData() {
     this.userService.getProfileData(this.id).subscribe(
       (data: any) => {
-        this.profile = data;
-        data.friends.forEach(element => {
-          if (this.getCurrentUserId === element.friendId) {
-            this.friends = true;
-          }
-        });
-        this.getCurrentProfilePicture = data.image;
-        if (this.getCurrentProfilePicture == null) {
-          this.url = 'http://localhost:3000/images/download.jpeg';
-          // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/download.jpeg';
-        } else {
-          this.url = 'http://localhost:3000/images/' + this.getCurrentProfilePicture;
-          // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/' + this.getCurrentProfilePicture;
-        }
+        this.userService.getpublicBlog(data.userName, this.id).subscribe(
+          data => {
+            this.postList = Object.values(data).sort((val1, val2) => {
+              const start = +new Date(val1.createdAt);
+              const end = +new Date(val2.createdAt);
+              return end - start;
+            });
+            this.sizeOfAllPost = Object.keys(this.postList).length;
+          },
+          err => console.log(err)
+        );
       },
       error => {
         console.log(error.message);
       }
     );
   }
-
-  sendRequestButton(receiverId: string) {
-    const request = {
-      receiverId,            // receiver of friend request
-      senderId: this.getCurrentUserId    // sender of friend request
-    };
-    this.userService.sendRequest(request).subscribe(
+  DisplayProfile() {
+    this.userService.displayProfile().subscribe(
       data => {
-        this.socket.emit('friendRequest', request);
-        this.friendRequestSent = true;
+        this.usersProfile = data;
       },
-      error => console.log(error)
+      err => {
+        console.log(err);
+      }
     );
   }
 
-  sentRequest() {
-    this.userService.SentRequestList(this.getCurrentUserId).subscribe(
-      (data: any) => {
-        data.forEach(element => {
-          if (this.id === element) {
-            this.friendRequestSent = true;
-          }
-        });
-
-      },
-      error => console.log(error)
-    );
-  }
-
-  newRequest() {
-    this.userService.RequestList(this.getCurrentUserId).subscribe(
-      (data: any) => {
-        for (const i of data.pendingRequestId) {
-          this.acceptRequest = true;
-        }
-      },
-      error => console.log(error)
-    );
-  }
-
-  AcceptFriendRequest(friendId: string, friendUserName: string) {
-    this.userService.changeRequestStatus(this.getCurrentUserId, friendId).subscribe(
-      data => {
-        this.socket.emit('acceptFriendRequest', this.getCurrentUserId);
-        this.updateFriendList(this.getCurrentUserId, this.getCurrentUserName, friendId, friendUserName);
-        this.updateFriendList(friendId, friendUserName, this.getCurrentUserId, this.getCurrentUserName);
-        this.newRequest();
-      },
-      error => console.log(error)
-    );
-  }
-
-  updateFriendList(userId: string, userName: string, friendId: string, friendUserName: string) {
-    this.userService.acceptFriendRequest(userId, userName, friendId, friendUserName).subscribe(
-      data => {
-        this.newRequest();
-        this.getProfileData();
-        // this.visitUsersProfile = true;
-      },
-      error => console.log(error)
-    );
-  }
-
-  DeleteFriendRequest(userId: string) {
-    this.userService.deleteFriendRequest(userId, this.getCurrentUserId).subscribe(
-      data => {
-        this.socket.emit('cancelFriendRequest', this.getCurrentUserId);
-        this.acceptRequest = false;
-        this.friendRequestSent = false;
-        this.friends = false;
-        this.newRequest();
-        this.sentRequest();
-      },
-      error => console.error(error)
-    );
-  }
-
-  CancelFriendRequest(userId: string) {
-    this.userService.cancelFriendRequest(this.getCurrentUserId, userId).subscribe(
-      data => {
-        this.socket.emit('cancelFriendRequest', this.getCurrentUserId);
-        this.acceptRequest = false;
-        this.friendRequestSent = false;
-        this.newRequest();
-        this.sentRequest();
-      },
-      error => console.error(error)
-    );
-  }
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
-  }
+  GetImageUrl(filename) {
+    if (filename === undefined) {
+        this.blogProfilePic = 'http://localhost:3000/images/download.jpeg';
+        // this.blogProfilePic = 'https://backend-blogging-appliaction.herokuapp.com/images/download.jpeg';
+    } else {
+        this.blogProfilePic = 'http://localhost:3000/images/' + filename;
+        // this.blogProfilePic = 'https://backend-blogging-appliaction.herokuapp.com/images/' + filename;
+    }
+    return this.sanitized.bypassSecurityTrustUrl(this.blogProfilePic);
+}
 }

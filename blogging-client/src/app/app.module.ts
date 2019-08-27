@@ -5,8 +5,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { OrderModule } from 'ngx-order-pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
 import { AgmCoreModule } from '@agm/core';
 import { MentionModule } from 'angular-mentions';
 import { FilterPipeModule } from 'ngx-filter-pipe';
@@ -15,7 +13,6 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { ShareButtonsModule } from '@ngx-share/buttons';
 import { TooltipModule } from 'ng2-tooltip-directive';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
-import { MatToolbarModule, MatSidenavModule, MatListModule, MatButtonModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -36,6 +33,7 @@ import { CreateBLogComponent } from './create-blog/create-blog.component';
 import { PersonalBlogsComponent } from './personal-blogs/personal-blogs.component';
 import { FriendsComponent } from './friends/friends.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { ProfileCardComponent } from './profile-card/profile-card.component';
 
 
 export const authInterceptorProviders = [
@@ -56,7 +54,8 @@ export const authInterceptorProviders = [
     CreateBLogComponent,
     PersonalBlogsComponent,
     FriendsComponent,
-    NavbarComponent
+    NavbarComponent,
+    ProfileCardComponent
   ],
   imports: [
     BrowserModule,
@@ -66,8 +65,6 @@ export const authInterceptorProviders = [
     HttpClientModule,
     OrderModule,
     BrowserAnimationsModule,
-    MatExpansionModule,
-    MatIconModule,
     MentionModule,
     FilterPipeModule,
     EmojiModule,
@@ -75,8 +72,6 @@ export const authInterceptorProviders = [
     ShareButtonsModule,
     TooltipModule,
     MDBBootstrapModule,
-    MatToolbarModule,
-    MatSidenavModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyBzS-pIcW-xUtwOFGXt2ErDPfpAbLCRgSc',
       libraries: ['places']

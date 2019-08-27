@@ -28,7 +28,6 @@ export class NavbarComponent implements OnInit {
   public menuState = 'out';
   public recentNotification: any;
   public recentFollowReq: any;
-  public hideSuccessMessage: boolean;
   public numberOfNotification = 0;
   public sizeOfNotifications: number;
   public unreadReq = 0;
@@ -48,7 +47,6 @@ export class NavbarComponent implements OnInit {
     this.userService.newTag().subscribe(
       data => {
         if (data.users.includes(this.currentUserName)) {
-          this.hideSuccessMessage = true;
           this.newNotification();
         }
       },
@@ -104,7 +102,6 @@ export class NavbarComponent implements OnInit {
                 const userName = 'userName';
                 const read = 'read';
                 if (x[temp][userName] === this.currentUserName && x[temp][read] === false) {
-                  this.hideSuccessMessage = true;
                   this.numberOfNotification++;
                 }
               }

@@ -30,7 +30,7 @@
                       <div *ngIf="!!f.description.errors.required">Enter valid information</div>
                   </div>
               </div>
-              <button type="button" class="btn btn-sm btn-primary" (click) = "showGoogleMap = true">Add Location</button>
+              <button type="button" class="btn btn-sm btn-primary" (click) = "showGoogleMap = !showGoogleMap">Add Location</button>
               <div *ngIf = "showGoogleMap">
                   <agm-map [latitude]="latitude" [longitude]="longitude" [zoom]="zoom">
                           <agm-marker [latitude]="latitude" [longitude]="longitude" [markerDraggable]="true" (dragEnd)="markerDragEnd($event)"></agm-marker>

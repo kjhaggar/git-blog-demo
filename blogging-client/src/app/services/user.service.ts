@@ -188,6 +188,14 @@ export class UserService {
         });
     }
 
+    getpublicBlog(userName: string, userId: string) {
+      return this.http.get(this.url + 'publicBlog/' + userName + '/' + userId, {
+          observe: 'body',
+          withCredentials: true,
+          headers: new HttpHeaders().append('Content-Type', 'application/json')
+      });
+  }
+
 
     acceptFriendRequest(userId: string, userName: string, friendId: string, friendUserName: string) {
         const body = {
