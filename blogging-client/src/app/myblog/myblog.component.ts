@@ -48,7 +48,20 @@ export class MyblogComponent implements OnInit {
     image: new FormControl(null)
   });
 
-  constructor(private route: ActivatedRoute, private userService: UserService, private sanitized: DomSanitizer) { }
+  constructor(private route: ActivatedRoute, private userService: UserService,
+    private sanitized: DomSanitizer) {
+    this.userService.newCommentReceived().subscribe(
+      data => {
+        this.getBlog();
+      }
+    );
+
+    this.userService.newReplyReceived().subscribe(
+      data => {
+        this.getBlog();
+      }
+    );
+  }
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
@@ -83,8 +96,8 @@ export class MyblogComponent implements OnInit {
 
   DisplayProfilePicture() {
     this.userService.displayProfile().subscribe(
-      (data: { user: object }) => {
-        this.usersProfile = data.user;
+      data => {
+        this.usersProfile = data;
       },
       err => {
         console.log(err);

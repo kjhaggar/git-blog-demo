@@ -33,8 +33,6 @@ export class BlogComponent implements OnInit {
     public post: object;
     public showEmojiPicker = false;
     public showReplyEmojiPicker = [];
-    // replyForm: FormGroup;
-    // items: FormArray;
 
     commentForm: FormGroup = new FormGroup({
         content: new FormControl('', Validators.required)
@@ -49,10 +47,8 @@ export class BlogComponent implements OnInit {
         image: new FormControl(null)
     });
 
-    constructor(private route: ActivatedRoute, private userService: UserService, private sanitized: DomSanitizer, private fb: FormBuilder) {
-        // this.replyForm = this.fb.group({
-        //   items: this.fb.array([this.createItem])
-        // });
+    constructor(private route: ActivatedRoute, private userService: UserService,
+      private sanitized: DomSanitizer, private fb: FormBuilder) {
 
         this.userService.newCommentReceived().subscribe(
             data => {
@@ -77,10 +73,6 @@ export class BlogComponent implements OnInit {
         this.getBlog();
         this.DisplayProfilePicture();
 
-        // this.replyForm = new FormGroup({})
-        // for(let formModule of this.post.comments){
-        //   this.replyForm.addcontrol(formModule.key,new FormControl(formModule.Value))
-        // }
     }
 
     get createItem(): FormGroup {
@@ -111,8 +103,8 @@ export class BlogComponent implements OnInit {
 
     DisplayProfilePicture = () => {
         this.userService.displayProfile().subscribe(
-            (data: { user: object }) => {
-                this.usersProfile = data.user;
+            data => {
+                this.usersProfile = data;
             },
             err => {
                 console.log(err);
@@ -185,7 +177,7 @@ export class BlogComponent implements OnInit {
 
     deleteComment(commentId: string) {
       this.userService.deleteComment(commentId, this.id).subscribe(
-        (data) => {
+        data => {
             this.socket.emit('delete comment', commentId);
             this.getBlog();
         },
@@ -195,7 +187,7 @@ export class BlogComponent implements OnInit {
 
     deleteReply(replyId: string, commentId: string) {
       this.userService.deleteReply(replyId, commentId, this.id).subscribe(
-        (data) => {
+        data => {
             this.getBlog();
         },
         error => console.error(error)
@@ -214,7 +206,6 @@ export class BlogComponent implements OnInit {
     }
 
     addReply = (postId: string, commentId: string, index: number) => {
-        // (this.replyForm.get('items') as FormArray).push(this.createItem);
         if (!this.replyForm.valid) {
             return;
         }

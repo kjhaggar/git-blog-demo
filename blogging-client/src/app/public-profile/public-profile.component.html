@@ -1,3 +1,5 @@
+<app-navbar></app-navbar>
+
 <div class="container">
     <div class="row profile">
 		<div class="col-md-3">
@@ -24,12 +26,7 @@
 				</div>
 				<div class="profile-usermenu">
 					<ul class="nav">
-						<li class="active">
-							<a routerLink="/profile">
-							<i class="glyphicon glyphicon-home"></i>
-							Home </a>
-						</li>
-						<li *ngIf ="getCurrentUserId === id">
+						<li *ngIf ="getCurrentUserId === id" class="active">
 							<a routerLink="/editProfile">
 							<i class="glyphicon glyphicon-user"></i>
 							Account Settings </a>

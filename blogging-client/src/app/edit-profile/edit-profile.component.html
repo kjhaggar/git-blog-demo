@@ -52,7 +52,7 @@
                             <div class="form-group">
                                 <label for="password" class="col-md-12 control-label">Password</label>
                                 <div class="col-md-9">
-                                    <input type="password" formControlName="password" class="form-control" placeholder="*****"
+                                    <input type="password" formControlName="password" class="form-control"
                                     [ngClass]="{ 'is-invalid':pwdsubmitted && f.password.errors}">
                                     <div *ngIf="pwdsubmitted && !!f.password.errors" class="invalid-feedback">
                                         <div *ngIf="!!f.password.errors.minlength">Password must be at least 6 characters</div>
@@ -64,7 +64,7 @@
                                 <div class="col-md-9">
                                     <input type="password" formControlName="confirmPassword" class="form-control" placeholder=""
                                     [ngClass]="{ 'is-invalid':pwdsubmitted && f.confirmPassword.errors}">
-                                    <div *ngIf="matchPassword"  class="invalid-feedback">Password do not match.</div>
+                                    <div *ngIf="matchPassword" style="color: #dc3545; font-size: 80%" [ngClass] ="FadeOutSuccessMsg()">Password do not match.</div>
                                 </div>
                             </div>
                     </div>
@@ -76,7 +76,7 @@
                 </form>
             </div>
         </div>
-        <a class="btn btn-block btn-success" [routerLink]="['/publicProfile', getCurrentUserId]">Back to Dashboard</a>
+        <a class="btn btn-block btn-success" [routerLink]="['/publicProfile', getCurrentUserId]">Back to Profile</a>
         <div  *ngIf="hideSuccessMessage">
             <div class="col-18">
               <p class="alert alert-success">

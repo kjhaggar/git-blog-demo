@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
         if (localStorage.getItem('token')) {
-            this.router.navigate(['/profile']);
+            this.router.navigate(['/home']);
         }
     }
 
@@ -38,11 +38,8 @@ export class LoginComponent implements OnInit {
             return;
         }
         this.authService.login(JSON.stringify(this.loginForm.value)).subscribe(
-            (data: { userId: string, userName: string, success: boolean, message: string, token: string}) => {
-                if (data.success) {
-                    alert('not a memmber');
-                }
-                this.router.navigate(['/profile']);
+            (data: any) => {
+                this.router.navigate(['/home']);
                 this.authService.storeUserData(data.token, data.userName, data.userId);
             },
             error => {

@@ -1,0 +1,137 @@
+<nav
+  class="navbar navbar-expand-md navbar-light navbar-fixed-top"
+  style="background-color: rgb(176, 200, 252);"
+>
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand"> Blog - Demo </a>
+      <a class="navbar-brand">Welcome {{ currentUserName | titlecase }}</a>
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+      <li>
+        <a routerLink="/createBlog">
+          <i class="fa fa-fw fa-pencil"></i>New Blog</a
+        >
+      </li>
+      <li>
+        <a routerLink="/home"> <i class="fa fa-fw fa-home"></i>Home</a>
+      </li>
+      <li>
+        <a routerLink="/personalBlogs">
+          <i class="fa fa-fw fa-bookmark"></i>My Blogs</a
+        >
+      </li>
+      <li>
+        <a routerLink="/friends" (click)="changeRequestStatus()">
+          <i class="fa fa-fw fa-users"></i
+          ><span [ngStyle]="{ color: getTextColor(unreadReq) }">Friends</span>
+          <sup
+            *ngIf="unreadReq > 0"
+            [ngStyle]="{
+              'background-color': getBgColor(unreadReq),
+              'border-radius': '50px',
+              color: getTextColor(unreadReq)
+            }"
+            >{{ unreadReq }}</sup
+          >
+        </a>
+      </li>
+      <li>
+        <a (click)="Notify()">
+          <i class="fa fa-fw fa-bell"></i
+          ><span [ngStyle]="{ color: getTextColor(numberOfNotification) }"
+            >Notifications</span
+          >
+          <sup
+            *ngIf="numberOfNotification > 0"
+            [ngStyle]="{
+              'background-color': getBgColor(numberOfNotification),
+              'border-radius': '50px',
+              color: getTextColor(numberOfNotification)
+            }"
+            >{{ numberOfNotification }}</sup
+          >
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['/publicProfile', currentUserId]">
+          <i class="fa fa-fw fa-user"></i>My Account</a
+        >
+      </li>
+      <li>
+        <a (click)="Logout()"> <i class="fa fa-fw fa-sign-out"></i>Logout</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div
+  *ngIf="sizeOfNotifications > 0; else noMessage"
+  class="container toggleNotification"
+  [@slideInOut]="menuState"
+>
+  <div class="row newNotify" *ngFor="let new of recentNotification">
+    <div *ngIf="new.typeOfMsg === 'taggedOnBlog'">
+      <div
+        class="col-lg-2"
+        *ngFor="let user of usersProfile"
+        class="panel-title pull-left"
+      >
+        <img
+          class="notifyProfile"
+          *ngIf="new.taggedBy.name == user.userName"
+          [src]="GetImageUrl(user.image)"
+        />
+      </div>
+      <div
+        class="col-lg-10"
+        *ngIf="currentUserId !== new.taggedBy.id; else ownBlog"
+      >
+        <b
+          [routerLink]="['/publicProfile', new.taggedBy.id]"
+          style="cursor: pointer"
+        >
+          {{ new.taggedBy["name"] }}
+        </b>
+        mentioned you in a
+        <a [routerLink]="['/blog', new.postId]" (click)="changeStatus(new._id)"
+          >blog</a
+        >, created on: {{ new.time | date: "MMM dd, yyyy" }}
+      </div>
+      <ng-template #ownBlog>
+        <b
+          [routerLink]="['/publicProfile', new.taggedBy.id]"
+          style="cursor: pointer"
+        >
+          You
+        </b>
+        &nbsp;mentioned yourself in a<a
+          [routerLink]="['/blog', new.postId]"
+          (click)="changeStatus(new._id)"
+          >&nbsp;blog</a
+        >, created on: {{ new.time | date: "MMM dd, yyyy" }}
+      </ng-template>
+      <br />
+    </div>
+    <div *ngIf="new.typeOfMsg === 'acceptRequest'">
+        <div
+        class="col-lg-2"
+        *ngFor="let user of usersProfile"
+        class="panel-title pull-left"
+      >
+        <img
+          class="notifyProfile"
+          *ngIf="new.friendName == user.userName"
+          [src]="GetImageUrl(user.image)"
+        />
+      </div>
+      You started following <b [routerLink]="['/publicProfile', new.friendId]"
+      style="cursor: pointer">{{new.friendName}}</b>
+    </div>
+  </div>
+</div>
+<ng-template #noMessage>
+  <div class="container toggleNotification" [@slideInOut]="menuState">
+    No new notification.
+  </div>
+</ng-template>

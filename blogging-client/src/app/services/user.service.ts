@@ -31,14 +31,6 @@ export class UserService {
         });
     }
 
-    sendFriendReqNotification(body) {
-      return this.http.post(this.url + 'storeTaggedUsers', body, {
-          observe: 'body',
-          withCredentials: true,
-          headers: new HttpHeaders().append('Content-Type', 'application/json')
-      });
-  }
-
     getUsersList() {
         return this.http.get(this.url + 'getUsersList/', {
             observe: 'body',
@@ -328,6 +320,16 @@ export class UserService {
         });
         return observable;
     }
+
+    acceptRequestReceived() {
+      const observable = new Observable<any>(observer => {
+          this.socket.on('acceptRequest', (userId) => {
+              observer.next(userId);
+          });
+          return () => { this.socket.disconnect(); };
+      });
+      return observable;
+  }
 
     newTag() {
         const observable = new Observable<any>(observer => {

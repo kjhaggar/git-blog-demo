@@ -32,6 +32,10 @@ import { UserService } from './services/user.service';
 import { AuthInterceptor } from './interceptor/auth-interceptor';
 import { AuthGuard } from './guards/auth.guard';
 import { PublicProfileComponent } from './public-profile/public-profile.component';
+import { CreateBLogComponent } from './create-blog/create-blog.component';
+import { PersonalBlogsComponent } from './personal-blogs/personal-blogs.component';
+import { FriendsComponent } from './friends/friends.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 
 export const authInterceptorProviders = [
@@ -48,7 +52,11 @@ export const authInterceptorProviders = [
     BlogComponent,
     MyblogComponent,
     FilterPipe,
-    PublicProfileComponent
+    PublicProfileComponent,
+    CreateBLogComponent,
+    PersonalBlogsComponent,
+    FriendsComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,

@@ -23,6 +23,7 @@ export class PublicProfileComponent implements OnInit {
   public acceptRequest = false;
 
   constructor(private route: ActivatedRoute, private userService: UserService) {
+
     this.userService.newRequestReceived().subscribe(
       data => {
         if (this.getCurrentUserId === data.receiverId) {
@@ -35,8 +36,16 @@ export class PublicProfileComponent implements OnInit {
     this.userService.canceledRequestReceived().subscribe(
       data => {
         this.newRequest();
+        this.getProfileData();
         this.acceptRequest = false;
         this.friendRequestSent = false;
+      },
+      error => console.log(error)
+    );
+
+    this.userService.acceptRequestReceived().subscribe(
+      data => {
+        this.getProfileData();
       },
       error => console.log(error)
     );
@@ -57,14 +66,14 @@ export class PublicProfileComponent implements OnInit {
 
   getProfileData() {
     this.userService.getProfileData(this.id).subscribe(
-      (data: { user: any }) => {
-        this.profile = data.user;
-        data.user.friends.forEach(element => {
+      (data: any) => {
+        this.profile = data;
+        data.friends.forEach(element => {
           if (this.getCurrentUserId === element.friendId) {
             this.friends = true;
           }
         });
-        this.getCurrentProfilePicture = data.user.image;
+        this.getCurrentProfilePicture = data.image;
         if (this.getCurrentProfilePicture == null) {
           this.url = 'http://localhost:3000/images/download.jpeg';
           // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/download.jpeg';
@@ -95,18 +104,21 @@ export class PublicProfileComponent implements OnInit {
 
   sentRequest() {
     this.userService.SentRequestList(this.getCurrentUserId).subscribe(
-      (data: { pendingRequestId: Array<string> }) => {
-        data.pendingRequestId.forEach(element => {
-          this.friendRequestSent = true;
+      (data: any) => {
+        data.forEach(element => {
+          if (this.id === element) {
+            this.friendRequestSent = true;
+          }
         });
+
       },
       error => console.log(error)
     );
   }
 
-  newRequest(userId?: string) {
+  newRequest() {
     this.userService.RequestList(this.getCurrentUserId).subscribe(
-      (data: { pendingUserProfile: any, pendingRequestId: any }) => {
+      (data: any) => {
         for (const i of data.pendingRequestId) {
           this.acceptRequest = true;
         }
@@ -118,6 +130,7 @@ export class PublicProfileComponent implements OnInit {
   AcceptFriendRequest(friendId: string, friendUserName: string) {
     this.userService.changeRequestStatus(this.getCurrentUserId, friendId).subscribe(
       data => {
+        this.socket.emit('acceptFriendRequest', this.getCurrentUserId);
         this.updateFriendList(this.getCurrentUserId, this.getCurrentUserName, friendId, friendUserName);
         this.updateFriendList(friendId, friendUserName, this.getCurrentUserId, this.getCurrentUserName);
         this.newRequest();
@@ -162,5 +175,9 @@ export class PublicProfileComponent implements OnInit {
       },
       error => console.error(error)
     );
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 }

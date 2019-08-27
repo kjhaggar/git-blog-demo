@@ -1,0 +1,75 @@
+<app-navbar></app-navbar>
+
+<div class= "container" *ngIf="newFriendAdded">
+  <p class="alert alert-success col-md-3 col-md-offset-4" style="text-align: center">
+      <strong [ngClass] ="FadeOutSuccessMsg()">Friend Request accepted..!!</strong>
+      <button type="button" class="close" (click)="newFriendAdded = false">
+          <span aria-hidden="true">&times;</span>
+      </button>
+  </p>
+</div>
+
+<div class= "container" style="margin: 20px">
+  <form class="form-inline" name="myform">
+      <span class="glyphicon glyphicon-search"></span>
+      <input type="text" [(ngModel)]="searchText" name="searchfriend" placeholder="Search here..">
+  </form>
+  <ul>
+      <div *ngIf ="searchText">
+      <div *ngFor="let item of items | filter: searchText;">
+
+          <form class="form-inline">
+          <div class="row" style="cursor: pointer" tooltip="Vist Profile" placement="top" show-delay="500" [routerLink]="['/publicProfile', item._id]">
+              <img class="logo" [src] = GetImageUrl(item.image) alt="Your Profile Picture" >
+              <h5 style="margin-top: 35px ">{{item.firstName | titlecase}} {{item.lastName | titlecase}}</h5>
+          </div>
+          <div *ngFor = "let new of newFriend">
+          <div *ngIf = "currentUserId !== item._id">
+            <p *ngIf = "!friendRequestSent[new._id]">
+                <!-- <button type="button" class="btn-primary" style='margin-left: 30px;' (click)="sendRequestButton(item._id)">
+                  <i class="material-icons">person_add</i>
+                </button> -->
+            </p>
+            <p *ngIf = "friendRequestSent[item._id]">
+              <button type="button" class="btn-primary" style='margin-left: 30px;' (click) = "CancelFriendRequest(item._id)">Friend Request Sent <br> Cancel??</button>
+            </p>
+              <br>
+            </div>
+          </div>
+      </form>
+      </div>
+  </div>
+</ul>
+
+  <hr>
+  <div class="row">
+      <div class = "col-sm-5 col-md-offset-1">
+          <h3>Friend Requests</h3>
+          <div  *ngIf = "newFriendRequest; else noRequest">
+          <div class="reqColumn" *ngFor ="let new of newFriend">
+              <div class="row" *ngIf = "!acceptRequest[new._id]" style="cursor: pointer" tooltip="Vist Profile" placement="top" show-delay="500" [routerLink]="['/publicProfile', new._id]">
+                <img class="logo column" [src] = GetImageUrl(new.image) alt="Your Profile Picture" [routerLink]="['/publicProfile', new._id]" >
+                <h5 class="column" style="margin-top: 35px ">{{new.firstName | titlecase}} {{new.lastName | titlecase}}</h5>
+              </div>
+              <div class="row" *ngIf = "!acceptRequest[new._id]">
+                  <button class="col-md-4 acceptRequest" (click) = "AcceptFriendRequest(new._id, new.userName)" style="margin: 10px;">Accept</button>
+                  <button class="col-md-4 acceptRequest" (click)="DeleteFriendRequest(new._id)" style="margin: 10px;">Delete</button>
+              </div>
+            </div>
+          </div>
+      </div>
+      <ng-template #noRequest>No pending request.</ng-template>
+
+      <div class = "col-sm-3 col-md-offset-6" >
+              <h3>My Friends</h3>
+          <div *ngFor = "let profile of friendsInfo" style="margin-top: 20px">
+              <div class="row">
+                  <img class="logo" [src] = GetImageUrl(profile.image) alt="Your Profile Picture" >
+                  <label style="margin-top: 35px">{{profile.firstName | titlecase}} {{profile.lastName | titlecase}}</label>
+              </div>
+              <button type="button" class="sendRequest"style="cursor: pointer" tooltip="Vist Profile" placement="top" show-delay="500" [routerLink]="['/publicProfile', profile._id]">Visit Profile</button>
+              <br>
+          </div>
+      </div>
+  </div>
+</div>

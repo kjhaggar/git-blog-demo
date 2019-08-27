@@ -86,14 +86,18 @@ router.post('/sendRequest', function(req, res, next) {
 
 router.post('/storeTaggedUsers', function(req, res, next) {
     var notify = new Notify({
-        postId: req.body.postId,
-        taggedBy: req.body.taggedBy,
-        // newFriend: `${req.body.taggedBy} send you follow request`,
+        typeOfMsg : req.body.type,
+        postId: req.body.postId
     });
+
     for (var i = 0; i < req.body.users.length; i++) {
         notify.taggedUsers.push({
             userName: req.body.users[i]});
     }
+
+    notify.taggedBy.name = req.body.name;
+    notify.taggedBy.id = req.body.id;
+    
     notify.save((err) => {
         if (err) {
             res.json({ success: false, message: 'Something went wrong.' });
@@ -102,7 +106,6 @@ router.post('/storeTaggedUsers', function(req, res, next) {
         }
     });
 });
-
 router.put('/changePostStatus', function(req, res, next) {
     Notify.findByIdAndUpdate({_id: req.body.blogIdList}).exec(function (err, blog) {
         if (err) {
@@ -135,6 +138,14 @@ router.put('/acceptFriendRequest', function(req, res, next) {
                     friendName: req.body.friendUserName,
                     friendId: req.body.friendId
                 });
+                var notify = new Notify({
+                    typeOfMsg: 'acceptRequest',
+                    userId: req.body.userId,
+                    userName: req.body.userName,
+                    friendId: req.body.friendId,
+                    friendName: req.body.friendUserName
+                })
+                notify.save();
                 user.save((err) => {
                     if (err) {
                         res.json({ success: false, message: 'Something went wrong.' });
@@ -281,7 +292,7 @@ router.get('/displayProfilePicture', function(req, res) {
         if (err) {
         console.log("Error:", err);
         } else {
-            res.json({success: true, user });
+            res.json(user);
         }
     });
 });
@@ -407,7 +418,7 @@ User.findOne({ _id: req.params.id }).exec((err, user) => {
     if (!user) {
         res.json({ success: false, message: 'User not found' });
     } else {
-        res.json({ success: true, user });
+        res.json(user);
     }
     }
 });
@@ -468,7 +479,7 @@ router.get('/sentRequestList/:id', function(req, res) {
             // console.log("requests send by current user:")
             // console.log(request)
             var pendingRequestId = request.map(({requestTo}) => requestTo);
-            res.send({pendingRequestId});
+            res.send(pendingRequestId);
         }
     });
 });
@@ -487,7 +498,7 @@ router.get('/friendsList/:id', function(req, res) {
                     console.log("Error:", err);
                 } else {
 
-                    res.send({ friendList, friendsId });
+                    res.send(friendList);
                 }
             })
         }
@@ -521,12 +532,11 @@ router.put('/changePendingRequestStatus/:id', function(req, res, next) {
 })
 
 router.get('/getNotified/:userName', function(req, res) {
-    Notify.find({ "taggedUsers.userName" : req.params.userName}).exec(function (err, user) {
+    Notify.find({$or : [{"taggedUsers.userName" : req.params.userName}, { userName: req.params.userName}] }).exec(function (err, msg) {
         if (err) {
             console.log("Error:", err);
-        } else {
-            res.send(user)
         }
+        res.send(msg)
     });
 });
 
@@ -549,8 +559,8 @@ router.get('/tagUser', function(req, res) {
         if (err) {
         console.log("Error:", err);
         } else {
-            var uName = user.map(({userName}) => userName);
-            res.json({uName,user});
+            var userName = user.map(({userName}) => userName);
+            res.json({userName,user});
         }
     });
 });

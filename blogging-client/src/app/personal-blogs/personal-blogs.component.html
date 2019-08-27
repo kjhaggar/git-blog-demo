@@ -1,0 +1,25 @@
+<app-navbar></app-navbar>
+
+<div class= "container">
+  <h2>My Blogs</h2>
+  <div *ngIf="sizeOfMyPost > 0 ; else noMyPOst">
+  <div class = "displayPost panel panel-primary" *ngFor = "let post of displayMyPost">
+      <form [formGroup]="updatePost">
+          <div class="panel-heading row clearfix">
+              <div *ngFor = "let user of usersProfile" class="panel-title pull-left">
+                  <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
+              </div>
+              <label class="panel-title title col-lg-2" ><em>{{ post.title | titlecase}}</em></label>
+              <small class="info col-lg-4" >Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>
+          </div>
+          <p class = "description">{{post.description | slice:0:234 }}...
+              <a [routerLink]="['/myBlog', post._id]">Show More</a>
+          </p>
+      </form>
+    </div>
+  </div>
+  <ng-template #noMyPOst>
+    <br>
+    <h6>No Blog Uploaded By You.</h6>
+  </ng-template>
+</div>
