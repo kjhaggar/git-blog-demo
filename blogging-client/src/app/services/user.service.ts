@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as io from 'socket.io-client';
 import { Observable } from 'rxjs/Observable';
+import { IUsers } from '../Interface/users';
 
 @Injectable({
     providedIn: 'root'
@@ -11,7 +12,8 @@ export class UserService {
     // url = 'https://backend-blogging-appliaction.herokuapp.com/api/';
 
     private socket = io('http://127.0.0.1:3000');
-    url = 'http://127.0.0.1:3000/api/';
+    private url = 'http://127.0.0.1:3000/api/';
+    private usersInfo;
 
     constructor(private http: HttpClient) { }
 
@@ -347,5 +349,13 @@ export class UserService {
             return () => { this.socket.disconnect(); };
         });
         return observable;
+    }
+
+    setUsersProfile(profile: IUsers) {
+      this.usersInfo = profile;
+    }
+
+    getUsersProfile() {
+      return this.usersInfo;
     }
 }

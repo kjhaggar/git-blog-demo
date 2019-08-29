@@ -59,7 +59,6 @@ export class NavbarComponent implements OnInit {
     this.currentUserName = localStorage.getItem('user');
     this.newNotification();
     this.newRequest();
-    this.DisplayProfile();
   }
 
   Notify() {
@@ -118,17 +117,11 @@ export class NavbarComponent implements OnInit {
   newRequest() {
     this.userService.RequestList(this.currentUserId).subscribe(
       (data: any) => {
-        // this.pendingRequest = data.request;
         data.request.forEach(element => {
           if (element.read === false) {
             this.unreadReq++;
           }
         });
-        // this.newFriendRequest = true;
-        // this.newFriend = data.pendingUserProfile;
-        for (const i of data.pendingRequestId) {
-          // this.acceptRequest[data.pendingRequestId[i]] = true;
-        }
       },
       error => console.log(error)
     );
@@ -140,17 +133,6 @@ export class NavbarComponent implements OnInit {
         this.unreadReq = 0;
       },
       error => console.log(error)
-    );
-  }
-
-  DisplayProfile() {
-    this.userService.displayProfile().subscribe(
-      data => {
-        this.usersProfile = data;
-      },
-      err => {
-        console.log(err);
-      }
     );
   }
 

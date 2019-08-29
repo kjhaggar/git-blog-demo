@@ -1,8 +1,9 @@
 import { DomSanitizer } from '@angular/platform-browser';
 import { UserService } from './../services/user.service';
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 import * as io from 'socket.io-client';
+import { EventEmitter } from 'events';
 
 @Component({
   selector: 'app-public-profile',
@@ -32,14 +33,14 @@ export class PublicProfileComponent implements OnInit {
     }
 
   ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
+    this.route.params.subscribe(params => {
       const postId = 'id';
       this.id = params[postId];
+      this.getProfileData();
     });
     this.getCurrentUserId = localStorage.getItem('userId');
     this.getCurrentUserName = localStorage.getItem('user');
 
-    this.getProfileData();
     this.DisplayProfile();
   }
 

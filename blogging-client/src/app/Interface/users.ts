@@ -4,7 +4,7 @@ export interface IUsers {
   firstName: string;
   lastName: string;
   email: string;
-  image: string;
+  image?: string;
   friends: IFriends;
 }
 

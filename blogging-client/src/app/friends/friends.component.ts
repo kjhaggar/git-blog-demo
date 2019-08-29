@@ -2,6 +2,7 @@ import { UserService } from './../services/user.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import * as io from 'socket.io-client';
+import { IUsers } from '../Interface/users';
 
 @Component({
     selector: 'app-friends',
@@ -23,7 +24,6 @@ export class FriendsComponent implements OnInit {
     public pendingRequest: any;
     public acceptRequest = [];
     public newFriendAdded: boolean;
-    private visitUsersProfile = [];
 
     constructor(private sanitized: DomSanitizer, private userService: UserService ) {
 
@@ -102,10 +102,11 @@ export class FriendsComponent implements OnInit {
     AcceptFriendRequest(friendId: string, friendUserName: string) {
       this.userService.changeRequestStatus(this.currentUserId, friendId).subscribe(
         data => {
+          this.acceptRequest[friendId] = false;
+          this.friendRequestSent[friendId] = false;
           this.SOCKET.emit('acceptFriendRequest', this.currentUserId);
           this.updateFriendList(this.currentUserId, this.currentUserName, friendId, friendUserName);
           this.updateFriendList(friendId, friendUserName, this.currentUserId, this.currentUserName);
-          this.newRequest();
           this.newFriendAdded = true;
         },
         error => console.log(error)
@@ -117,7 +118,6 @@ export class FriendsComponent implements OnInit {
         data => {
           this.newRequest();
           this.friends();
-          this.visitUsersProfile[userId] = true;
         },
         error => console.log(error)
       );
@@ -150,7 +150,6 @@ export class FriendsComponent implements OnInit {
     sentRequest() {
       this.userService.SentRequestList(this.currentUserId).subscribe(
         data => {
-          // console.log(data);
           for (const i of data as Array<string>) {
             this.friendRequestSent[data[i]] = true;
           }
@@ -177,5 +176,9 @@ export class FriendsComponent implements OnInit {
         },
         error => console.log(error)
       );
+    }
+
+    usersInfo(profile: IUsers) {
+      this.userService.setUsersProfile(profile);
     }
 }

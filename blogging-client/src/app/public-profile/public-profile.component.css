@@ -6,25 +6,28 @@
   background: #fff;
   min-height: 460px;
 }
-.displayPost{
+.displayPost {
   margin: 100px;
 }
-.panel{
-    width: 650px;
-    margin: 50px auto;
+.panel {
+  width: 650px;
+  margin: 50px auto;
 }
-.logo{
+.logo {
   height: 50px;
   width: 50px;
   margin: 20px;
 }
 .info {
-    display : block;
-    margin-top: 30px;
-    margin-left : 120px;
+  display: block;
+  margin-top: 30px;
+  margin-left: 120px;
 }
-.description{
-    text-align: justify;
-    margin: 0px 20px;
-    margin-bottom: 20px;
+.description {
+  text-align: justify;
+  margin: 0px 20px;
+  margin-bottom: 20px;
+}
+app-profile-card {
+  position: fixed;
 }

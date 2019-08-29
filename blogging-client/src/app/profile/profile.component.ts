@@ -13,18 +13,8 @@ import * as io from 'socket.io-client';
     styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-    private socket = io('http://127.0.0.1:3000');
-    // private socket = io ('https://backend-blogging-appliaction.herokuapp.com');
-    private subscription: Subscription = new Subscription();
     public getCurrentUserId: string;
-    private displayComment = [];
     private url: any;
-    private panelOpenState = [];
-    private dispalyReplyBox = [];
-    private commentClicked: boolean;
-    private replyClicked = [];
-    private uploadUpdatedBlogImages = [];
-    public showAllPost = true;
     public postList: any;
     public incorrectPost: boolean;
     public uploadBlogImages: boolean;
@@ -54,43 +44,12 @@ export class ProfileComponent implements OnInit {
 
     constructor(private userService: UserService, private router: Router,
         private sanitized: DomSanitizer) {
-        this.userService.newCommentReceived().subscribe(
-            data => {
-                this.ShowAllPost();
-                if (this.showMyPost) {
-                    // this.DisplayMyPost();
-                }
-            }
-        );
-
-        this.userService.newReplyReceived().subscribe(
-            data => {
-                this.ShowAllPost();
-                if (this.showMyPost) {
-                    // this.DisplayMyPost();
-                }
-            }
-        );
 
         this.userService.newPostReceived().subscribe(
             data => {
                 this.ShowAllPost();
-                if (this.showMyPost) {
-                    // this.DisplayMyPost();
-                }
             }
         );
-
-        // this.userService.newTag().subscribe(
-        //   data => {
-        //     if (data.users.includes(this.getCurrentUserName)) {
-        //       this.getTaggedByUser = data.taggedBy;
-        //       this.hideSuccessMessage = true;
-        //       this.newNotification();
-        //     }
-        //   },
-        //   error => console.log(error)
-        // );
 
     }
 
@@ -109,69 +68,6 @@ export class ProfileComponent implements OnInit {
             err => {
                 console.log(err);
             }
-        );
-    }
-
-    UploadBlogImages(index: number) {
-        this.uploadBlogImages = !this.uploadBlogImages;
-        this.submitted = false;
-        if (this.showMyPost) {
-            this.uploadUpdatedBlogImages[index] = !this.uploadUpdatedBlogImages[index];
-        }
-    }
-
-    modifyvalue(item) {
-        return '<b>' + item.label + '</b>';
-    }
-
-    clickedHome() {
-        this.showAllPost = true;
-        this.displayAddPost = false;
-        this.showMyPost = false;
-        this.showMyFriends = false;
-    }
-
-    openCommentForm() {
-        this.commentClicked = !this.commentClicked;
-    }
-
-    openReplyForm(index) {
-        this.replyClicked[index] = !this.replyClicked[index];
-    }
-
-    openReplyText(index: number) {
-        this.dispalyReplyBox[index] = !this.dispalyReplyBox[index];
-    }
-
-    addReply(postId: string, commentId: string, index: number, blogIndex: number) {
-        this.panelOpenState[blogIndex] = true;
-        if (!this.replyForm.valid) {
-            return;
-        }
-
-        const obj = {
-            postId,
-            commentId,
-            content: this.replyForm.value.content,
-            userId: this.getCurrentUserId,
-            userName: this.getCurrentUserName
-        };
-
-        this.subscription.add(
-            this.userService.addReply(obj).subscribe(
-                data => {
-                    this.replyClicked[index] = !this.replyClicked[index];
-                    this.socket.emit('reply', obj);
-                    this.replyForm.reset();
-                    this.ShowAllPost();
-
-                    if (this.showMyPost) {
-                        // this.DisplayMyPost();
-                    }
-                },
-                error => {
-                }
-            )
         );
     }
 
@@ -195,11 +91,6 @@ export class ProfileComponent implements OnInit {
         );
     }
 
-    DisplayPostBox = () => {
-        this.displayAddPost = !this.displayAddPost;
-        this.panelOpenState = [];
-    }
-
     GetImageUrl(filename) {
         if (filename === undefined) {
             this.url = 'http://localhost:3000/images/download.jpeg';
@@ -210,27 +101,4 @@ export class ProfileComponent implements OnInit {
         }
         return this.sanitized.bypassSecurityTrustUrl(this.url);
     }
-
-    GetBlogImageUrl(filename) {
-        this.url = 'http://localhost:3000/blogImages/' + filename;
-        // this.url = 'https://backend-blogging-appliaction.herokuapp.com/blogImages/' + filename;
-        return this.sanitized.bypassSecurityTrustUrl(this.url);
-    }
-
-    ShowCommentBox(id: string, index: number) {
-        this.displayComment[index] = !this.displayComment[index];
-        this.dispalyReplyBox = [];
-        this.replyClicked = [];
-    }
-
-    DeletePost(postId) {
-        this.userService.deletePost(postId).subscribe(
-            data => {
-                // this.DisplayMyPost();
-                this.ShowAllPost();
-            },
-            error => console.error(error)
-        );
-    }
-
 }

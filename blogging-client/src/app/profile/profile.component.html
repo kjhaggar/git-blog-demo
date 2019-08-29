@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 
-<div class= "container" *ngIf = "showAllPost">
+<div class= "container">
     <h2>All Blogs</h2>
     <div *ngIf="sizeOfAllPost > 0; else noAllPost">
     <div class = "displayPost panel panel-primary" *ngFor = "let post of postList">
