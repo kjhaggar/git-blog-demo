@@ -17,7 +17,11 @@ var userSchema = new Schema({
         friendId: {
             type: Schema.ObjectId
         }
-    }]
+    }],
+    provider: { type: String },
+    provider_id: { type: String },
+    provider_pic: { type: String },
+    token: { type: String }
 });
 
 userSchema.statics.hashPassword = function hashPassword(password){

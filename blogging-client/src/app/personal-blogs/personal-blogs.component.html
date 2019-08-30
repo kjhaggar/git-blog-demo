@@ -5,15 +5,17 @@
   <div *ngIf="sizeOfMyPost > 0 ; else noMyPOst">
   <div class = "displayPost panel panel-primary" *ngFor = "let post of displayMyPost">
       <form [formGroup]="updatePost">
-          <div class="panel-heading row clearfix">
-              <div *ngFor = "let user of usersProfile" class="panel-title pull-left">
+          <div class="panel-heading">
+            <div class="panel-title row">
+              <div *ngFor = "let user of usersProfile">
                   <img class = "logo" *ngIf = "post.userId==user._id" [src] = GetImageUrl(user.image)/>
               </div>
-              <label class="panel-title title col-lg-2" ><em>{{ post.title | titlecase}}</em></label>
-              <small class="info col-lg-4" >Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>
+              <label class="col"  style="margin-top: 30px"><em>{{ post.title | titlecase}}</em></label>
+              <small class="col"  style="margin-top: 30px">Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>
+            </div>
           </div>
           <p class = "description">{{post.description | slice:0:234 }}...
-              <a [routerLink]="['/myBlog', post._id]">Show More</a>
+              <a [routerLink]="['/myBlog', post._id]">Read More</a>
           </p>
       </form>
     </div>

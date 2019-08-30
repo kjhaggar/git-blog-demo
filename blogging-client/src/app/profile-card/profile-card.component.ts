@@ -76,13 +76,15 @@ export class ProfileCardComponent implements OnInit {
                         this.friends = true;
                     }
                 });
-                this.currentProfilePicture = data.image;
-                if (this.currentProfilePicture == null) {
-                    this.url = 'http://localhost:3000/images/download.jpeg';
-                    // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/download.jpeg';
+
+                if (data.provider_pic) {
+                  this.url = data.provider_pic;
+                } else if (data.image) {
+                  this.url = 'http://localhost:3000/images/' + data.image;
+                  // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/' + data.image;
                 } else {
-                    this.url = 'http://localhost:3000/images/' + this.currentProfilePicture;
-                    // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/' + this.currentProfilePicture;
+                  this.url = 'http://localhost:3000/images/download.jpeg';
+                  // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/download.jpeg';
                 }
             },
             error => {

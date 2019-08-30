@@ -29,6 +29,39 @@ async function addToDB(req, res) {
   }
 }
 
+router.post("/socialRegister", function(req, res, next) {
+  addToSocialDB(req, res);
+});
+
+function addToSocialDB(req, res) {
+  User.find({ email: req.body.email }).exec(function(err, user) {
+    if (err) {
+      console.log("Error:", err);
+    } else {
+      if (user) {
+        res.json({
+          success: "false",
+          message: "User already registered with this email"
+        });
+      } else {
+        var splitted = req.body.name.split(" ", 2);
+        var user = new User({
+          firstName: splitted[0],
+          lastName: splitted[1],
+          email: req.body.email,
+          provider_pic: req.body.image
+        });
+        try {
+          doc = user.save();
+          return res.status(201).json(doc);
+        } catch (err) {
+          return res.status(501).json(err);
+        }
+      }
+    }
+  });
+}
+
 function verifyToken(req, res, next) {
   if (!req.headers.authorization) {
     return res.status(401).send("Unauthorised request");
@@ -65,13 +98,24 @@ router.post("/login", function(req, res, next) {
         return res.status(501).json(err);
       }
       return res.status(200).json({
-        message: "Login Success",
         token: token,
         userId: user._id,
         userName: user.userName
       });
     });
   })(req, res, next);
+});
+
+router.post("/socialLogin", function(req, res, next) {
+  User.find({ email: req.body.email }).exec(function(err, userData) {
+    if (err) {
+      return res.status(501).json({ err, success: false, message: "Unable To login." });
+    }
+    if (!userData) {
+      return res.status(501).json({ success: false, message: "Not the registered user" });
+    }
+    res.json(userData);
+  });
 });
 
 router.post("/sendRequest", verifyToken, function(req, res, next) {
@@ -166,7 +210,7 @@ router.put("/acceptFriendRequest", function(req, res, next) {
 });
 
 router.use(function(req, res, next) {
-  // res.header("Access-Control-Allow-Origin", "https://demo-blogging-application.herokuapp.com");
+  //   res.header("Access-Control-Allow-Origin", "https://demo-blogging-application.herokuapp.com");
   res.header("Access-Control-Allow-Origin", "http://localhost:4200");
   res.header(
     "Access-Control-Allow-Headers",
@@ -446,7 +490,7 @@ router.get("/getProfileData/:id", (req, res) => {
 });
 
 router.delete("/deleteProfilePicture/:id", function(req, res, next) {
-  User.update({ _id: req.params.id }, { $unset: { image: 1 } }, function(
+  User.update({ _id: req.params.id }, { $unset: { image: 1,  provider_pic: 1 } }, function(
     err,
     post
   ) {
@@ -541,7 +585,7 @@ router.put("/changeRequestStatus", function(req, res, next) {
     if (err) {
       console.log("Error:", err);
     } else {
-      request.status = 'true';
+      request.status = "true";
       request.save(err => {
         if (err) {
           res.json({ success: false, message: "Something went wrong." });

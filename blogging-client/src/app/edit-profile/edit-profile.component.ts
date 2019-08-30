@@ -23,7 +23,6 @@ export class EditProfileComponent implements OnInit {
   public changePassword = false;
   private selectedFile: File;
   public getCurrentUserId: string;
-  private getCurrentProfilePicture: any;
   private originalData: any;
 
   constructor(private http: HttpClient, private userService: UserService) { }
@@ -49,17 +48,21 @@ export class EditProfileComponent implements OnInit {
         this.updateForm.get('userName').setValue(data.userName);
         this.updateForm.get('firstName').setValue(data.firstName);
         this.updateForm.get('lastName').setValue(data.lastName);
-        this.getCurrentProfilePicture = data.image;
-        if (this.getCurrentProfilePicture == null) {
+
+        if (data.provider_pic) {
+          this.disableBtn = false;
+          this.validPicture = 'Delete current picutre';
+          this.url = data.provider_pic;
+        } else if (data.image) {
+          this.disableBtn = false;
+          this.validPicture = 'Delete current picutre';
+          this.url = 'http://localhost:3000/images/' + data.image;
+          // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/' + data.image;
+        } else {
           this.disableBtn = true;
           this.validPicture = 'No image uploaded';
           this.url = 'http://localhost:3000/images/download.jpeg';
           // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/download.jpeg';
-        } else {
-          this.disableBtn = false;
-          this.validPicture = 'Delete current picutre';
-          this.url = 'http://localhost:3000/images/' + this.getCurrentProfilePicture;
-          // this.url = 'https://backend-blogging-appliaction.herokuapp.com/images/' + this.getCurrentProfilePicture;
         }
       },
       error => {

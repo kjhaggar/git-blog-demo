@@ -1,12 +1,18 @@
-import { AuthService } from '../services/auth.service';
+import { AuthorizationService } from '../services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import {
+    AuthService,
+    FacebookLoginProvider,
+    GoogleLoginProvider
+} from 'angular-6-social-login';
+
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+    selector: 'app-register',
+    templateUrl: './register.component.html',
+    styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
     matchPassword: boolean;
@@ -23,9 +29,10 @@ export class RegisterComponent implements OnInit {
     );
 
 
-    constructor(private authService: AuthService, private router: Router) {}
+    constructor(private authService: AuthorizationService, private router: Router,
+        private socialAuthService: AuthService) { }
 
-    ngOnInit() {}
+    ngOnInit() { }
 
     get f() { return this.regiForm.controls; }
 
@@ -45,8 +52,43 @@ export class RegisterComponent implements OnInit {
                 this.router.navigate(['/login']);
             },
             error => {
-        console.error(error);
-    });
-  }
+                console.error(error);
+            }
+        );
+    }
+
+    public socialSignIn(socialPlatform: string) {
+        let socialPlatformProvider;
+        if (socialPlatform === 'facebook') {
+            socialPlatformProvider = FacebookLoginProvider.PROVIDER_ID;
+        } else if (socialPlatform === 'google') {
+            socialPlatformProvider = GoogleLoginProvider.PROVIDER_ID;
+        }
+
+        this.socialAuthService.signIn(socialPlatformProvider).then(userData => {
+            this.apiConnection(userData);
+        });
+    }
+
+    apiConnection(data) {
+        this.authService.socialRegister(JSON.stringify(data)).subscribe(
+            (data: any) => {
+                if (data.success === 'false') {
+                    console.log(data.message)
+                } else {
+                    this.router.navigate(['/login']);
+                }
+            },
+            error => {
+                console.error(error);
+            }
+        );
+    }
+
+    logout() {
+      this.socialAuthService.signOut().then(data => {
+      this.authService.logout();
+   });
+   }
 
 }

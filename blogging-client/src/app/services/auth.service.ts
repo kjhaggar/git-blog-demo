@@ -1,11 +1,11 @@
 import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders} from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthorizationService {
   authToken: any;
   user: string;
   url = 'http://127.0.0.1:3000/api';
@@ -15,19 +15,36 @@ export class AuthService {
 
   register(body: any) {
     return this.http.post(this.url + '/register', body,
-    {
-      observe: 'body',
-      headers: new HttpHeaders().append('Content-Type', 'application/json')
-    });
+      {
+        observe: 'body',
+        headers: new HttpHeaders().append('Content-Type', 'application/json')
+      });
+  }
+
+  socialRegister(body: any) {
+    return this.http.post(this.url + '/socialRegister', body,
+      {
+        observe: 'body',
+        headers: new HttpHeaders().append('Content-Type', 'application/json')
+      });
   }
 
   login(body: any) {
     return this.http.post(this.url + '/login', body,
-    {
-      observe: 'body',
-      withCredentials: true,
-      headers: new HttpHeaders().append('Content-Type', 'application/json')
-    });
+      {
+        observe: 'body',
+        withCredentials: true,
+        headers: new HttpHeaders().append('Content-Type', 'application/json')
+      });
+  }
+
+  socialLogin(body: any) {
+    return this.http.post(this.url + '/socialLogin', body,
+      {
+        observe: 'body',
+        withCredentials: true,
+        headers: new HttpHeaders().append('Content-Type', 'application/json')
+      });
   }
 
   logout() {
@@ -36,15 +53,18 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('userId');
-    this.router.navigate(['/login']);
+    localStorage.clear();
+    return this.router.navigate(['']);
   }
 
-  storeUserData(token, user, userId) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', user);
-    localStorage.setItem('userId', userId);
-    this.authToken = token;
-    this.user = user;
+  async storeUserData(data, userData?) {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', data.userName || data.name);
+    localStorage.setItem('userId', data.userId || userData._id);
+    this.authToken = data.token;
+    this.user = data.user;
+
+    return this.router.navigate(['/home']);
   }
 
   loggedIn() {

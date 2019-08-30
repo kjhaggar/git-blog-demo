@@ -1,6 +1,6 @@
 import { DomSanitizer } from '@angular/platform-browser';
 import { UserService } from './../services/user.service';
-import { AuthService } from './../services/auth.service';
+import { AuthorizationService } from './../services/auth.service';
 import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
@@ -41,7 +41,7 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  constructor(private userService: UserService, private authService: AuthService, private sanitized: DomSanitizer,
+  constructor(private userService: UserService, private authService: AuthorizationService, private sanitized: DomSanitizer,
     private eRef: ElementRef) {
 
     this.userService.newTag().subscribe(
@@ -58,6 +58,7 @@ export class NavbarComponent implements OnInit {
     this.currentUserId = localStorage.getItem('userId');
     this.currentUserName = localStorage.getItem('user');
     this.newNotification();
+    this.DisplayProfile();
     this.newRequest();
   }
 
@@ -77,6 +78,17 @@ export class NavbarComponent implements OnInit {
   public getTextColor(balance: number): string {
     return balance > 0 ? 'white' : '';
   }
+
+  DisplayProfile() {
+    this.userService.displayProfile().subscribe(
+        data => {
+            this.usersProfile = data;
+        },
+        err => {
+            console.log(err);
+        }
+    );
+}
 
   changeStatus() {
     this.recentNotification.forEach(element => {

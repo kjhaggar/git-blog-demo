@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { OrderModule } from 'ngx-order-pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -13,6 +13,12 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { ShareButtonsModule } from '@ngx-share/buttons';
 import { TooltipModule } from 'ng2-tooltip-directive';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
+import {
+  SocialLoginModule,
+  AuthServiceConfig,
+  GoogleLoginProvider,
+  FacebookLoginProvider
+} from 'angular-6-social-login';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -23,7 +29,7 @@ import { BlogComponent } from './blog/blog.component';
 import { MyblogComponent } from './myblog/myblog.component';
 import { FilterPipe } from './filter.pipe';
 
-import { AuthService } from './services/auth.service';
+import { AuthorizationService } from './services/auth.service';
 import { UserService } from './services/user.service';
 
 import { AuthInterceptor } from './interceptor/auth-interceptor';
@@ -35,51 +41,72 @@ import { FriendsComponent } from './friends/friends.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ProfileCardComponent } from './profile-card/profile-card.component';
 
-
 export const authInterceptorProviders = [
-  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
 ];
 
+export function getAuthServiceConfigs() {
+  const config = new AuthServiceConfig(
+  [
+  {
+      id: FacebookLoginProvider.PROVIDER_ID,
+      provider: new FacebookLoginProvider('493698497854128')
+  }
+  ]
+  );
+  return config;
+  }
+
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    RegisterComponent,
-    ProfileComponent,
-    EditProfileComponent,
-    BlogComponent,
-    MyblogComponent,
-    FilterPipe,
-    PublicProfileComponent,
-    CreateBLogComponent,
-    PersonalBlogsComponent,
-    FriendsComponent,
-    NavbarComponent,
-    ProfileCardComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    OrderModule,
-    BrowserAnimationsModule,
-    MentionModule,
-    FilterPipeModule,
-    EmojiModule,
-    PickerModule,
-    ShareButtonsModule,
-    TooltipModule,
-    MDBBootstrapModule,
-    AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyBzS-pIcW-xUtwOFGXt2ErDPfpAbLCRgSc',
-      libraries: ['places']
-    })
-  ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    AuthInterceptor, UserService, AuthService, AuthGuard],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        LoginComponent,
+        RegisterComponent,
+        ProfileComponent,
+        EditProfileComponent,
+        BlogComponent,
+        MyblogComponent,
+        FilterPipe,
+        PublicProfileComponent,
+        CreateBLogComponent,
+        PersonalBlogsComponent,
+        FriendsComponent,
+        NavbarComponent,
+        ProfileCardComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        OrderModule,
+        BrowserAnimationsModule,
+        MentionModule,
+        FilterPipeModule,
+        EmojiModule,
+        PickerModule,
+        ShareButtonsModule,
+        TooltipModule,
+        MDBBootstrapModule,
+        SocialLoginModule,
+        AgmCoreModule.forRoot({
+            apiKey: 'AIzaSyBzS-pIcW-xUtwOFGXt2ErDPfpAbLCRgSc',
+            libraries: ['places']
+        })
+    ],
+    providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true
+        },
+        {
+          provide: AuthServiceConfig,
+          useFactory: getAuthServiceConfigs
+          },
+        AuthInterceptor, UserService, AuthorizationService, AuthGuard
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

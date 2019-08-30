@@ -47,7 +47,7 @@ export class PublicProfileComponent implements OnInit {
   getProfileData() {
     this.userService.getProfileData(this.id).subscribe(
       (data: any) => {
-        this.userService.getpublicBlog(data.userName, this.id).subscribe(
+        this.userService.getpublicBlog(data.userName || data.firstName, this.id).subscribe(
           data => {
             this.postList = Object.values(data).sort((val1, val2) => {
               const start = +new Date(val1.createdAt);
