@@ -1,4 +1,4 @@
-import { UserService } from './../services/user.service';
+import { AppState } from './../store/blog.state';
 import { Component, OnInit, NgZone } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,6 +8,9 @@ import {
   FacebookLoginProvider,
   GoogleLoginProvider
 } from 'angular-6-social-login';
+import { Store } from '@ngrx/store';
+import { Actions, ofType } from '@ngrx/effects';
+import * as AuthActionTypes from '../store/actions/auth.action';
 
 declare var FB: any;
 
@@ -30,8 +33,15 @@ export class LoginComponent implements OnInit {
   htmlTag: HTMLElement = document.getElementsByTagName('html')[0];
 
   constructor(private authorizationService: AuthorizationService, private router: Router,
-    private ngZone: NgZone, private socialAuthService: AuthService
-  ) {}
+    private ngZone: NgZone, private socialAuthService: AuthService, private store: Store<AppState>, actions: Actions
+  ) {
+    actions.pipe(
+      ofType('[Auth] - Error'),
+    ).subscribe((action: any) => {
+      this.invalidUser = true;
+      this.unauthMessage = action.error.message;
+    });
+  }
 
   ngOnInit() {
     if (localStorage.getItem('token')) {
@@ -47,15 +57,17 @@ export class LoginComponent implements OnInit {
     if (!this.loginForm.valid) {
       return;
     }
-    this.authorizationService.login(JSON.stringify(this.loginForm.value)).subscribe(
-      (data: any) => {
-        this.authorizationService.storeUserData(data);
-      },
-      error => {
-        this.invalidUser = true;
-        this.unauthMessage = error.error.message;
-      }
-    );
+    const payload = this.loginForm.value;
+    this.store.dispatch(AuthActionTypes.Login(this.loginForm.value));
+    // this.authorizationService.login(JSON.stringify(this.loginForm.value)).subscribe(
+    //   (data: any) => {
+    //     this.authorizationService.storeUserData(data);
+    //   },
+    //   error => {
+    //     this.invalidUser = true;
+    //     this.unauthMessage = error.error.message;
+    //   }
+    // );
   }
 
   public socialSignIn(socialPlatform: string) {

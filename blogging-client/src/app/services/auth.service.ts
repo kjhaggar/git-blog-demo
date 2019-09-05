@@ -8,13 +8,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class AuthorizationService {
   authToken: any;
   user: string;
-  url = 'http://127.0.0.1:3000/api';
-  // url = 'https://backend-blogging-appliaction.herokuapp.com/api';
+  URL = 'http://127.0.0.1:3000/api';
+  // URL = 'https://backend-blogging-appliaction.herokuapp.com/api';
 
   constructor(private http: HttpClient, private router: Router) { }
 
   register(body: any) {
-    return this.http.post(this.url + '/register', body,
+    return this.http.post(this.URL + '/register', body,
       {
         observe: 'body',
         headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -22,7 +22,7 @@ export class AuthorizationService {
   }
 
   socialRegister(body: any) {
-    return this.http.post(this.url + '/socialRegister', body,
+    return this.http.post(this.URL + '/socialRegister', body,
       {
         observe: 'body',
         headers: new HttpHeaders().append('Content-Type', 'application/json')
@@ -30,7 +30,7 @@ export class AuthorizationService {
   }
 
   login(body: any) {
-    return this.http.post(this.url + '/login', body,
+    return this.http.post(this.URL + '/login', body,
       {
         observe: 'body',
         withCredentials: true,
@@ -39,7 +39,7 @@ export class AuthorizationService {
   }
 
   socialLogin(body: any) {
-    return this.http.post(this.url + '/socialLogin', body,
+    return this.http.post(this.URL + '/socialLogin', body,
       {
         observe: 'body',
         withCredentials: true,

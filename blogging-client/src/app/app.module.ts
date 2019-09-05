@@ -1,3 +1,5 @@
+import { AuthEffects } from './store/effects/auth.effect';
+
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,6 +15,9 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { ShareButtonsModule } from '@ngx-share/buttons';
 import { TooltipModule } from 'ng2-tooltip-directive';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+
 import {
   SocialLoginModule,
   AuthServiceConfig,
@@ -41,6 +46,8 @@ import { FriendsComponent } from './friends/friends.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ProfileCardComponent } from './profile-card/profile-card.component';
 
+import { ToDoReducer } from './store/reducers/auth.reducers';
+
 export const authInterceptorProviders = [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
 ];
@@ -51,7 +58,11 @@ export function getAuthServiceConfigs() {
   {
       id: FacebookLoginProvider.PROVIDER_ID,
       provider: new FacebookLoginProvider('493698497854128')
-  }
+  },
+  {
+    id: GoogleLoginProvider.PROVIDER_ID,
+    provider: new GoogleLoginProvider('186215547479-3jf5m9tc409407fso1ojchpubcm6f4fg.apps.googleusercontent.com')
+}
   ]
   );
   return config;
@@ -90,6 +101,8 @@ export function getAuthServiceConfigs() {
         TooltipModule,
         MDBBootstrapModule,
         SocialLoginModule,
+        StoreModule.forRoot({ login: ToDoReducer }),
+        EffectsModule.forRoot([AuthEffects]),
         AgmCoreModule.forRoot({
             apiKey: 'AIzaSyBzS-pIcW-xUtwOFGXt2ErDPfpAbLCRgSc',
             libraries: ['places']

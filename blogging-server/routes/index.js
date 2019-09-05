@@ -38,7 +38,8 @@ function addToSocialDB(req, res) {
     if (err) {
       console.log("Error:", err);
     } else {
-      if (user) {
+      if (user.length!=0) {
+        console.log(user)
         res.json({
           success: "false",
           message: "User already registered with this email"
@@ -53,6 +54,7 @@ function addToSocialDB(req, res) {
         });
         try {
           doc = user.save();
+          console.log(doc)
           return res.status(201).json(doc);
         } catch (err) {
           return res.status(501).json(err);
@@ -88,7 +90,7 @@ router.post("/login", function(req, res, next) {
     if (!user) {
       return res
         .status(501)
-        .json({ success: false, message: "Not the registered user" });
+        .json({ success: false, message: "Username or password is incorrect..!!" });
     }
     const token = jwt.sign({ id: user._id }, "qwerty@12345", {
       expiresIn: 86400
