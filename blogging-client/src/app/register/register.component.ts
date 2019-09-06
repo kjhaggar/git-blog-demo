@@ -49,10 +49,12 @@ export class RegisterComponent implements OnInit {
 
     this.authService.register(JSON.stringify(this.regiForm.value)).subscribe(
       data => {
+        console.log(data);
         this.router.navigate(['/login']);
       },
       error => {
-        console.error(error);
+        alert(error.error.text);
+        this.router.navigate(['/login']);
       }
     );
   }

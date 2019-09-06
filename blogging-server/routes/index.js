@@ -7,26 +7,77 @@ var Request = require("../models/FriendRequest");
 var Notify = require("../models/newTagNotify");
 var jwt = require("jsonwebtoken");
 var multer = require("multer");
+var crypto = require("crypto");
+var nodemailer = require("nodemailer");
+var async = require("async");
 
 router.post("/register", function(req, res, next) {
-  addToDB(req, res);
+  addToDB(req, res, next);
 });
 
-async function addToDB(req, res) {
-  var user = new User({
-    email: req.body.email,
-    userName: req.body.userName,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    password: User.hashPassword(req.body.password)
-  });
+async function addToDB(req, res, next) {
+  async.waterfall(
+    [
+      function(done) {
+        crypto.randomBytes(20, function(err, buf) {
+          var token = buf.toString("hex");
+          done(err, token);
+        });
+      },
+      function(token, done) {
+        var user = new User({
+          email: req.body.email,
+          userName: req.body.userName,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          password: User.hashPassword(req.body.password),
+          confirmEmailToken: token
+        });
 
-  try {
-    doc = await user.save();
-    return res.status(201).json(doc);
-  } catch (err) {
-    return res.status(501).json(err);
-  }
+        user.save(function(err) {
+          done(err, token, user);
+        });
+      },
+      function(token, done) {
+        var smtpTransport = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: "bucksswag17@gmail.com",
+            pass: "sweetflower"
+          }
+        });
+        var mailOptions = {
+          to: req.body.email,
+          from: "Demo Blogging Application <blog@demo.com>",
+          subject: "Verify Account",
+          text:
+            "Hi, " + req.body.firstName + " \n\n" +
+            "Thank you so much for joining blog application!" +
+            "To finish signing up, you just need to confirm that we got your email right.\n\n" +
+            "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
+            "" +
+            req.headers.origin +
+            "/verify/" +
+            token
+          };
+        smtpTransport.sendMail(mailOptions, function(err) {
+          if (err) {
+            console.log("Error:", err);
+          } else {
+            res.send(
+              "A verification e-mail has been sent to " +
+              req.body.email +
+                " with further instructions. Please check your email inbox for a link to complete the signing up."
+            );
+          }
+          done(err, "done");
+        });
+      }
+    ],
+    function(err) {
+      if (err) return next(err);
+    }
+  );
 }
 
 router.post("/socialRegister", function(req, res, next) {
@@ -38,8 +89,8 @@ function addToSocialDB(req, res) {
     if (err) {
       console.log("Error:", err);
     } else {
-      if (user.length!=0) {
-        console.log(user)
+      if (user.length != 0) {
+        console.log(user);
         res.json({
           success: "false",
           message: "User already registered with this email"
@@ -54,7 +105,7 @@ function addToSocialDB(req, res) {
         });
         try {
           doc = user.save();
-          console.log(doc)
+          console.log(doc);
           return res.status(201).json(doc);
         } catch (err) {
           return res.status(501).json(err);
@@ -81,16 +132,23 @@ function verifyToken(req, res, next) {
 }
 
 router.post("/login", function(req, res, next) {
-  passport.authenticate("local", function(err, user) {
+  passport.authenticate("local", function(err, user, invalidUser) {
     if (err) {
       return res
         .status(501)
         .json({ err, success: false, message: "Unable To login." });
     }
+
     if (!user) {
-      return res
-        .status(501)
-        .json({ success: false, message: "Username or password is incorrect..!!" });
+      console.log(user)
+      return res.status(501).json({
+        success: false,
+        message: "Username or password is incorrect..!!"
+      });
+    }
+
+    if(user.verified == false) {
+      return res.send("Account not verified..!!")
     }
     const token = jwt.sign({ id: user._id }, "qwerty@12345", {
       expiresIn: 86400
@@ -111,10 +169,14 @@ router.post("/login", function(req, res, next) {
 router.post("/socialLogin", function(req, res, next) {
   User.find({ email: req.body.email }).exec(function(err, userData) {
     if (err) {
-      return res.status(501).json({ err, success: false, message: "Unable To login." });
+      return res
+        .status(501)
+        .json({ err, success: false, message: "Unable To login." });
     }
     if (!userData) {
-      return res.status(501).json({ success: false, message: "Not the registered user" });
+      return res
+        .status(501)
+        .json({ success: false, message: "Not the registered user" });
     }
     res.json(userData);
   });
@@ -492,13 +554,14 @@ router.get("/getProfileData/:id", (req, res) => {
 });
 
 router.delete("/deleteProfilePicture/:id", function(req, res, next) {
-  User.update({ _id: req.params.id }, { $unset: { image: 1,  provider_pic: 1 } }, function(
-    err,
-    post
-  ) {
-    if (err) return next(err);
-    res.json(post);
-  });
+  User.update(
+    { _id: req.params.id },
+    { $unset: { image: 1, provider_pic: 1 } },
+    function(err, post) {
+      if (err) return next(err);
+      res.json(post);
+    }
+  );
 });
 
 router.delete("/deleteBlogImage", function(req, res, next) {
@@ -685,4 +748,147 @@ router.get("/tagUser", function(req, res) {
       }
     });
 });
+
+router.post("/resetPassword", function(req, res, next) {
+  async.waterfall(
+    [
+      function(done) {
+        crypto.randomBytes(20, function(err, buf) {
+          var token = buf.toString("hex");
+          done(err, token);
+        });
+      },
+      function(token, done) {
+        User.findOne({ email: req.body.email }, function(err, user) {
+          if (!user) {
+            return res.send("No account with that email address exists.");
+          }
+          user.resetPasswordToken = token;
+          user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+          user.save(function(err) {
+            done(err, token, user);
+          });
+        });
+      },
+      function(token, user, done) {
+        var smtpTransport = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: "bucksswag17@gmail.com",
+            pass: "sweetflower"
+          }
+        });
+        var mailOptions = {
+          to: user.email,
+          from: "Demo Blogging Application <blog@demo.com>",
+          subject: "Password Reset",
+          text:
+            "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
+            "The password reset window is limited to one hours." +
+            "If you do not reset your password within one hours, you will need to submit a new request.\n\n" +
+            "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
+            "" +
+            req.headers.origin +
+            "/reset/" +
+            token +
+            "\n\n" +
+            "If you did not request this, please ignore this email and your password will remain unchanged.\n"
+        };
+        smtpTransport.sendMail(mailOptions, function(err) {
+          if (err) {
+            console.log("Error:", err);
+          } else {
+            res.send(
+              "An e-mail has been sent to " +
+                user.email +
+                " with further instructions. Please check your email inbox for a link to complete the reset."
+            );
+          }
+          done(err, "done");
+        });
+      }
+    ],
+    function(err) {
+      if (err) return next(err);
+    }
+  );
+});
+
+router.get("/reset/:token", function(req, res) {
+  User.findOne(
+    {
+      resetPasswordToken: req.params.token,
+      resetPasswordExpires: { $gt: Date.now() }
+    },
+    function(err, user) {
+      if (err) {
+        console.log("Error:", err);
+      }
+      if (!user) {
+        return res.send("Password reset token is invalid or has expired.");
+      }
+      res.send(user);
+    }
+  );
+});
+
+router.post("/reset/:token", function(req, res) {
+  async.waterfall(
+    [
+      function(done) {
+        User.findOne(
+          {
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() }
+          },
+          function(err, user) {
+            if (!user) {
+              return res.send(
+                "Password reset token is invalid or has expired."
+              );
+            }
+
+            user.password = User.hashPassword(req.body.password);
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+
+            user.save(function(err) {
+              req.logIn(user, function(err) {
+                done(err, user);
+              });
+            });
+          }
+        );
+      },
+      function(user, done) {
+        var smtpTransport = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: "bucksswag17@gmail.com",
+            pass: "sweetflower"
+          }
+        });
+        var mailOptions = {
+          to: user.email,
+          from: "Demo Blogging Application <blog@demo.com>",
+          subject: "Your password has been changed",
+          text:
+            "Hello,\n\n" +
+            "This is a confirmation that the password for your account " +
+            user.email +
+            " has just been changed.\n"
+        };
+        smtpTransport.sendMail(mailOptions, function(err) {
+          res.send("Success! Your password has been changed.");
+          done(err);
+        });
+      }
+    ],
+    function(err) {
+      if (err) return next(err);
+    }
+  );
+});
+
 module.exports = router;

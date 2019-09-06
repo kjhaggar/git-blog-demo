@@ -11,8 +11,7 @@ export class FilterPipe implements PipeTransform {
       return items;
     }
     searchText = searchText.toLowerCase();
-    const x = searchText.split(' ');
-    return items.filter(user => {
+    return items.filter((user) => {
       return user.userName.toLowerCase().includes(searchText)
         || user.firstName.toLowerCase().includes(searchText)
         || user.lastName.toLowerCase().includes(searchText);

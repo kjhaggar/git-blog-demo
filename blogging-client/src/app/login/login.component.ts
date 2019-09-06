@@ -33,20 +33,25 @@ export class LoginComponent implements OnInit {
   htmlTag: HTMLElement = document.getElementsByTagName('html')[0];
 
   constructor(private authorizationService: AuthorizationService, private router: Router,
-    private ngZone: NgZone, private socialAuthService: AuthService, private store: Store<AppState>, actions: Actions
+    private socialAuthService: AuthService, private store: Store<AppState>, actions: Actions
   ) {
     actions.pipe(
       ofType('[Auth] - Error'),
     ).subscribe((action: any) => {
+      console.log(action.error)
       this.invalidUser = true;
+      if (action.error.message) {
       this.unauthMessage = action.error.message;
+      } else {
+        this.unauthMessage = action.error.text;
+      }
     });
   }
 
   ngOnInit() {
     if (localStorage.getItem('token')) {
       this.router.navigate(['/home']);
-  }
+    }
   }
 
   get f() { return this.loginForm.controls; }
@@ -94,5 +99,11 @@ export class LoginComponent implements OnInit {
         console.log(err);
       }
     );
+  }
+
+  FadeOutSuccessMsg() {
+    setTimeout(() => {
+      this.invalidUser = false;
+    }, 3000);
   }
 }

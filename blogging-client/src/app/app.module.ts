@@ -47,6 +47,8 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { ProfileCardComponent } from './profile-card/profile-card.component';
 
 import { ToDoReducer } from './store/reducers/auth.reducers';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { SetNewPasswordComponent } from './set-new-password/set-new-password.component';
 
 export const authInterceptorProviders = [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
@@ -83,7 +85,9 @@ export function getAuthServiceConfigs() {
         PersonalBlogsComponent,
         FriendsComponent,
         NavbarComponent,
-        ProfileCardComponent
+        ProfileCardComponent,
+        ResetPasswordComponent,
+        SetNewPasswordComponent
     ],
     imports: [
         BrowserModule,
