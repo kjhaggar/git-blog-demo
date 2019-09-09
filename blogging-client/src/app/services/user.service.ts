@@ -309,6 +309,14 @@ export class UserService {
     });
   }
 
+  verifyAccount(token: string) {
+    return this.http.get(this.url + 'verifyAccount/' + token, {
+      observe: 'body',
+      withCredentials: true,
+      headers: new HttpHeaders().append('Content-Type', 'application/json')
+    });
+  }
+
   newCommentReceived() {
     const observable = new Observable<any>(observer => {
       this.socket.on('new comment', (data) => {

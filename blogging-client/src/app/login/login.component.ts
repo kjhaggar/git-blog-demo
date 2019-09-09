@@ -38,7 +38,6 @@ export class LoginComponent implements OnInit {
     actions.pipe(
       ofType('[Auth] - Error'),
     ).subscribe((action: any) => {
-      console.log(action.error)
       this.invalidUser = true;
       if (action.error.message) {
       this.unauthMessage = action.error.message;

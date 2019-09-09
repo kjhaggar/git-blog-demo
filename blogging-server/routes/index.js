@@ -57,7 +57,7 @@ async function addToDB(req, res, next) {
             "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
             "" +
             req.headers.origin +
-            "/verify/" +
+            "/verifyAccount/" +
             token
           };
         smtpTransport.sendMail(mailOptions, function(err) {
@@ -79,6 +79,33 @@ async function addToDB(req, res, next) {
     }
   );
 }
+
+router.get("/verifyAccount/:token", function(req, res) {
+  User.findOne(
+    {
+      confirmEmailToken: req.params.token
+    },
+    function(err, user) {
+      if (err) {
+        console.log("Error:", err);
+      }
+      if (!user) {
+        return res.send("Password reset token is invalid or has expired.");
+      }
+
+      user.verified = true;
+      user.confirmEmailToken = undefined;
+
+      user.save(err => {
+        if (err) {
+          res.json({ success: false, message: "Something went wrong." });
+        } else {
+          res.json(user);
+        }
+      });
+    }
+  );
+});
 
 router.post("/socialRegister", function(req, res, next) {
   addToSocialDB(req, res);
@@ -140,7 +167,6 @@ router.post("/login", function(req, res, next) {
     }
 
     if (!user) {
-      console.log(user)
       return res.status(501).json({
         success: false,
         message: "Username or password is incorrect..!!"

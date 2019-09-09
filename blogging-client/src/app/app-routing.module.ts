@@ -1,3 +1,4 @@
+import { VerifyAccountComponent } from './verify-account/verify-account.component';
 import { SetNewPasswordComponent } from './set-new-password/set-new-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { FriendsComponent } from './friends/friends.component';
@@ -28,7 +29,8 @@ const routes: Routes = [
   { path: 'editProfile', component: EditProfileComponent, canActivate: [AuthGuard] },
   { path: 'publicProfile/:id', component: PublicProfileComponent},
   { path: 'resetPassword', component: ResetPasswordComponent},
-  { path: 'reset/:token', component: SetNewPasswordComponent}
+  { path: 'reset/:token', component: SetNewPasswordComponent},
+  { path: 'verifyAccount/:token', component: VerifyAccountComponent}
 ];
 
 @NgModule({
