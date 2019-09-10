@@ -59,7 +59,7 @@ export class AuthorizationService {
 
   async storeUserData(data, userData?) {
     localStorage.setItem('token', data.token);
-    localStorage.setItem('user', data.userName || data.name);
+    localStorage.setItem('user', data.userName || userData.userName);
     localStorage.setItem('userId', data.userId || userData._id);
     this.authToken = data.token;
     this.user = data.user;

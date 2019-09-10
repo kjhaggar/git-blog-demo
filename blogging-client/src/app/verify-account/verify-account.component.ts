@@ -8,7 +8,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./verify-account.component.css']
 })
 export class VerifyAccountComponent implements OnInit {
-  token: string;
+  private token: string;
+  public invalidMessage: string;
+  public validToken = true;
 
   constructor(private route: ActivatedRoute, private userService: UserService, private router: Router) { }
 
@@ -22,7 +24,8 @@ export class VerifyAccountComponent implements OnInit {
         this.router.navigate(['/login']);
       },
       (error) => {
-        console.log(error);
+        this.validToken = false;
+        this.invalidMessage = error.error.text;
       }
     );
   }

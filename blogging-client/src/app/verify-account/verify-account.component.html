@@ -1,4 +1,4 @@
-<div>
+<div *ngIf="validToken">
   <div class="app-loading">
     Verifying Account
     <svg class="spinner" viewBox="25 25 50 50">
@@ -14,5 +14,8 @@
     </svg>
   </div>
   <br />
-  <!-- <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp; -->
+</div>
+
+<div *ngIf="!validToken">
+  {{ invalidMessage }}
 </div>

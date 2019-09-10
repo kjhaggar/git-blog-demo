@@ -182,6 +182,9 @@
           <span class="fa fa-google"></span> Sign in with Google
         </button> -->
       </form>
+      <div *ngIf="registrationError">
+        {{ invalidMessage }}
+      </div>
     </div>
   </div>
 

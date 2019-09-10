@@ -1,0 +1,48 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+  <div class="row profile">
+    <div class="col-md-3">
+      <app-profile-card></app-profile-card>
+    </div>
+    <div class="col-md-9">
+      <div class="profile-content">
+        <div *ngIf="sizeOfAllPost > 0; else noAllPost">
+          <div
+            class="displayPost panel panel-primary"
+            *ngFor="let post of postList"
+          >
+            <form>
+              <div class="panel-heading">
+                <div class="panel-title row">
+                  <div *ngFor="let user of usersProfile">
+                    <img
+                      class="logo"
+                      *ngIf="post.userId == user._id"
+                      [src]="GetImageUrl(user.image)"
+                    />
+                  </div>
+                  <label class="panel-title col" style="margin-top: 30px"
+                    ><em>{{ post.title | titlecase }}</em></label
+                  >
+                  <small class="col" style="margin-top: 30px"
+                    >Posted by {{ post.userName | titlecase }} on
+                    {{ post.createdAt | date: "MMM dd, yyyy" }}
+                  </small>
+                </div>
+              </div>
+              <p class="description" cols="80" rows="4">
+                {{ post.description | slice: 0:234 }}...
+                <a [routerLink]="['/home/blog', post._id]">Read More</a>
+              </p>
+            </form>
+          </div>
+        </div>
+        <ng-template #noAllPost>
+          <br />
+          <h6>No Blog Posted.</h6>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

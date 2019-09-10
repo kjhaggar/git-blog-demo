@@ -90,7 +90,7 @@ router.get("/verifyAccount/:token", function(req, res) {
         console.log("Error:", err);
       }
       if (!user) {
-        return res.send("Password reset token is invalid or has expired.");
+        return res.send("Account verification link is invalid or has expired.");
       }
 
       user.verified = true;
@@ -116,15 +116,11 @@ function addToSocialDB(req, res) {
     if (err) {
       console.log("Error:", err);
     } else {
-      if (user.length != 0) {
-        console.log(user);
-        res.json({
-          success: "false",
-          message: "User already registered with this email"
-        });
-      } else {
+      if (user.length === 0) {
         var splitted = req.body.name.split(" ", 2);
         var user = new User({
+          verified: true,
+          userName: splitted[0].charAt(0)+ splitted[1].toLowerCase(),
           firstName: splitted[0],
           lastName: splitted[1],
           email: req.body.email,
@@ -137,6 +133,11 @@ function addToSocialDB(req, res) {
         } catch (err) {
           return res.status(501).json(err);
         }
+      } else {
+        res.json({
+          success: "false",
+          message: "User already registered with this email"
+        });
       }
     }
   });
@@ -300,7 +301,7 @@ router.put("/acceptFriendRequest", function(req, res, next) {
 });
 
 router.use(function(req, res, next) {
-  //   res.header("Access-Control-Allow-Origin", "https://demo-blogging-application.herokuapp.com");
+    // res.header("Access-Control-Allow-Origin", "https://demo-blogging-application.herokuapp.com");
   res.header("Access-Control-Allow-Origin", "http://localhost:4200");
   res.header(
     "Access-Control-Allow-Headers",
@@ -615,7 +616,7 @@ router.get("/getUsersList", function(req, res) {
 });
 
 router.get("/requestList/:id", function(req, res) {
-  Request.find({ requestTo: req.params.id, status: "false" }).exec(function(
+  Request.find({ requestTo: req.params.id, status: false }).exec(function(
     err,
     request
   ) {
@@ -676,7 +677,8 @@ router.put("/changeRequestStatus", function(req, res, next) {
     if (err) {
       console.log("Error:", err);
     } else {
-      request.status = "true";
+      console.log(request)
+      request.status = true;
       request.save(err => {
         if (err) {
           res.json({ success: false, message: "Something went wrong." });

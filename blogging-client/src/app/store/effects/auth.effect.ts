@@ -1,8 +1,4 @@
-import { Login } from './../actions/auth.action';
-import { AppState } from './../blog.state';
-import { Router } from '@angular/router';
 import { AuthorizationService } from './../../services/auth.service';
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';

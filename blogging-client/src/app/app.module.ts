@@ -1,3 +1,4 @@
+import { NavbarModule } from './navbar/navbar.module';
 import { AuthEffects } from './store/effects/auth.effect';
 
 import { BrowserModule } from '@angular/platform-browser';
@@ -9,7 +10,7 @@ import { OrderModule } from 'ngx-order-pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AgmCoreModule } from '@agm/core';
 import { MentionModule } from 'angular-mentions';
-import { FilterPipeModule } from 'ngx-filter-pipe';
+
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { ShareButtonsModule } from '@ngx-share/buttons';
@@ -26,34 +27,18 @@ import {
 } from 'angular-6-social-login';
 
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { EditProfileComponent } from './edit-profile/edit-profile.component';
-import { ProfileComponent } from './profile/profile.component';
-import { BlogComponent } from './blog/blog.component';
-import { MyblogComponent } from './myblog/myblog.component';
-import { FilterPipe } from './filter.pipe';
+import { CreateBLogComponent } from './create-blog/create-blog.component';
+import { SetNewPasswordComponent } from './set-new-password/set-new-password.component';
+import { VerifyAccountComponent } from './verify-account/verify-account.component';
 
 import { AuthorizationService } from './services/auth.service';
 import { UserService } from './services/user.service';
 
 import { AuthInterceptor } from './interceptor/auth-interceptor';
 import { AuthGuard } from './guards/auth.guard';
-import { PublicProfileComponent } from './public-profile/public-profile.component';
-import { CreateBLogComponent } from './create-blog/create-blog.component';
-import { PersonalBlogsComponent } from './personal-blogs/personal-blogs.component';
-import { FriendsComponent } from './friends/friends.component';
-import { NavbarComponent } from './navbar/navbar.component';
-import { ProfileCardComponent } from './profile-card/profile-card.component';
 
 import { ToDoReducer } from './store/reducers/auth.reducers';
-import { ResetPasswordComponent } from './reset-password/reset-password.component';
-import { SetNewPasswordComponent } from './set-new-password/set-new-password.component';
-import { VerifyAccountComponent } from './verify-account/verify-account.component';
-
-export const authInterceptorProviders = [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
-];
 
 export function getAuthServiceConfigs() {
   const config = new AuthServiceConfig(
@@ -74,33 +59,21 @@ export function getAuthServiceConfigs() {
 @NgModule({
     declarations: [
         AppComponent,
-        LoginComponent,
         RegisterComponent,
-        ProfileComponent,
-        EditProfileComponent,
-        BlogComponent,
-        MyblogComponent,
-        FilterPipe,
-        PublicProfileComponent,
         CreateBLogComponent,
-        PersonalBlogsComponent,
-        FriendsComponent,
-        NavbarComponent,
-        ProfileCardComponent,
-        ResetPasswordComponent,
         SetNewPasswordComponent,
         VerifyAccountComponent
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
+        NavbarModule,
         FormsModule,
         ReactiveFormsModule,
         HttpClientModule,
         OrderModule,
         BrowserAnimationsModule,
         MentionModule,
-        FilterPipeModule,
         EmojiModule,
         PickerModule,
         ShareButtonsModule,

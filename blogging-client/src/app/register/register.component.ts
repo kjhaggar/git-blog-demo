@@ -17,6 +17,8 @@ import {
 export class RegisterComponent implements OnInit {
   matchPassword: boolean;
   submitted: boolean;
+  public invalidMessage: string;
+  public registrationError: boolean;
 
   regiForm: FormGroup = new FormGroup({
     email: new FormControl(null, [Validators.required, Validators.email]),
@@ -76,7 +78,8 @@ export class RegisterComponent implements OnInit {
     this.authService.socialRegister(JSON.stringify(data)).subscribe(
       (data: any) => {
         if (data.success === 'false') {
-          console.log(data.message)
+          this.registrationError = true;
+          this.invalidMessage = data.message;
         } else {
           this.router.navigate(['/login']);
         }
