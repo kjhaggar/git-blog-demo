@@ -10,7 +10,8 @@ import * as io from 'socket.io-client';
   templateUrl: './friends-list.component.html',
   styleUrls: ['./friends-list.component.css']
 })
-export class FriendsListComponent implements OnInit {private SOCKET = io('http://127.0.0.1:3000');
+export class FriendsListComponent implements OnInit {
+  private SOCKET = io('http://127.0.0.1:3000');
 // private SOCKET = io ('https://backend-blogging-appliaction.herokuapp.com');
   public currentUserId: string;
   public currentUserName: string;
@@ -102,7 +103,6 @@ export class FriendsListComponent implements OnInit {private SOCKET = io('http:/
   AcceptFriendRequest(friendId: string, friendUserName: string) {
     this.userService.changeRequestStatus(this.currentUserId, friendId).subscribe(
       data => {
-        console.log(data)
         this.acceptRequest[friendId] = false;
         this.friendRequestSent[friendId] = false;
         this.SOCKET.emit('acceptFriendRequest', this.currentUserId);

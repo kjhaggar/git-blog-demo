@@ -7,24 +7,19 @@ import { Routes, RouterModule } from '@angular/router';
 
 
 const routes: Routes = [
-  // {
-  //   path: '',
-  //   component: ParentComponent,
-  //   children: [
-  //     {
-  //       path: 'editProfile', component: EditProfileComponent, canActivate: [AuthGuard]
-  //     },
-  //     {
-  //       path: ':id', component: ProfileComponent
-  //     },
-  //   ]
-  // }
   {
-    path: 'editProfile', component: EditProfileComponent, canActivate: [AuthGuard]
-  },
-  {
-    path: ':id', component: ProfileComponent
-  },
+    path: '',
+    component: ParentComponent,
+    children: [
+      {
+        path: 'editProfile', component: EditProfileComponent, canActivate: [AuthGuard]
+      },
+      {
+        path: ':id', component: ProfileComponent
+      },
+    ]
+  }
+
 
 ];
 

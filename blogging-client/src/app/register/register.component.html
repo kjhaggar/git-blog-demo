@@ -87,6 +87,44 @@
           </div>
         </div>
         <div class="row">
+          <div class="form-group">
+            <div class="col-xs-8 col-sm-2 col-md-2">
+              <select
+                class="custom-select"
+                style="width: 67px; height: 46px;"
+                #code
+              >
+                <option selected="">+91</option>
+                <option>+972</option>
+                <option>+198</option>
+                <option>+701</option>
+              </select>
+            </div>
+            <div class="col-xs-16 col-sm-10 col-md-10">
+              <div class="input_with_text">
+                <input
+                  type="text"
+                  name="phone"
+                  id="phone"
+                  class="form-control input-lg"
+                  formControlName="phone"
+                  placeholder="Phone Number"
+                  [ngClass]="{ 'is-invalid': submitted && f.phone.errors }"
+                  tabindex="5"
+                  style="width: 446px"
+                  #Phone
+                />
+                <span class="verify" (click)="sendOTP(this.Phone.value)" style="cursor: pointer;">Verify</span>
+              </div>
+            </div>
+            <div *ngIf="submitted && !!f.phone.errors" class="invalid-feedback">
+              <div *ngIf="!!f.phone.errors.phone">
+                Enter valid phone Number
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
           <div class="col-xs-12 col-sm-6 col-md-6">
             <div class="form-group">
               <input
@@ -97,7 +135,7 @@
                 formControlName="password"
                 placeholder="Password"
                 [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
-                tabindex="5"
+                tabindex="6"
               />
               <div
                 *ngIf="submitted && !!f.password.errors"
@@ -124,7 +162,7 @@
                 [ngClass]="{
                   'is-invalid': submitted && f.confirmPassword.errors
                 }"
-                tabindex="6"
+                tabindex="7"
               />
               <div
                 *ngIf="submitted && !!f.confirmPassword.errors"
@@ -157,9 +195,9 @@
               type="submit"
               value="Register"
               class="btn btn-primary btn-block btn-lg"
-              (click)="Register()"
+              (click)="Register(this.code.value)"
               [disabled]="regiForm.pristine"
-              tabindex="7"
+              tabindex="8"
             />
           </div>
           <div class="col-xs-12 col-md-6">

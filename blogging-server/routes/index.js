@@ -11,6 +11,12 @@ var crypto = require("crypto");
 var nodemailer = require("nodemailer");
 var async = require("async");
 
+const Nexmo = require("nexmo");
+const nexmo = new Nexmo({
+  apiKey: "16d8189f",
+  apiSecret: "POPFcDsJtx9nAwZr"
+});
+
 router.post("/register", function(req, res, next) {
   addToDB(req, res, next);
 });
@@ -26,11 +32,12 @@ async function addToDB(req, res, next) {
       },
       function(token, done) {
         var user = new User({
-          email: req.body.email,
-          userName: req.body.userName,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          password: User.hashPassword(req.body.password),
+          email: req.body.formValue.email,
+          userName: req.body.formValue.userName,
+          firstName: req.body.formValue.firstName,
+          lastName: req.body.formValue.lastName,
+          phone: req.body.countryCode + req.body.formValue.phone,
+          password: User.hashPassword(req.body.formValue.password),
           confirmEmailToken: token
         });
 
@@ -47,11 +54,13 @@ async function addToDB(req, res, next) {
           }
         });
         var mailOptions = {
-          to: req.body.email,
+          to: req.body.formValue.email,
           from: "Demo Blogging Application <blog@demo.com>",
           subject: "Verify Account",
           text:
-            "Hi, " + req.body.firstName + " \n\n" +
+            "Hi, " +
+            req.body.formValue.firstName +
+            " \n\n" +
             "Thank you so much for joining blog application!" +
             "To finish signing up, you just need to confirm that we got your email right.\n\n" +
             "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
@@ -59,14 +68,14 @@ async function addToDB(req, res, next) {
             req.headers.origin +
             "/verifyAccount/" +
             token
-          };
+        };
         smtpTransport.sendMail(mailOptions, function(err) {
           if (err) {
             console.log("Error:", err);
           } else {
             res.send(
               "A verification e-mail has been sent to " +
-              req.body.email +
+                req.body.formValue.email +
                 " with further instructions. Please check your email inbox for a link to complete the signing up."
             );
           }
@@ -120,7 +129,7 @@ function addToSocialDB(req, res) {
         var splitted = req.body.name.split(" ", 2);
         var user = new User({
           verified: true,
-          userName: splitted[0].charAt(0)+ splitted[1].toLowerCase(),
+          userName: splitted[0].charAt(0) + splitted[1].toLowerCase(),
           firstName: splitted[0],
           lastName: splitted[1],
           email: req.body.email,
@@ -143,6 +152,38 @@ function addToSocialDB(req, res) {
   });
 }
 
+router.post("/sendOTP", function(req, res, next) {
+  nexmo.verify.request(
+    {
+      number: req.body.phone,
+      brand: "Demo_Blog_App"
+    },
+    (err, result) => {
+      if (err) {
+        console.error(err);
+      } else {
+        const verifyRequestId = result.request_id;
+        console.log("request_id", verifyRequestId);
+        res.send(verifyRequestId);
+      }
+    }
+  );
+});
+
+router.post("/verifyOTP", function(req, res, next) {
+  nexmo.verify.check({
+    request_id: req.body.request,
+    code: req.body.otp
+  }, (err, result) => {
+    if (err) {
+      console.error(err);
+    } else {
+      res.send(result);
+    }
+  });
+
+});
+
 function verifyToken(req, res, next) {
   if (!req.headers.authorization) {
     return res.status(401).send("Unauthorised request");
@@ -151,16 +192,22 @@ function verifyToken(req, res, next) {
   if (token == "null") {
     return res.status(401).send("Unauthorised request. No token found");
   }
-  let payload = jwt.verify(token, "qwerty@12345");
-  if (!payload) {
-    return res.status(401).send("Unauthorised request (!payload)");
+
+  //token from facebook
+  if (token.split(".").length === 1) {
+    next();
+  } else {
+    let payload = jwt.verify(token, "qwerty@12345");
+    if (!payload) {
+      return res.status(401).send("Unauthorised request (!payload)");
+    }
+    req.userId = payload.id;
+    next();
   }
-  req.userId = payload.subject;
-  next();
 }
 
 router.post("/login", function(req, res, next) {
-  passport.authenticate("local", function(err, user, invalidUser) {
+  passport.authenticate("local", function(err, user) {
     if (err) {
       return res
         .status(501)
@@ -174,8 +221,8 @@ router.post("/login", function(req, res, next) {
       });
     }
 
-    if(user.verified == false) {
-      return res.send("Account not verified..!!")
+    if (user.verified == false) {
+      return res.send("Account not verified..!!");
     }
     const token = jwt.sign({ id: user._id }, "qwerty@12345", {
       expiresIn: 86400
@@ -187,7 +234,8 @@ router.post("/login", function(req, res, next) {
       return res.status(200).json({
         token: token,
         userId: user._id,
-        userName: user.userName
+        userName: user.userName,
+        phone: user.phone
       });
     });
   })(req, res, next);
@@ -301,7 +349,7 @@ router.put("/acceptFriendRequest", function(req, res, next) {
 });
 
 router.use(function(req, res, next) {
-    // res.header("Access-Control-Allow-Origin", "https://demo-blogging-application.herokuapp.com");
+  // res.header("Access-Control-Allow-Origin", "https://demo-blogging-application.herokuapp.com");
   res.header("Access-Control-Allow-Origin", "http://localhost:4200");
   res.header(
     "Access-Control-Allow-Headers",
@@ -388,8 +436,17 @@ router.put("/updatePost/:id", blogImagesUpload.array("uploads[]", 12), function(
 
 router.delete("/deletePost/:id", function(req, res, next) {
   Post.findByIdAndRemove(req.params.id, req.body, function(err, post) {
-    if (err) return next(err);
-    res.json(post);
+    if (err) {
+      return next(err);
+    } else {
+      Notify.findOneAndDelete({ postId: req.params.id }).exec(function(
+        err,
+        notification
+      ) {
+        if (err) return next(err);
+      });
+      res.json(post);
+    }
   });
 });
 
@@ -677,7 +734,7 @@ router.put("/changeRequestStatus", function(req, res, next) {
     if (err) {
       console.log("Error:", err);
     } else {
-      console.log(request)
+      console.log(request);
       request.status = true;
       request.save(err => {
         if (err) {

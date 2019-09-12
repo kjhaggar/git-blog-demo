@@ -94,7 +94,7 @@
           {{ new.taggedBy["name"] }}
         </b>
         mentioned you in a
-        <a [routerLink]="['/blog', new.postId]" (click)="changeStatus(new._id)"
+        <a [routerLink]="['/home/blog', new.postId]" (click)="changeStatus(new._id)"
           >blog</a
         >, created on: {{ new.time | date: "MMM dd, yyyy" }}
       </div>

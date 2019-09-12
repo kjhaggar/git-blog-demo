@@ -36,7 +36,15 @@ export class AuthEffects {
     this.actions.pipe(
       ofType(AuthActionTypes.SuccessLoginAction),
       tap((user) => {
-        this.authService.storeUserData(user.user);
+        this.authService.sendOTP(user.user.phone).subscribe(
+          data => {
+            console.log(data);
+          },
+          err => {
+            this.authService.storeUserData(user.user);
+            this.authService.setOtpReq(err.error.text);
+          }
+        );
       })
     ),
     { dispatch: false }

@@ -1,3 +1,4 @@
+import { VerifyOTPComponent } from './../verify-otp/verify-otp.component';
 import { AppState } from '../../store/blog.state';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -11,6 +12,7 @@ import {
 import { Store } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import * as AuthActionTypes from '../../store/actions/auth.action';
+import { MDBModalRef, MDBModalService } from 'angular-bootstrap-md';
 
 @Component({
   selector: 'app-login',
@@ -18,9 +20,11 @@ import * as AuthActionTypes from '../../store/actions/auth.action';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  modalRef: MDBModalRef;
   submitted: boolean;
   invalidUser: boolean;
   unauthMessage: string;
+  verifyOtp: boolean;
 
   loginForm: FormGroup = new FormGroup({
     userName: new FormControl(null, Validators.required),
@@ -31,14 +35,15 @@ export class LoginComponent implements OnInit {
   htmlTag: HTMLElement = document.getElementsByTagName('html')[0];
 
   constructor(private authorizationService: AuthorizationService, private router: Router,
-    private socialAuthService: AuthService, private store: Store<AppState>, actions: Actions
+    private socialAuthService: AuthService, private store: Store<AppState>, actions: Actions,
+    private modalService: MDBModalService
   ) {
     actions.pipe(
       ofType('[Auth] - Error'),
     ).subscribe((action: any) => {
       this.invalidUser = true;
       if (action.error.message) {
-      this.unauthMessage = action.error.message;
+        this.unauthMessage = action.error.message;
       } else {
         this.unauthMessage = action.error.text;
       }
@@ -59,17 +64,8 @@ export class LoginComponent implements OnInit {
     if (!this.loginForm.valid) {
       return;
     }
-    const payload = this.loginForm.value;
+    this.verifyOtp = true;
     this.store.dispatch(AuthActionTypes.Login(this.loginForm.value));
-    // this.authorizationService.login(JSON.stringify(this.loginForm.value)).subscribe(
-    //   (data: any) => {
-    //     this.authorizationService.storeUserData(data);
-    //   },
-    //   error => {
-    //     this.invalidUser = true;
-    //     this.unauthMessage = error.error.message;
-    //   }
-    // );
   }
 
   public socialSignIn(socialPlatform: string) {
@@ -98,6 +94,23 @@ export class LoginComponent implements OnInit {
     );
   }
 
+  openModal() {
+    // this.modalRef = this.modalService.show(VerifyOTPComponent);
+  }
+
+  verifyOTP(otp: string) {
+    this.authorizationService.verifyOTP(otp).subscribe(
+      (data: any) => {
+        if (data.status === '0') {
+          this.router.navigate(['/home']);
+        } else {
+          console.log('invalid otp');
+          this.authorizationService.logout();
+        }
+      },
+      err => console.log(err)
+    );
+  }
   FadeOutSuccessMsg() {
     setTimeout(() => {
       this.invalidUser = false;

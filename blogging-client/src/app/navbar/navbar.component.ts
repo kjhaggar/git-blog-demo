@@ -52,6 +52,22 @@ export class NavbarComponent implements OnInit {
       },
       error => console.log(error)
     );
+
+    this.userService.newRequestReceived().subscribe(
+      data => {
+          if (this.currentUserId === data.receiverId) {
+              this.newRequest();
+          }
+      },
+      error => console.log(error)
+  );
+
+  this.userService.acceptRequestReceived().subscribe(
+    data => {
+      this.newNotification();
+    },
+    error => console.log(error)
+);
   }
 
   ngOnInit() {

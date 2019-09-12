@@ -50,12 +50,23 @@
             </div>
             <div class="form-group">
               <div class="col-md-12">
-                <a [routerLink]="['/login/forgotPassword']" > Forget Password..?? </a>
+                <a routerLink="/login/forgotPassword" > Forget Password..?? </a>
               </div>
             </div>
+            <div *ngIf="verifyOtp" class="form-group">
+                <div class="col-md-12">
+                    <input
+                    type="otpcode"
+                    class="form-control"
+                    placeholder="Enter OTP sent to registered mobile number"
+                    #otp
+                  />
+                </div>
+                <button (click)="verifyOTP(this.otp.value)">Confirm</button>
+              </div>
             <div class="form-group action">
               <div class="col-sm-12">
-                <button class="btn btn-block btn-success" (click)="Login()">
+                <button class="btn btn-block btn-success" (click)="Login(); openModal()">
                   <i class="fa fa-fw fa-sign-in"></i>Login
                 </button>
               </div>

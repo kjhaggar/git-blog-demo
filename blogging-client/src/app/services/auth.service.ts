@@ -10,6 +10,7 @@ export class AuthorizationService {
   user: string;
   URL = 'http://127.0.0.1:3000/api';
   // URL = 'https://backend-blogging-appliaction.herokuapp.com/api';
+  otpRequest: string;
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -63,8 +64,7 @@ export class AuthorizationService {
     localStorage.setItem('userId', data.userId || userData._id);
     this.authToken = data.token;
     this.user = data.user;
-
-    return this.router.navigate(['/home']);
+    // return this.router.navigate(['/home']);
   }
 
   loggedIn() {
@@ -75,4 +75,32 @@ export class AuthorizationService {
     return localStorage.getItem('token');
   }
 
+  setOtpReq(request: string) {
+    this.otpRequest = request;
+  }
+
+  sendOTP(phone) {
+    const body = {
+      phone
+    };
+    return this.http.post(this.URL + '/sendOTP', body,
+      {
+        observe: 'body',
+        withCredentials: true,
+        headers: new HttpHeaders().append('Content-Type', 'application/json')
+      });
+  }
+
+  verifyOTP(otp: string) {
+    const body = {
+      request: this.otpRequest,
+      otp
+    };
+    return this.http.post(this.URL + '/verifyOTP', body,
+      {
+        observe: 'body',
+        withCredentials: true,
+        headers: new HttpHeaders().append('Content-Type', 'application/json')
+      });
+  }
 }

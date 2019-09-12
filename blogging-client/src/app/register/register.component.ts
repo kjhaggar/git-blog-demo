@@ -1,3 +1,4 @@
+import { UserService } from './../services/user.service';
 import { AuthorizationService } from '../services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -7,7 +8,8 @@ import {
   FacebookLoginProvider,
   GoogleLoginProvider
 } from 'angular-6-social-login';
-
+import { AbstractControl } from '@angular/forms';
+import { empty } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -25,11 +27,11 @@ export class RegisterComponent implements OnInit {
     userName: new FormControl(null, Validators.required),
     firstName: new FormControl(null, Validators.required),
     lastName: new FormControl(null, Validators.required),
+    phone: new FormControl(null, [Validators.required, Validators.minLength(10)]),
     password: new FormControl(null, [Validators.required, Validators.minLength(6)]),
     confirmPassword: new FormControl(null, Validators.required)
   }
   );
-
 
   constructor(private authService: AuthorizationService, private router: Router,
     private socialAuthService: AuthService) { }
@@ -38,7 +40,7 @@ export class RegisterComponent implements OnInit {
 
   get f() { return this.regiForm.controls; }
 
-  Register() {
+  Register(countryCode: string) {
     this.submitted = true;
 
     if (this.regiForm.controls.password.value !== this.regiForm.controls.confirmPassword.value) {
@@ -49,7 +51,12 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    this.authService.register(JSON.stringify(this.regiForm.value)).subscribe(
+    const body = {
+      formValue: this.regiForm.value,
+      countryCode
+    };
+
+    this.authService.register(body).subscribe(
       data => {
         console.log(data);
         this.router.navigate(['/login']);
@@ -59,6 +66,17 @@ export class RegisterComponent implements OnInit {
         this.router.navigate(['/login']);
       }
     );
+  }
+
+  sendOTP(phone: number) {
+    // this.authService.sendOTP().subscribe(
+    //   data => {
+    //     console.log(data);
+    //   },
+    //   err => {
+    //     console.log(err);
+    //   }
+    // );
   }
 
   public socialSignIn(socialPlatform: string) {

@@ -2,15 +2,13 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { UserService } from '../../services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import * as io from 'socket.io-client';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent implements OnInit {private socket = io('http://127.0.0.1:3000');
-// private socket = io ('https://backend-blogging-appliaction.herokuapp.com');
+export class ProfileComponent implements OnInit {
 public id: string;
 public sub: any;
 public getCurrentUserId: string;

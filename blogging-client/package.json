@@ -37,7 +37,7 @@
     "@ngx-share/buttons": "^7.1.2",
     "@ngx-share/core": "^7.1.2",
     "angular-6-social-login": "^1.1.1",
-    "angular-bootstrap-md": "^8.1.1",
+    "angular-bootstrap-md": "^8.2.0",
     "angular-mentions": "^1.0.3",
     "angular2-jwt": "^0.2.3",
     "bootstrap": "^3.4.1",

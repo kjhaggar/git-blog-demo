@@ -43,9 +43,9 @@ export class CreateBLogComponent implements OnInit {
         this.currentUserName = localStorage.getItem('user');
         this.tagUser();
 
-        this.mapsAPILoader.load().then(() => {
+        // this.mapsAPILoader.load().then(() => {
             // this.setCurrentLocation();
-            this.geoCoder = new (google.maps.Geocoder)();
+            // this.geoCoder = new (google.maps.Geocoder)();
             // let autocomplete = new google.maps.places.Autocomplete(this.search, {
             //     types: ["address"]
             //   });
@@ -60,7 +60,7 @@ export class CreateBLogComponent implements OnInit {
             //       this.zoom = 12;
             //     });
             // });
-        });
+        // });
 
         this.searchInfo = {
             location: '',

@@ -1,6 +1,6 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PersonalBlogsRoutingModule } from './personal-blogs-routing.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
