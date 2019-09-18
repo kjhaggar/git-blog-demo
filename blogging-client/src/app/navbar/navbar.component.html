@@ -53,7 +53,7 @@
           >
         </a>
       </li>
-      <li>
+      <li *ngIf="currentUserId != null">
         <a [routerLink]="['/publicProfile', currentUserId]">
           <i class="fa fa-fw fa-user"></i>My Profile</a
         >
@@ -88,25 +88,31 @@
         *ngIf="currentUserId !== new.taggedBy.id; else ownBlog"
       >
         <b
-          [routerLink]="['/publicProfile', new.taggedBy.id]"
+          *ngIf="new?.taggedBy?.id != null"
+          [routerLink]="['/publicProfile', new?.taggedBy?.id]"
           style="cursor: pointer"
         >
           {{ new.taggedBy["name"] }}
         </b>
         mentioned you in a
-        <a [routerLink]="['/home/blog', new.postId]" (click)="changeStatus(new._id)"
+        <a
+          *ngIf="new?.postId != null"
+          [routerLink]="['/home/blog', new?.postId]"
+          (click)="changeStatus(new._id)"
           >blog</a
         >, created on: {{ new.time | date: "MMM dd, yyyy" }}
       </div>
       <ng-template #ownBlog>
         <b
-          [routerLink]="['/publicProfile', new.taggedBy.id]"
+          *ngIf="new?.taggedBy?.id != null"
+          [routerLink]="['/publicProfile', new?.taggedBy?.id]"
           style="cursor: pointer"
         >
           You
         </b>
         &nbsp;mentioned yourself in a<a
-          [routerLink]="['/blog', new.postId]"
+          *ngIf="new?.postId != null"
+          [routerLink]="['/blog', new?.postId]"
           (click)="changeStatus(new._id)"
           >&nbsp;blog</a
         >, created on: {{ new.time | date: "MMM dd, yyyy" }}
@@ -114,7 +120,7 @@
       <br />
     </div>
     <div *ngIf="new.typeOfMsg === 'acceptRequest'">
-        <div
+      <div
         class="col-lg-2"
         *ngFor="let user of usersProfile"
         class="panel-title pull-left"
@@ -125,8 +131,13 @@
           [src]="GetImageUrl(user.image)"
         />
       </div>
-      &nbsp;You started following <b [routerLink]="['/publicProfile', new.friendId]"
-      style="cursor: pointer">{{new.friendName}}</b>
+      &nbsp;You started following
+      <b
+      *ngIf="new?.friendId != null"
+        [routerLink]="['/publicProfile', new?.friendId]"
+        style="cursor: pointer"
+        >{{ new.friendName }}</b
+      >
     </div>
   </div>
 </div>

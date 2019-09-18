@@ -6,7 +6,9 @@ import { CommonModule } from '@angular/common';
 
 
 @NgModule({
-  declarations: [NavbarComponent],
+  declarations: [
+    NavbarComponent
+  ],
   imports: [
     CommonModule,
     RouterModule

@@ -2,7 +2,7 @@
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NavbarModule } from './../navbar/navbar.module';
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, APP_BASE_HREF } from '@angular/common';
 import { PublicProfileRoutingModule } from './public-profile-routing.module';
 
 import { ProfileComponent } from './profile/profile.component';
@@ -24,6 +24,12 @@ import { ParentComponent } from './parent/parent.component';
     NavbarModule,
     FormsModule,
     ReactiveFormsModule,
+  ],
+  providers: [
+    {
+      provide: APP_BASE_HREF,
+      useValue: '/'
+    }
   ]
 })
 export class PublicProfileModule { }

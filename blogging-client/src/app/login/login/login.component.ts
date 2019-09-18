@@ -77,6 +77,7 @@ export class LoginComponent implements OnInit {
     }
 
     this.socialAuthService.signIn(socialPlatformProvider).then(userData => {
+      debugger
       this.apiConnection(userData);
     });
   }

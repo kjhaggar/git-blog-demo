@@ -1,3 +1,4 @@
+import { MDBBootstrapModule, MDBModalRef, ModalModule } from 'angular-bootstrap-md';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VerifyOTPComponent } from './verify-otp.component';
@@ -8,7 +9,14 @@ describe('VerifyOTPComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ VerifyOTPComponent ]
+      declarations: [ VerifyOTPComponent ],
+      imports: [
+        MDBBootstrapModule,
+        ModalModule.forRoot()
+      ],
+      providers: [
+        MDBModalRef
+      ]
     })
     .compileComponents();
   }));

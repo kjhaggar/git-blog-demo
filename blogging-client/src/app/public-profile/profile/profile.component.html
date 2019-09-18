@@ -31,7 +31,7 @@
                   </small>
                 </div>
               </div>
-              <p class="description" cols="80" rows="4">
+              <p *ngIf="post?._id != null" class="description" cols="80" rows="4">
                 {{ post.description | slice: 0:234 }}...
                 <a [routerLink]="['/home/blog', post._id]">Read More</a>
               </p>

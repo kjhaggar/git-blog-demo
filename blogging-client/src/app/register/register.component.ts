@@ -8,8 +8,6 @@ import {
   FacebookLoginProvider,
   GoogleLoginProvider
 } from 'angular-6-social-login';
-import { AbstractControl } from '@angular/forms';
-import { empty } from 'rxjs';
 
 @Component({
   selector: 'app-register',

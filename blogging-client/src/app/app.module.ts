@@ -42,63 +42,63 @@ import { ToDoReducer } from './store/reducers/auth.reducers';
 
 export function getAuthServiceConfigs() {
   const config = new AuthServiceConfig(
-  [
-  {
-      id: FacebookLoginProvider.PROVIDER_ID,
-      provider: new FacebookLoginProvider('493698497854128')
-  },
-  {
-    id: GoogleLoginProvider.PROVIDER_ID,
-    provider: new GoogleLoginProvider('186215547479-3jf5m9tc409407fso1ojchpubcm6f4fg.apps.googleusercontent.com')
-}
-  ]
+    [
+      {
+        id: FacebookLoginProvider.PROVIDER_ID,
+        provider: new FacebookLoginProvider('493698497854128')
+      },
+      {
+        id: GoogleLoginProvider.PROVIDER_ID,
+        provider: new GoogleLoginProvider('186215547479-3jf5m9tc409407fso1ojchpubcm6f4fg.apps.googleusercontent.com')
+      }
+    ]
   );
   return config;
-  }
+}
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        RegisterComponent,
-        CreateBLogComponent,
-        SetNewPasswordComponent,
-        VerifyAccountComponent
-    ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        NavbarModule,
-        FormsModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        OrderModule,
-        BrowserAnimationsModule,
-        MentionModule,
-        EmojiModule,
-        PickerModule,
-        ShareButtonsModule,
-        TooltipModule,
-        MDBBootstrapModule,
-        SocialLoginModule,
-        StoreModule.forRoot({ login: ToDoReducer }),
-        EffectsModule.forRoot([AuthEffects]),
-        AgmCoreModule.forRoot({
-            apiKey: 'AIzaSyBzS-pIcW-xUtwOFGXt2ErDPfpAbLCRgSc',
-            libraries: ['places']
-        })
-    ],
-    providers: [
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: AuthInterceptor,
-            multi: true
-        },
-        {
-          provide: AuthServiceConfig,
-          useFactory: getAuthServiceConfigs
-          },
-        AuthInterceptor, UserService, AuthorizationService, AuthGuard
-    ],
-    bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    RegisterComponent,
+    CreateBLogComponent,
+    SetNewPasswordComponent,
+    VerifyAccountComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    NavbarModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    OrderModule,
+    BrowserAnimationsModule,
+    MentionModule,
+    EmojiModule,
+    PickerModule,
+    ShareButtonsModule,
+    TooltipModule,
+    MDBBootstrapModule,
+    SocialLoginModule,
+    StoreModule.forRoot({ login: ToDoReducer }),
+    EffectsModule.forRoot([AuthEffects]),
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyBzS-pIcW-xUtwOFGXt2ErDPfpAbLCRgSc',
+      libraries: ['places']
+    })
+  ],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: AuthServiceConfig,
+      useFactory: getAuthServiceConfigs
+    },
+    AuthInterceptor, UserService, AuthorizationService, AuthGuard
+  ],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

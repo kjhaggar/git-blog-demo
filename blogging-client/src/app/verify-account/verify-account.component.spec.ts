@@ -1,6 +1,9 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterModule } from '@angular/router';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VerifyAccountComponent } from './verify-account.component';
+import { APP_BASE_HREF } from '@angular/common';
 
 describe('VerifyAccountComponent', () => {
   let component: VerifyAccountComponent;
@@ -8,7 +11,14 @@ describe('VerifyAccountComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ VerifyAccountComponent ]
+      declarations: [ VerifyAccountComponent ],
+      imports: [
+        RouterModule.forRoot([]),
+        HttpClientTestingModule
+      ],
+      providers: [
+        { provide: APP_BASE_HREF, useValue : '/' }
+    ]
     })
     .compileComponents();
   }));

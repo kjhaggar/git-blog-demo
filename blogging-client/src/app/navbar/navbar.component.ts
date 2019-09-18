@@ -55,19 +55,19 @@ export class NavbarComponent implements OnInit {
 
     this.userService.newRequestReceived().subscribe(
       data => {
-          if (this.currentUserId === data.receiverId) {
-              this.newRequest();
-          }
+        if (this.currentUserId === data.receiverId) {
+          this.newRequest();
+        }
       },
       error => console.log(error)
-  );
+    );
 
-  this.userService.acceptRequestReceived().subscribe(
-    data => {
-      this.newNotification();
-    },
-    error => console.log(error)
-);
+    this.userService.acceptRequestReceived().subscribe(
+      data => {
+        this.newNotification();
+      },
+      error => console.log(error)
+    );
   }
 
   ngOnInit() {
@@ -84,7 +84,7 @@ export class NavbarComponent implements OnInit {
   }
 
   closeNotify() {
-      this.menuState = 'out';
+    this.menuState = 'out';
   }
 
   public getBgColor(balance: number): string {
@@ -97,14 +97,14 @@ export class NavbarComponent implements OnInit {
 
   DisplayProfile() {
     this.userService.displayProfile().subscribe(
-        data => {
-            this.usersProfile = data;
-        },
-        err => {
-            console.log(err);
-        }
+      data => {
+        this.usersProfile = data;
+      },
+      err => {
+        console.log(err);
+      }
     );
-}
+  }
 
   changeStatus() {
     this.recentNotification.forEach(element => {

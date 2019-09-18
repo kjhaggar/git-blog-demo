@@ -3,7 +3,7 @@ import { FilterPipe } from './filter.pipe';
 
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, APP_BASE_HREF } from '@angular/common';
 import { FilterPipeModule } from 'ngx-filter-pipe';
 import { FriendsRoutingModule } from './friends-routing.module';
 
@@ -22,6 +22,12 @@ import { FriendsListComponent } from './friends-list/friends-list.component';
     FriendsRoutingModule,
     NavbarModule,
     FilterPipeModule
+  ],
+  providers: [
+    {
+      provide: APP_BASE_HREF,
+      useValue: '/'
+    }
   ]
 })
 export class FriendsModule { }

@@ -14,7 +14,7 @@
               <small class="col"  style="margin-top: 30px">Posted on {{ post.createdAt | date:'MMM dd, yyyy'}} </small>
             </div>
           </div>
-          <p class = "description">{{post.description | slice:0:234 }}...
+          <p *ngIf="post?._id != null" class = "description">{{post.description | slice:0:234 }}...
               <a [routerLink]="['/personalBlogs/myBlog', post._id]">Read More</a>
           </p>
       </form>

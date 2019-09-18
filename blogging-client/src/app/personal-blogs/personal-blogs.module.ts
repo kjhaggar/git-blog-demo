@@ -1,6 +1,6 @@
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, APP_BASE_HREF } from '@angular/common';
 import { PersonalBlogsRoutingModule } from './personal-blogs-routing.module';
 import { NavbarModule } from '../navbar/navbar.module';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
@@ -26,6 +26,12 @@ import { MyBlogComponent } from './my-blog/my-blog.component';
     EmojiModule,
     ShareButtonsModule,
     TooltipModule
+  ],
+  providers: [
+    {
+      provide: APP_BASE_HREF,
+      useValue: '/'
+    }
   ]
 })
 export class PersonalBlogsModule { }

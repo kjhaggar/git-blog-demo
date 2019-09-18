@@ -1,0 +1,257 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+      <form role="form" [formGroup]="regiForm">
+        <h2>Please Sign Up <small>It's free and always will be.</small></h2>
+        <hr class="colorgraph" />
+        <div class="row">
+          <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="form-group">
+              <input
+                type="text"
+                name="first_name"
+                id="first_name"
+                class="form-control input-lg"
+                formControlName="firstName"
+                placeholder="First Name"
+                [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }"
+                tabindex="1"
+              />
+              <div
+                *ngIf="submitted && !!f.firstName.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="!!f.firstName.errors.required">
+                  Firstname required
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="form-group">
+              <input
+                type="text"
+                name="last_name"
+                id="last_name"
+                class="form-control input-lg"
+                formControlName="lastName"
+                placeholder="Last Name"
+                [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }"
+                tabindex="2"
+              />
+              <div
+                *ngIf="submitted && !!f.lastName.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="!!f.lastName.errors.required">
+                  Last Name is required
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <input
+            type="text"
+            name="display_name"
+            id="display_name"
+            class="form-control input-lg"
+            formControlName="userName"
+            placeholder="User Name"
+            [ngClass]="{ 'is-invalid': submitted && f.userName.errors }"
+            tabindex="3"
+          />
+          <div
+            *ngIf="submitted && !!f.userName.errors"
+            class="invalid-feedback"
+          >
+            <div *ngIf="!!f.userName.errors.required">Username is required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <input
+            type="email"
+            name="email"
+            id="email"
+            class="form-control input-lg"
+            formControlName="email"
+            placeholder="Email Address"
+            [ngClass]="{ 'is-invalid': submitted && f.email.errors }"
+            tabindex="4"
+          />
+          <div *ngIf="submitted && !!f.email.errors" class="invalid-feedback">
+            <div *ngIf="!!f.email.errors.required">Email is required</div>
+            <div *ngIf="!!f.email.errors.email">
+              Email must be a valid email address
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <div class="col-xs-8 col-sm-2 col-md-2">
+              <select
+                class="custom-select"
+                style="width: 67px; height: 46px;"
+                #code
+              >
+                <option selected="">+91</option>
+                <option>+972</option>
+                <option>+198</option>
+                <option>+701</option>
+              </select>
+            </div>
+            <div class="col-xs-16 col-sm-10 col-md-10">
+              <div class="input_with_text">
+                <input
+                  type="text"
+                  name="phone"
+                  id="phone"
+                  class="form-control input-lg"
+                  formControlName="phone"
+                  placeholder="Phone Number"
+                  [ngClass]="{ 'is-invalid': submitted && f.phone.errors }"
+                  tabindex="5"
+                  style="width: 446px"
+                  #Phone
+                />
+                <span class="verify" style="cursor: pointer;">Verify</span>
+              </div>
+            </div>
+            <div *ngIf="submitted && !!f.phone.errors" class="invalid-feedback">
+              <div *ngIf="!!f.phone.errors.phone">
+                Enter valid phone Number
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="form-group">
+              <input
+                type="password"
+                name="password"
+                id="password"
+                class="form-control input-lg"
+                formControlName="password"
+                placeholder="Password"
+                [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
+                tabindex="6"
+              />
+              <div
+                *ngIf="submitted && !!f.password.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="!!f.password.errors.required">
+                  Password is required
+                </div>
+                <div *ngIf="!!f.password.errors.minlength">
+                  Password must be at least 6 characters
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="form-group">
+              <input
+                type="password"
+                name="password_confirmation"
+                id="password_confirmation"
+                class="form-control input-lg"
+                formControlName="confirmPassword"
+                placeholder="Confirm Password"
+                [ngClass]="{
+                  'is-invalid': submitted && f.confirmPassword.errors
+                }"
+                tabindex="7"
+              />
+              <div
+                *ngIf="submitted && !!f.confirmPassword.errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="!!f.confirmPassword.errors.required">
+                  Confirm Password is required
+                </div>
+              </div>
+              <div *ngIf="matchPassword">Password do not match.</div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="row">
+				<div class="col-xs-4 col-sm-3 col-md-3">
+					<span class="button-checkbox">
+						<button type="button" class="btn" data-color="info" tabindex="7">I Agree</button>
+                        <input type="checkbox" name="t_and_c" id="t_and_c" class="hidden" value="1">
+					</span>
+				</div>
+				<div class="col-xs-8 col-sm-9 col-md-9">
+					 By clicking <strong class="label label-primary">Register</strong>, you agree to the <a href="#" data-toggle="modal" data-target="#t_and_c_m">Terms and Conditions</a> set out by this site, including our Cookie Use.
+				</div>
+			</div> -->
+
+        <hr class="colorgraph" />
+        <div class="row">
+          <div class="col-xs-12 col-md-6">
+            <button
+              type="submit"
+              value="Register"
+              class="btn btn-primary btn-block btn-lg"
+              (click)="Register(this.code.value)"
+              [disabled]="!regiForm.valid"
+              tabindex="8"
+            > Register
+          </button>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <a routerLink="/login" class="btn btn-success btn-block btn-lg"
+              >Sign In</a
+            >
+          </div>
+        </div>
+        <br />
+        <!-- <button
+          (click)="socialSignIn('google')"
+          class="btn btn-social btn-google btn-block"
+        >
+          <span class="fa fa-google"></span> Sign in with Google
+        </button> -->
+      </form>
+      <div *ngIf="registrationError">
+        {{ invalidMessage }}
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="modal fade"
+    id="t_and_c_m"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="myModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <!-- <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-hidden="true"
+          >
+            ×
+          </button> -->
+          <h4 class="modal-title" id="myModalLabel">Terms & Conditions</h4>
+        </div>
+        <div class="modal-body">
+          <!-- <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique, itaque, modi, aliquam nostrum at sapiente consequuntur natus odio reiciendis perferendis rem nisi tempore possimus ipsa porro delectus quidem dolorem ad.</p> -->
+        </div>
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-primary" data-dismiss="modal">
+            I Agree
+          </button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
